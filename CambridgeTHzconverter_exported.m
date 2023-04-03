@@ -92,8 +92,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         
         function updateProfile(app)
             mPath = fileparts(which(mfilename)); % matlab app designer source code folder
-            ins_profilefile = strcat(mPath,'\profile\instrument.xls');
-            lab_profilefile = strcat(mPath,'\profile\laboratory.xls');
+            ins_profilefile = strcat(mPath,filesep,'profile',filesep,'instrument.xls');
+            lab_profilefile = strcat(mPath,filesep,'profile',filesep,'laboratory.xls');
 
             % check instrument profile file and set the default
             if isfile(ins_profilefile)
@@ -123,7 +123,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         
         function writeP1Profile(app)            
             mPath = fileparts(which(mfilename));
-            ins_profilefile = strcat(mPath,'\profile\instrument.xls');
+            ins_profilefile = strcat(mPath,filesep,'profile',filesep,'instrument.xls');
             TcellP = app.TcellP1;
 
             if isempty(TcellP)
@@ -140,7 +140,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         
         function writeP2Profile(app)
             mPath = fileparts(which(mfilename));
-            lab_profilefile = strcat(mPath,'\profile\laboratory.xls');
+            lab_profilefile = strcat(mPath,filesep,'profile',filesep,'laboratory.xls');
             TcellP = app.TcellP2;
             
             if isempty(TcellP)
@@ -285,15 +285,10 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
 
         % Button pushed function: DEPLOYDATAButton
         function DEPLOYDATAButtonPushed(app, event)
-            mPath = fileparts(which(mfilename)); % matCamCcalab app designer source code folder
-            ins_profilefile = strcat(mPath,filesep,'profile',filesep,'instrument.xls');
-            lab_profilefile = strcat(mPath,filesep,'profile',fielsep,'laboratory.xls');
-            app.Tcell = [];
-            
             TDSinstrument = app.THzCONVERTERENGINEDropDown.Value;
             PRJ_count = app.PRJ_count; % number of files to be imported
             fullpathname = app.fullpathname; % full path for the imported files
-            Tcell = app.Tcell; % cell structure table
+            Tcell = []; % cell structure table
             DEBUGMsgLabel = app.DEBUGMsgLabel; % Debug message label handler
             uiFigure = app.CambeidgeTHzconverterUIFigure;
 
@@ -301,6 +296,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
 
             func = str2func(TDSinstrument);
             Tcell = func(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell);
+
+            assignin("base","ins_profilefile", app.ins_profile);
 
 
             Tcell(8,:) = num2cell(app.ins_profile);
