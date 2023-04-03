@@ -4,7 +4,7 @@ Cambridge Terahertz Converter for the dotTHz project
 Cambridge Terahertz Converter and other tools available at dotTHzTAG repositories were coded using MATLAB(R2022a) App-Designer.
 Therefore, it is necessary to install MATLAB and MATLAB App-Designer before you use all the tools.
 
-Basically, the MATLAB App-Designer file is a binary file and a text editor cannot open the file neither track the revisions. Instead, 'CambridgeTHzconveter_exported.m' file is also uploaded as a fair using 'save - export to m file' function in MATLAB App-Designer. This file is only for revision referencing, and it cannot be imported in MATLAB App-Desinger.
+Basically, the MATLAB App-Designer file is a binary file and a text editor cannot open the file neither track its revisions. Instead, 'CambridgeTHzconveter_exported.m' file is uploaded as a pair using 'save - export to m file' function in MATLAB App-Designer. This file is only for revision referencing, and it cannot be imported in MATLAB App-Desinger.
 
 To use the CambridgeTHzConverter, pleaese follow the instructions below.
 
