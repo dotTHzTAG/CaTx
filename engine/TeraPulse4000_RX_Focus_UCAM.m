@@ -40,13 +40,13 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     return;
                 end
                 
-                %assignin('base',"HDFinfo",HDFDataInfo);
+                assignin('base',"HDFinfo",HDFDataInfo);
                 
                 MeasCount = size(HDFDataInfo.Groups,1);
         
                 for idx=1:MeasCount
                     groupName = HDFDataInfo.Groups(idx).Name;
-                    HDFSet_baselineX =strcat(groupName,'/baseline/sample/xdata');
+                    %HDFSet_baselineX =strcat(groupName,'/baseline/sample/xdata');
                     HDFSet_baselineY =strcat(groupName,'/baseline/sample/ydata');
                     HDFSet_sampleX =strcat(groupName,'/sample/xdata');
                     HDFSet_sampleY =strcat(groupName,'/sample/ydata');
@@ -81,7 +81,7 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                         thickness = 0;
                     end
 
-                    baseTime = h5read(fullpath,HDFSet_baselineX);
+                    %baseTime = h5read(fullpath,HDFSet_baselineX);
                     baseSig =  h5read(fullpath,HDFSet_baselineY);
                     samTime = h5read(fullpath,HDFSet_sampleX);
                     samSig = h5read(fullpath,HDFSet_sampleY);

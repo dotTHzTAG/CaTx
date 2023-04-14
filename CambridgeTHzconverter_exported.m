@@ -297,7 +297,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             func = str2func(TDSinstrument);
             Tcell = func(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell);
 
-            assignin("base","ins_profilefile", app.ins_profile);
+            %assignin("base","ins_profilefile", app.ins_profile);
 
 
             Tcell(8,:) = num2cell(app.ins_profile);
