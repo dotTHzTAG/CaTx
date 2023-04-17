@@ -552,6 +552,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             if isequal(filename,0)||isequal(filepath,0)
                 return;
             end
+
+            app.FILESEditField.Value = filename;
             
             fullfile = strcat(filepath,filename);
             thzInfo = h5info(fullfile);
@@ -582,9 +584,9 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
                 for attrLoc = [3 (10:22)]
                     try
                         Tcell{attrLoc,idx} = h5readatt(fullfile,dn,attrItems(cnt));
-                        cnt = cnt + 1;
                     catch ME
                     end
+                    cnt = cnt + 1;
                 end
 
                 % instrument profile matching
