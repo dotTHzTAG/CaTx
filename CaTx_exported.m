@@ -1,80 +1,80 @@
-classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
+classdef CaTx_exported < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        CambeidgeTHzconverterUIFigure  matlab.ui.Figure
-        mustincludeparameterDropDown   matlab.ui.control.DropDown
-        mustincludeparameterDropDownLabel  matlab.ui.control.Label
-        AttributuesallocationSwitch    matlab.ui.control.Switch
-        AttributuesallocationLabel     matlab.ui.control.Label
-        NumberprefixSwitch             matlab.ui.control.Switch
+        CambeidgeTHzconverterUIFigure   matlab.ui.Figure
+        MustincludeParameterDropDown    matlab.ui.control.DropDown
+        MustincludeParameterDropDownLabel  matlab.ui.control.Label
+        AttributuesAllocationSwitch     matlab.ui.control.Switch
+        AttributuesallocationLabel      matlab.ui.control.Label
+        NumberPrefixSwitch              matlab.ui.control.Switch
         PrefixnumberstothedatasetnameLabel  matlab.ui.control.Label
-        TabGroup                       matlab.ui.container.TabGroup
-        MEASUREMENTANDMETADATATab      matlab.ui.container.Tab
-        REFERENCESIGNALCONTROLPanel    matlab.ui.container.Panel
-        ApplyButton                    matlab.ui.control.Button
-        FILEDLISTTOEditField           matlab.ui.control.NumericEditField
-        toLabel                        matlab.ui.control.Label
-        TocolumnsfromEditField         matlab.ui.control.NumericEditField
-        TocolumnsfromEditFieldLabel    matlab.ui.control.Label
-        sDropDown                      matlab.ui.control.DropDown
-        sDropDownLabel                 matlab.ui.control.Label
-        SelectedcolumnEditField        matlab.ui.control.NumericEditField
-        SelectedcolumnEditFieldLabel   matlab.ui.control.Label
-        UPDATETABLEPanel               matlab.ui.container.Panel
-        TimedelayButton                matlab.ui.control.Button
-        ThicknessButton                matlab.ui.control.Button
-        RefractuveindexButton          matlab.ui.control.Button
-        COLUMNCONTROLPanel             matlab.ui.container.Panel
-        PlotwaveformsButton            matlab.ui.control.Button
-        MoveButton_2                   matlab.ui.control.Button
-        MoveButton                     matlab.ui.control.Button
-        RemoveButton                   matlab.ui.control.Button
-        METADATAPanel                  matlab.ui.container.Panel
-        LOADMETAXLS_EditField          matlab.ui.control.EditField
-        ImportmetadatafromXLSfileButton  matlab.ui.control.Button
-        GengeratemetaXLSfileButton     matlab.ui.control.Button
-        UITable_scan_header            matlab.ui.control.Table
-        UITable_measurement            matlab.ui.control.Table
-        INSTRUMENTANDLABORATORYTab     matlab.ui.container.Tab
+        TabGroup                        matlab.ui.container.TabGroup
+        MEASUREMENTANDMETADATATab       matlab.ui.container.Tab
+        REFERENCESIGNALCONTROLPanel     matlab.ui.container.Panel
+        ApplyButton                     matlab.ui.control.Button
+        FILEDLISTTOEditField            matlab.ui.control.NumericEditField
+        toLabel                         matlab.ui.control.Label
+        TocolumnsfromEditField          matlab.ui.control.NumericEditField
+        TocolumnsfromEditFieldLabel     matlab.ui.control.Label
+        sDropDown                       matlab.ui.control.DropDown
+        sDropDownLabel                  matlab.ui.control.Label
+        SelectedcolumnEditField         matlab.ui.control.NumericEditField
+        SelectedcolumnEditFieldLabel    matlab.ui.control.Label
+        UPDATETABLEPanel                matlab.ui.container.Panel
+        TimeDelayButton                 matlab.ui.control.Button
+        ThicknessButton                 matlab.ui.control.Button
+        RefractuveIndexButton           matlab.ui.control.Button
+        COLUMNCONTROLPanel              matlab.ui.container.Panel
+        PlotWaveformsButton             matlab.ui.control.Button
+        MoveButton_2                    matlab.ui.control.Button
+        MoveButton                      matlab.ui.control.Button
+        RemoveButton                    matlab.ui.control.Button
+        METADATAPanel                   matlab.ui.container.Panel
+        LOADMETAXLS_EditField           matlab.ui.control.EditField
+        ImportMetadatafromXLSFileButton  matlab.ui.control.Button
+        GengerateMetadataXLSFileButton  matlab.ui.control.Button
+        UITable_scan_header             matlab.ui.control.Table
+        UITable_measurement             matlab.ui.control.Table
+        INSTRUMENTANDLABORATORYTab      matlab.ui.container.Tab
         DonotusecharacterindescriptionasitisusedforadelimiterLabel  matlab.ui.control.Label
         LAB_MEASUREMENTFILEDTOEditField  matlab.ui.control.NumericEditField
-        toLabel_3                      matlab.ui.control.Label
-        LAB_MEASUREMENTFILEDEditField  matlab.ui.control.NumericEditField
-        MeasurementfieldfromLabel_2    matlab.ui.control.Label
+        toLabel_3                       matlab.ui.control.Label
+        LAB_MEASUREMENTFILEDEditField   matlab.ui.control.NumericEditField
+        MeasurementfieldfromLabel_2     matlab.ui.control.Label
         INS_MEASUREMENTFILEDTOEditField  matlab.ui.control.NumericEditField
-        toLabel_2                      matlab.ui.control.Label
-        INS_MEASUREMENTFILEDEditField  matlab.ui.control.NumericEditField
-        MeasurementfieldfromLabel      matlab.ui.control.Label
-        Applydefaultprofile1Button     matlab.ui.control.Button
-        LAB_SELECTIONEditField         matlab.ui.control.NumericEditField
-        SelectionLabel_2               matlab.ui.control.Label
-        INS_SELECTIONEditField         matlab.ui.control.NumericEditField
-        SelectionLabel                 matlab.ui.control.Label
-        REMOVE_LAB_COL_Button          matlab.ui.control.Button
-        ADD_LAB_COL_Button             matlab.ui.control.Button
-        REMOVE_INS_COL_Button          matlab.ui.control.Button
-        ADD_INS_COL_Button             matlab.ui.control.Button
-        LAB_LINKButton                 matlab.ui.control.Button
-        INS_LINKButton                 matlab.ui.control.Button
-        LABORATORYLabel                matlab.ui.control.Label
-        INSTRUMENTLabel                matlab.ui.control.Label
-        UITable_LAB_header             matlab.ui.control.Table
-        UITable_LAB                    matlab.ui.control.Table
-        UITable_INS_header             matlab.ui.control.Table
-        UITable_INS                    matlab.ui.control.Table
-        Image                          matlab.ui.control.Image
+        toLabel_2                       matlab.ui.control.Label
+        INS_MEASUREMENTFILEDEditField   matlab.ui.control.NumericEditField
+        MeasurementfieldfromLabel       matlab.ui.control.Label
+        ApplyDefaultProfile1Button      matlab.ui.control.Button
+        LAB_SELECTIONEditField          matlab.ui.control.NumericEditField
+        SelectionLabel_2                matlab.ui.control.Label
+        INS_SELECTIONEditField          matlab.ui.control.NumericEditField
+        SelectionLabel                  matlab.ui.control.Label
+        REMOVE_LAB_COL_Button           matlab.ui.control.Button
+        ADD_LAB_COL_Button              matlab.ui.control.Button
+        REMOVE_INS_COL_Button           matlab.ui.control.Button
+        ADD_INS_COL_Button              matlab.ui.control.Button
+        LAB_LINKButton                  matlab.ui.control.Button
+        INS_LINKButton                  matlab.ui.control.Button
+        LABORATORYLabel                 matlab.ui.control.Label
+        INSTRUMENTLabel                 matlab.ui.control.Label
+        UITable_LAB_header              matlab.ui.control.Table
+        UITable_LAB                     matlab.ui.control.Table
+        UITable_INS_header              matlab.ui.control.Table
+        UITable_INS                     matlab.ui.control.Table
+        Image                           matlab.ui.control.Image
         PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel  matlab.ui.control.Label
-        ImportTHzfileButton            matlab.ui.control.Button
-        ClearmemoryButton              matlab.ui.control.Button
-        THzCONVERTERENGINEDropDown     matlab.ui.control.DropDown
-        THzCONVERTERENGINEDropDownLabel  matlab.ui.control.Label
-        ExportTHzfileButton            matlab.ui.control.Button
-        DEBUGMsgLabel                  matlab.ui.control.Label
-        CaTxLabel                      matlab.ui.control.Label
-        DeplaydataButton               matlab.ui.control.Button
-        FILESEditField                 matlab.ui.control.EditField
-        ImportmeasurementButton        matlab.ui.control.Button
+        ImportTHzFileButton             matlab.ui.control.Button
+        ClearMemoryButton               matlab.ui.control.Button
+        ConverterEngineDropDown         matlab.ui.control.DropDown
+        ConverterEngineDropDownLabel    matlab.ui.control.Label
+        ExportTHzFileButton             matlab.ui.control.Button
+        DEBUGMsgLabel                   matlab.ui.control.Label
+        CaTxLabel                       matlab.ui.control.Label
+        DeplayDataButton                matlab.ui.control.Button
+        FILESEditField                  matlab.ui.control.EditField
+        ImportMeasurementButton         matlab.ui.control.Button
     end
 
     
@@ -96,8 +96,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         
         function updateProfile(app)
             mPath = fileparts(which(mfilename)); % matlab app designer source code folder
-            ins_profilefile = strcat(mPath,filesep,'profile',filesep,'instrument.xls');
-            lab_profilefile = strcat(mPath,filesep,'profile',filesep,'laboratory.xls');
+            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'instrument.xls');
+            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'laboratory.xls');
 
             % check instrument profile file and set the default
             if isfile(ins_profilefile)
@@ -127,7 +127,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         
         function writeP1Profile(app)            
             mPath = fileparts(which(mfilename));
-            ins_profilefile = strcat(mPath,filesep,'profile',filesep,'instrument.xls');
+            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'instrument.xls');
             TcellP = app.TcellP1;
 
             if isempty(TcellP)
@@ -144,7 +144,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         
         function writeP2Profile(app)
             mPath = fileparts(which(mfilename));
-            lab_profilefile = strcat(mPath,filesep,'profile',filesep,'laboratory.xls');
+            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'laboratory.xls');
             TcellP = app.TcellP2;
             
             if isempty(TcellP)
@@ -222,9 +222,9 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         function startupFcn(app)
             mPath = fileparts(which(mfilename)); % matlab app designer source code folder
 
-            % make a list of THz converter engines from .\engine folder
-            engineDir = strcat(mPath,filesep,'engine');
-            profileDir = strcat(mPath,filesep,'profile');
+            % make a list of THz converter engines from .\Engines folder
+            engineDir = strcat(mPath,filesep,'Engines');
+            profileDir = strcat(mPath,filesep,'Profiles');
             mkdir(engineDir);
             mkdir(profileDir);
             addpath(genpath(mPath));
@@ -236,7 +236,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
                 for idx = 1:engineNum
                     engineItems{idx} = extractBefore(engineList(idx).name,'.');
                 end
-                app.THzCONVERTERENGINEDropDown.Items = engineItems;
+                app.ConverterEngineDropDown.Items = engineItems;
             end
             
             app.PRJ_count = 0;
@@ -258,8 +258,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
 
         end
 
-        % Button pushed function: ImportmeasurementButton
-        function ImportmeasurementButtonPushed(app, event)
+        % Button pushed function: ImportMeasurementButton
+        function ImportMeasurementButtonPushed(app, event)
             [filename, pathname] = uigetfile('*.*');figure(app.CambeidgeTHzconverterUIFigure);
             % PRJ_count: number of project files imported
             PRJ_count = app.PRJ_count;
@@ -287,9 +287,9 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.PRJ_count = PRJ_count;
         end
 
-        % Button pushed function: DeplaydataButton
-        function DeplaydataButtonPushed(app, event)
-            TDSinstrument = app.THzCONVERTERENGINEDropDown.Value;
+        % Button pushed function: DeplayDataButton
+        function DeplayDataButtonPushed(app, event)
+            TDSinstrument = app.ConverterEngineDropDown.Value;
             PRJ_count = app.PRJ_count; % number of files to be imported
             fullpathname = app.fullpathname; % full path for the imported files
             Tcell = []; % cell structure table
@@ -318,8 +318,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.TabGroup.SelectedTab = app.TabGroup.Children(1);
         end
 
-        % Button pushed function: ClearmemoryButton
-        function ClearmemoryButtonPushed(app, event)
+        % Button pushed function: ClearMemoryButton
+        function ClearMemoryButtonPushed(app, event)
             question = "Do you want to clear memory?";
             answer = questdlg(question,'Warning');
                 
@@ -426,8 +426,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: ExportTHzfileButton
-        function ExportTHzfileButtonPushed(app, event)
+        % Button pushed function: ExportTHzFileButton
+        function ExportTHzFileButtonPushed(app, event)
             filter = {'*.thz';'*.*'};
             [filename, filepath] = uiputfile(filter);
             
@@ -441,18 +441,18 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
                         
             fullfile = strcat(filepath,filename);
             measNum = app.Tcell{1,end};
-            incNum = app.NumberprefixSwitch.Value;
+            incNum = app.NumberPrefixSwitch.Value;
             varsAttr = ["date and time","mode","n_eff","time delay","thickness","weight","temperature","concentration","phase","coordinate","ext_num","ext_text","ext_vect"];
             digitNum = ceil(log10(measNum));
             digitNumFormat = strcat('%0',num2str(digitNum),'d');
             dSet = [];
 
             % Are the attributes assigned to all datasets?
-            if isequal(app.AttributuesallocationSwitch.Value,"All datasets")
+            if isequal(app.AttributuesAllocationSwitch.Value,"All Datasets")
                 attAll = true;
             else
                 attAll = false;
-                ectAttr = str2num(app.mustincludeparameterDropDown.Value);
+                ectAttr = str2num(app.MustincludeParameterDropDown.Value);
             end
 
             app.DEBUGMsgLabel.Text = "Exporting started";
@@ -522,9 +522,9 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
 
         end
 
-        % Button pushed function: ImportTHzfileButton
-        function ImportTHzfileButtonPushed(app, event)
-            ClearmemoryButtonPushed(app);
+        % Button pushed function: ImportTHzFileButton
+        function ImportTHzFileButtonPushed(app, event)
+            ClearMemoryButtonPushed(app);
             
             if ~isempty(app.Tcell)
                 return;
@@ -670,8 +670,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: ImportmetadatafromXLSfileButton
-        function ImportmetadatafromXLSfileButtonPushed(app, event)
+        % Button pushed function: ImportMetadatafromXLSFileButton
+        function ImportMetadatafromXLSFileButtonPushed(app, event)
             [filename, filepath] = uigetfile('*.xls');
 
             if isequal(filename,0)||isequal(filepath,0)
@@ -702,8 +702,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             updateMeasurementTable(app);            
         end
 
-        % Button pushed function: GengeratemetaXLSfileButton
-        function GengeratemetaXLSfileButtonPushed(app, event)
+        % Button pushed function: GengerateMetadataXLSFileButton
+        function GengerateMetadataXLSFileButtonPushed(app, event)
 
             filter = {'*.xls';'*.*'};
             [filename, filepath] = uiputfile(filter);
@@ -726,8 +726,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             
         end
 
-        % Button pushed function: RefractuveindexButton
-        function RefractuveindexButtonPushed(app, event)
+        % Button pushed function: RefractuveIndexButton
+        function RefractuveIndexButtonPushed(app, event)
             rowRefractiveindex = 12;
             rowTimedelay = 13;
             rowThickness = 14;
@@ -786,8 +786,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: Applydefaultprofile1Button
-        function Applydefaultprofile1ButtonPushed(app, event)
+        % Button pushed function: ApplyDefaultProfile1Button
+        function ApplyDefaultProfile1ButtonPushed(app, event)
             updateProfile(app);
 
             Tcell = app.Tcell;
@@ -822,7 +822,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         function ADD_INS_COL_ButtonPushed(app, event)
             
             mPath = fileparts(which(mfilename));
-            ins_profilefile = strcat(mPath,'\profile\instrument.xls');
+            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'instrument.xls');
 
             if isfile(ins_profilefile)
                 TcellP = app.TcellP1;
@@ -864,7 +864,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         function ADD_LAB_COL_ButtonPushed(app, event)
             
             mPath = fileparts(which(mfilename));
-            lab_profilefile = strcat(mPath,'\profile\laboratory.xls');
+            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'laboratory.xls');
 
             if isfile(lab_profilefile)
                 TcellP = app.TcellP2;
@@ -873,7 +873,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
                 TcellP = [TcellP, newCell];
             else
                 TcellP{1,1} = 1; % profile number
-                TcellP{2,1} = char(); % OCRID
+                TcellP{2,1} = char(); % ORCID
                 TcellP{3,1} = char(); % Name
                 TcellP{4,1} = char(); % Email
                 TcellP{5,1} = char(); % Institute, country
@@ -999,8 +999,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.FILEDLISTTOEditField.Value = app.totalMeasNum;
         end
 
-        % Button pushed function: PlotwaveformsButton
-        function PlotwaveformsButtonPushed(app, event)
+        % Button pushed function: PlotWaveformsButton
+        function PlotWaveformsButtonPushed(app, event)
             Indices = app.cellIndices;
             Tcell = app.Tcell;
 
@@ -1143,8 +1143,8 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: TimedelayButton
-        function TimedelayButtonPushed(app, event)
+        % Button pushed function: TimeDelayButton
+        function TimeDelayButtonPushed(app, event)
             rowTimeDelay = 13; % time delay row
             maxPer = 0.80;
 
@@ -1207,23 +1207,23 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.CambeidgeTHzconverterUIFigure.Name = 'Cambeidge THz converter';
             app.CambeidgeTHzconverterUIFigure.Icon = fullfile(pathToMLAPP, 'CaT_logo.png');
 
-            % Create ImportmeasurementButton
-            app.ImportmeasurementButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
-            app.ImportmeasurementButton.ButtonPushedFcn = createCallbackFcn(app, @ImportmeasurementButtonPushed, true);
-            app.ImportmeasurementButton.FontWeight = 'bold';
-            app.ImportmeasurementButton.Position = [186 875 159 23];
-            app.ImportmeasurementButton.Text = 'Import measurement';
+            % Create ImportMeasurementButton
+            app.ImportMeasurementButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
+            app.ImportMeasurementButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMeasurementButtonPushed, true);
+            app.ImportMeasurementButton.FontWeight = 'bold';
+            app.ImportMeasurementButton.Position = [149 875 142 23];
+            app.ImportMeasurementButton.Text = 'Import Measurement';
 
             % Create FILESEditField
             app.FILESEditField = uieditfield(app.CambeidgeTHzconverterUIFigure, 'text');
-            app.FILESEditField.Position = [360 876 618 22];
+            app.FILESEditField.Position = [300 876 709 22];
 
-            % Create DeplaydataButton
-            app.DeplaydataButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
-            app.DeplaydataButton.ButtonPushedFcn = createCallbackFcn(app, @DeplaydataButtonPushed, true);
-            app.DeplaydataButton.FontWeight = 'bold';
-            app.DeplaydataButton.Position = [825 842 153 25];
-            app.DeplaydataButton.Text = 'Deplay data';
+            % Create DeplayDataButton
+            app.DeplayDataButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
+            app.DeplayDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeplayDataButtonPushed, true);
+            app.DeplayDataButton.FontWeight = 'bold';
+            app.DeplayDataButton.Position = [671 842 95 25];
+            app.DeplayDataButton.Text = 'Deplay Data';
 
             % Create CaTxLabel
             app.CaTxLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
@@ -1236,45 +1236,45 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             % Create DEBUGMsgLabel
             app.DEBUGMsgLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
             app.DEBUGMsgLabel.FontWeight = 'bold';
-            app.DEBUGMsgLabel.Position = [321 33 273 22];
+            app.DEBUGMsgLabel.Position = [781 843 238 22];
             app.DEBUGMsgLabel.Text = '';
 
-            % Create ExportTHzfileButton
-            app.ExportTHzfileButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
-            app.ExportTHzfileButton.ButtonPushedFcn = createCallbackFcn(app, @ExportTHzfileButtonPushed, true);
-            app.ExportTHzfileButton.FontWeight = 'bold';
-            app.ExportTHzfileButton.Position = [825 29 194 56];
-            app.ExportTHzfileButton.Text = 'Export THz file';
+            % Create ExportTHzFileButton
+            app.ExportTHzFileButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
+            app.ExportTHzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ExportTHzFileButtonPushed, true);
+            app.ExportTHzFileButton.FontWeight = 'bold';
+            app.ExportTHzFileButton.Position = [825 29 194 56];
+            app.ExportTHzFileButton.Text = 'Export THz File';
 
-            % Create THzCONVERTERENGINEDropDownLabel
-            app.THzCONVERTERENGINEDropDownLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
-            app.THzCONVERTERENGINEDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.THzCONVERTERENGINEDropDownLabel.HorizontalAlignment = 'right';
-            app.THzCONVERTERENGINEDropDownLabel.FontWeight = 'bold';
-            app.THzCONVERTERENGINEDropDownLabel.Position = [187 843 156 22];
-            app.THzCONVERTERENGINEDropDownLabel.Text = 'THz CONVERTER ENGINE';
+            % Create ConverterEngineDropDownLabel
+            app.ConverterEngineDropDownLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
+            app.ConverterEngineDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.ConverterEngineDropDownLabel.HorizontalAlignment = 'right';
+            app.ConverterEngineDropDownLabel.FontWeight = 'bold';
+            app.ConverterEngineDropDownLabel.Position = [154 843 108 22];
+            app.ConverterEngineDropDownLabel.Text = 'Converter Engine';
 
-            % Create THzCONVERTERENGINEDropDown
-            app.THzCONVERTERENGINEDropDown = uidropdown(app.CambeidgeTHzconverterUIFigure);
-            app.THzCONVERTERENGINEDropDown.Items = {'No engines available. Please check m files in .\engine folder.'};
-            app.THzCONVERTERENGINEDropDown.FontWeight = 'bold';
-            app.THzCONVERTERENGINEDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.THzCONVERTERENGINEDropDown.Position = [360 843 448 22];
-            app.THzCONVERTERENGINEDropDown.Value = 'No engines available. Please check m files in .\engine folder.';
+            % Create ConverterEngineDropDown
+            app.ConverterEngineDropDown = uidropdown(app.CambeidgeTHzconverterUIFigure);
+            app.ConverterEngineDropDown.Items = {'No engines available. Please check m files in .\engine folder.'};
+            app.ConverterEngineDropDown.FontWeight = 'bold';
+            app.ConverterEngineDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.ConverterEngineDropDown.Position = [275 843 385 22];
+            app.ConverterEngineDropDown.Value = 'No engines available. Please check m files in .\engine folder.';
 
-            % Create ClearmemoryButton
-            app.ClearmemoryButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
-            app.ClearmemoryButton.ButtonPushedFcn = createCallbackFcn(app, @ClearmemoryButtonPushed, true);
-            app.ClearmemoryButton.FontWeight = 'bold';
-            app.ClearmemoryButton.Position = [43 29 122 56];
-            app.ClearmemoryButton.Text = 'Clear memory';
+            % Create ClearMemoryButton
+            app.ClearMemoryButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
+            app.ClearMemoryButton.ButtonPushedFcn = createCallbackFcn(app, @ClearMemoryButtonPushed, true);
+            app.ClearMemoryButton.FontWeight = 'bold';
+            app.ClearMemoryButton.Position = [43 29 122 56];
+            app.ClearMemoryButton.Text = 'Clear Memory';
 
-            % Create ImportTHzfileButton
-            app.ImportTHzfileButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
-            app.ImportTHzfileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportTHzfileButtonPushed, true);
-            app.ImportTHzfileButton.FontWeight = 'bold';
-            app.ImportTHzfileButton.Position = [179 29 121 56];
-            app.ImportTHzfileButton.Text = 'Import THz file';
+            % Create ImportTHzFileButton
+            app.ImportTHzFileButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
+            app.ImportTHzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportTHzFileButtonPushed, true);
+            app.ImportTHzFileButton.FontWeight = 'bold';
+            app.ImportTHzFileButton.Position = [179 29 121 56];
+            app.ImportTHzFileButton.Text = 'Import THz File';
 
             % Create PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel
             app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
@@ -1289,7 +1289,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.CambeidgeTHzconverterUIFigure);
-            app.TabGroup.Position = [24 98 1010 723];
+            app.TabGroup.Position = [24 93 1010 728];
 
             % Create MEASUREMENTANDMETADATATab
             app.MEASUREMENTANDMETADATATab = uitab(app.TabGroup);
@@ -1303,32 +1303,32 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.UITable_measurement.CellEditCallback = createCallbackFcn(app, @UITable_measurementCellEdit, true);
             app.UITable_measurement.CellSelectionCallback = createCallbackFcn(app, @UITable_measurementCellSelection, true);
             app.UITable_measurement.Multiselect = 'off';
-            app.UITable_measurement.Position = [178 157 807 525];
+            app.UITable_measurement.Position = [178 151 807 536];
 
             % Create UITable_scan_header
             app.UITable_scan_header = uitable(app.MEASUREMENTANDMETADATATab);
             app.UITable_scan_header.ColumnName = '';
             app.UITable_scan_header.RowName = {};
             app.UITable_scan_header.FontWeight = 'bold';
-            app.UITable_scan_header.Position = [23 157 156 525];
+            app.UITable_scan_header.Position = [23 151 156 536];
 
             % Create METADATAPanel
             app.METADATAPanel = uipanel(app.MEASUREMENTANDMETADATATab);
             app.METADATAPanel.Title = 'METADATA';
             app.METADATAPanel.FontWeight = 'bold';
-            app.METADATAPanel.Position = [33 15 243 127];
+            app.METADATAPanel.Position = [33 11 243 127];
 
-            % Create GengeratemetaXLSfileButton
-            app.GengeratemetaXLSfileButton = uibutton(app.METADATAPanel, 'push');
-            app.GengeratemetaXLSfileButton.ButtonPushedFcn = createCallbackFcn(app, @GengeratemetaXLSfileButtonPushed, true);
-            app.GengeratemetaXLSfileButton.Position = [15 73 214 25];
-            app.GengeratemetaXLSfileButton.Text = 'Gengerate meta XLS file';
+            % Create GengerateMetadataXLSFileButton
+            app.GengerateMetadataXLSFileButton = uibutton(app.METADATAPanel, 'push');
+            app.GengerateMetadataXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @GengerateMetadataXLSFileButtonPushed, true);
+            app.GengerateMetadataXLSFileButton.Position = [15 73 214 25];
+            app.GengerateMetadataXLSFileButton.Text = 'Gengerate Metadata XLS File';
 
-            % Create ImportmetadatafromXLSfileButton
-            app.ImportmetadatafromXLSfileButton = uibutton(app.METADATAPanel, 'push');
-            app.ImportmetadatafromXLSfileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportmetadatafromXLSfileButtonPushed, true);
-            app.ImportmetadatafromXLSfileButton.Position = [15 41 214 25];
-            app.ImportmetadatafromXLSfileButton.Text = 'Import meta data from XLS file';
+            % Create ImportMetadatafromXLSFileButton
+            app.ImportMetadatafromXLSFileButton = uibutton(app.METADATAPanel, 'push');
+            app.ImportMetadatafromXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMetadatafromXLSFileButtonPushed, true);
+            app.ImportMetadatafromXLSFileButton.Position = [15 41 214 25];
+            app.ImportMetadatafromXLSFileButton.Text = 'Import Metadata from XLS File';
 
             % Create LOADMETAXLS_EditField
             app.LOADMETAXLS_EditField = uieditfield(app.METADATAPanel, 'text');
@@ -1340,7 +1340,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.COLUMNCONTROLPanel = uipanel(app.MEASUREMENTANDMETADATATab);
             app.COLUMNCONTROLPanel.Title = 'COLUMN CONTROL';
             app.COLUMNCONTROLPanel.FontWeight = 'bold';
-            app.COLUMNCONTROLPanel.Position = [292 15 180 127];
+            app.COLUMNCONTROLPanel.Position = [292 11 180 127];
 
             % Create RemoveButton
             app.RemoveButton = uibutton(app.COLUMNCONTROLPanel, 'push');
@@ -1360,22 +1360,22 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.MoveButton_2.Position = [92 73 75 25];
             app.MoveButton_2.Text = '>>Move';
 
-            % Create PlotwaveformsButton
-            app.PlotwaveformsButton = uibutton(app.COLUMNCONTROLPanel, 'push');
-            app.PlotwaveformsButton.ButtonPushedFcn = createCallbackFcn(app, @PlotwaveformsButtonPushed, true);
-            app.PlotwaveformsButton.Position = [11 42 155 25];
-            app.PlotwaveformsButton.Text = 'Plot waveform(s)';
+            % Create PlotWaveformsButton
+            app.PlotWaveformsButton = uibutton(app.COLUMNCONTROLPanel, 'push');
+            app.PlotWaveformsButton.ButtonPushedFcn = createCallbackFcn(app, @PlotWaveformsButtonPushed, true);
+            app.PlotWaveformsButton.Position = [11 42 155 25];
+            app.PlotWaveformsButton.Text = 'Plot Waveform(s)';
 
             % Create UPDATETABLEPanel
             app.UPDATETABLEPanel = uipanel(app.MEASUREMENTANDMETADATATab);
             app.UPDATETABLEPanel.Title = 'UPDATE TABLE';
-            app.UPDATETABLEPanel.Position = [776 15 164 127];
+            app.UPDATETABLEPanel.Position = [776 11 164 127];
 
-            % Create RefractuveindexButton
-            app.RefractuveindexButton = uibutton(app.UPDATETABLEPanel, 'push');
-            app.RefractuveindexButton.ButtonPushedFcn = createCallbackFcn(app, @RefractuveindexButtonPushed, true);
-            app.RefractuveindexButton.Position = [11 74 145 25];
-            app.RefractuveindexButton.Text = 'Refractuve index';
+            % Create RefractuveIndexButton
+            app.RefractuveIndexButton = uibutton(app.UPDATETABLEPanel, 'push');
+            app.RefractuveIndexButton.ButtonPushedFcn = createCallbackFcn(app, @RefractuveIndexButtonPushed, true);
+            app.RefractuveIndexButton.Position = [11 74 145 25];
+            app.RefractuveIndexButton.Text = 'Refractuve Index';
 
             % Create ThicknessButton
             app.ThicknessButton = uibutton(app.UPDATETABLEPanel, 'push');
@@ -1383,16 +1383,16 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.ThicknessButton.Position = [11 42 145 25];
             app.ThicknessButton.Text = 'Thickness';
 
-            % Create TimedelayButton
-            app.TimedelayButton = uibutton(app.UPDATETABLEPanel, 'push');
-            app.TimedelayButton.ButtonPushedFcn = createCallbackFcn(app, @TimedelayButtonPushed, true);
-            app.TimedelayButton.Position = [11 10 145 25];
-            app.TimedelayButton.Text = 'Time delay';
+            % Create TimeDelayButton
+            app.TimeDelayButton = uibutton(app.UPDATETABLEPanel, 'push');
+            app.TimeDelayButton.ButtonPushedFcn = createCallbackFcn(app, @TimeDelayButtonPushed, true);
+            app.TimeDelayButton.Position = [11 10 145 25];
+            app.TimeDelayButton.Text = 'Time Delay';
 
             % Create REFERENCESIGNALCONTROLPanel
             app.REFERENCESIGNALCONTROLPanel = uipanel(app.MEASUREMENTANDMETADATATab);
             app.REFERENCESIGNALCONTROLPanel.Title = 'REFERENCE SIGNAL CONTROL';
-            app.REFERENCESIGNALCONTROLPanel.Position = [485 15 276 127];
+            app.REFERENCESIGNALCONTROLPanel.Position = [485 11 276 127];
 
             % Create SelectedcolumnEditFieldLabel
             app.SelectedcolumnEditFieldLabel = uilabel(app.REFERENCESIGNALCONTROLPanel);
@@ -1462,14 +1462,14 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.UITable_INS.CellEditCallback = createCallbackFcn(app, @UITable_INSCellEdit, true);
             app.UITable_INS.CellSelectionCallback = createCallbackFcn(app, @UITable_INSCellSelection, true);
             app.UITable_INS.Multiselect = 'off';
-            app.UITable_INS.Position = [174 538 801 112];
+            app.UITable_INS.Position = [174 543 801 112];
 
             % Create UITable_INS_header
             app.UITable_INS_header = uitable(app.INSTRUMENTANDLABORATORYTab);
             app.UITable_INS_header.ColumnName = '';
             app.UITable_INS_header.RowName = {};
             app.UITable_INS_header.FontWeight = 'bold';
-            app.UITable_INS_header.Position = [19 538 156 112];
+            app.UITable_INS_header.Position = [19 543 156 112];
 
             % Create UITable_LAB
             app.UITable_LAB = uitable(app.INSTRUMENTANDLABORATORYTab);
@@ -1478,68 +1478,68 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.UITable_LAB.CellEditCallback = createCallbackFcn(app, @UITable_LABCellEdit, true);
             app.UITable_LAB.CellSelectionCallback = createCallbackFcn(app, @UITable_LABCellSelection, true);
             app.UITable_LAB.Multiselect = 'off';
-            app.UITable_LAB.Position = [174 289 801 133];
+            app.UITable_LAB.Position = [174 294 801 133];
 
             % Create UITable_LAB_header
             app.UITable_LAB_header = uitable(app.INSTRUMENTANDLABORATORYTab);
             app.UITable_LAB_header.ColumnName = '';
             app.UITable_LAB_header.RowName = {};
             app.UITable_LAB_header.FontWeight = 'bold';
-            app.UITable_LAB_header.Position = [19 289 156 133];
+            app.UITable_LAB_header.Position = [19 294 156 133];
 
             % Create INSTRUMENTLabel
             app.INSTRUMENTLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
             app.INSTRUMENTLabel.FontSize = 13;
-            app.INSTRUMENTLabel.Position = [27 657 96 22];
+            app.INSTRUMENTLabel.Position = [27 662 96 22];
             app.INSTRUMENTLabel.Text = 'INSTRUMENT*';
 
             % Create LABORATORYLabel
             app.LABORATORYLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
             app.LABORATORYLabel.FontSize = 13;
-            app.LABORATORYLabel.Position = [27 431 98 22];
+            app.LABORATORYLabel.Position = [27 436 98 22];
             app.LABORATORYLabel.Text = 'LABORATORY*';
 
             % Create INS_LINKButton
             app.INS_LINKButton = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
             app.INS_LINKButton.ButtonPushedFcn = createCallbackFcn(app, @INS_LINKButtonPushed, true);
-            app.INS_LINKButton.Position = [904 502 70 25];
+            app.INS_LINKButton.Position = [904 507 70 25];
             app.INS_LINKButton.Text = 'Link';
 
             % Create LAB_LINKButton
             app.LAB_LINKButton = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
             app.LAB_LINKButton.ButtonPushedFcn = createCallbackFcn(app, @LAB_LINKButtonPushed, true);
-            app.LAB_LINKButton.Position = [904 253 71 25];
+            app.LAB_LINKButton.Position = [904 258 71 25];
             app.LAB_LINKButton.Text = 'Link';
 
             % Create ADD_INS_COL_Button
             app.ADD_INS_COL_Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
             app.ADD_INS_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @ADD_INS_COL_ButtonPushed, true);
-            app.ADD_INS_COL_Button.Position = [138 501 165 26];
-            app.ADD_INS_COL_Button.Text = 'Add profile';
+            app.ADD_INS_COL_Button.Position = [138 506 165 26];
+            app.ADD_INS_COL_Button.Text = 'Add Profile';
 
             % Create REMOVE_INS_COL_Button
             app.REMOVE_INS_COL_Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
             app.REMOVE_INS_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @REMOVE_INS_COL_ButtonPushed, true);
-            app.REMOVE_INS_COL_Button.Position = [312 501 190 26];
-            app.REMOVE_INS_COL_Button.Text = 'Remove selected profile';
+            app.REMOVE_INS_COL_Button.Position = [312 506 190 26];
+            app.REMOVE_INS_COL_Button.Text = 'Remove Selected Profile';
 
             % Create ADD_LAB_COL_Button
             app.ADD_LAB_COL_Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
             app.ADD_LAB_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @ADD_LAB_COL_ButtonPushed, true);
-            app.ADD_LAB_COL_Button.Position = [142 252 165 26];
-            app.ADD_LAB_COL_Button.Text = 'Add profile';
+            app.ADD_LAB_COL_Button.Position = [142 257 165 26];
+            app.ADD_LAB_COL_Button.Text = 'Add Profile';
 
             % Create REMOVE_LAB_COL_Button
             app.REMOVE_LAB_COL_Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
             app.REMOVE_LAB_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @REMOVE_LAB_COL_ButtonPushed, true);
-            app.REMOVE_LAB_COL_Button.Position = [316 252 190 26];
-            app.REMOVE_LAB_COL_Button.Text = 'Remove selected profile';
+            app.REMOVE_LAB_COL_Button.Position = [316 257 190 26];
+            app.REMOVE_LAB_COL_Button.Text = 'Remove Selected Profile';
 
             % Create SelectionLabel
             app.SelectionLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
             app.SelectionLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.SelectionLabel.HorizontalAlignment = 'right';
-            app.SelectionLabel.Position = [523 503 55 22];
+            app.SelectionLabel.Position = [523 508 55 22];
             app.SelectionLabel.Text = 'Selection';
 
             % Create INS_SELECTIONEditField
@@ -1548,13 +1548,13 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.INS_SELECTIONEditField.ValueDisplayFormat = '%.0f';
             app.INS_SELECTIONEditField.Editable = 'off';
             app.INS_SELECTIONEditField.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.INS_SELECTIONEditField.Position = [586 503 34 22];
+            app.INS_SELECTIONEditField.Position = [586 508 34 22];
 
             % Create SelectionLabel_2
             app.SelectionLabel_2 = uilabel(app.INSTRUMENTANDLABORATORYTab);
             app.SelectionLabel_2.BackgroundColor = [0.9412 0.9412 0.9412];
             app.SelectionLabel_2.HorizontalAlignment = 'right';
-            app.SelectionLabel_2.Position = [527 254 55 22];
+            app.SelectionLabel_2.Position = [527 259 55 22];
             app.SelectionLabel_2.Text = 'Selection';
 
             % Create LAB_SELECTIONEditField
@@ -1563,104 +1563,104 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.LAB_SELECTIONEditField.ValueDisplayFormat = '%.0f';
             app.LAB_SELECTIONEditField.Editable = 'off';
             app.LAB_SELECTIONEditField.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.LAB_SELECTIONEditField.Position = [590 254 34 22];
+            app.LAB_SELECTIONEditField.Position = [590 259 34 22];
 
-            % Create Applydefaultprofile1Button
-            app.Applydefaultprofile1Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
-            app.Applydefaultprofile1Button.ButtonPushedFcn = createCallbackFcn(app, @Applydefaultprofile1ButtonPushed, true);
-            app.Applydefaultprofile1Button.Position = [723 28 252 26];
-            app.Applydefaultprofile1Button.Text = 'Apply default profile (1)';
+            % Create ApplyDefaultProfile1Button
+            app.ApplyDefaultProfile1Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
+            app.ApplyDefaultProfile1Button.ButtonPushedFcn = createCallbackFcn(app, @ApplyDefaultProfile1ButtonPushed, true);
+            app.ApplyDefaultProfile1Button.Position = [723 33 252 26];
+            app.ApplyDefaultProfile1Button.Text = 'Apply Default Profile (1)';
 
             % Create MeasurementfieldfromLabel
             app.MeasurementfieldfromLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
             app.MeasurementfieldfromLabel.HorizontalAlignment = 'right';
-            app.MeasurementfieldfromLabel.Position = [632 503 132 22];
-            app.MeasurementfieldfromLabel.Text = 'Measurement field from';
+            app.MeasurementfieldfromLabel.Position = [625 508 139 22];
+            app.MeasurementfieldfromLabel.Text = 'Measurement Field From';
 
             % Create INS_MEASUREMENTFILEDEditField
             app.INS_MEASUREMENTFILEDEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
             app.INS_MEASUREMENTFILEDEditField.Limits = [1 Inf];
             app.INS_MEASUREMENTFILEDEditField.ValueDisplayFormat = '%.0f';
-            app.INS_MEASUREMENTFILEDEditField.Position = [771 503 50 22];
+            app.INS_MEASUREMENTFILEDEditField.Position = [771 508 50 22];
             app.INS_MEASUREMENTFILEDEditField.Value = 1;
 
             % Create toLabel_2
             app.toLabel_2 = uilabel(app.INSTRUMENTANDLABORATORYTab);
             app.toLabel_2.HorizontalAlignment = 'right';
-            app.toLabel_2.Position = [819 503 25 22];
-            app.toLabel_2.Text = 'to';
+            app.toLabel_2.Position = [819 508 25 22];
+            app.toLabel_2.Text = 'To';
 
             % Create INS_MEASUREMENTFILEDTOEditField
             app.INS_MEASUREMENTFILEDTOEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
             app.INS_MEASUREMENTFILEDTOEditField.Limits = [1 Inf];
             app.INS_MEASUREMENTFILEDTOEditField.ValueDisplayFormat = '%.0f';
-            app.INS_MEASUREMENTFILEDTOEditField.Position = [848 503 50 22];
+            app.INS_MEASUREMENTFILEDTOEditField.Position = [848 508 50 22];
             app.INS_MEASUREMENTFILEDTOEditField.Value = 1;
 
             % Create MeasurementfieldfromLabel_2
             app.MeasurementfieldfromLabel_2 = uilabel(app.INSTRUMENTANDLABORATORYTab);
             app.MeasurementfieldfromLabel_2.HorizontalAlignment = 'right';
-            app.MeasurementfieldfromLabel_2.Position = [633 254 132 22];
-            app.MeasurementfieldfromLabel_2.Text = 'Measurement field from';
+            app.MeasurementfieldfromLabel_2.Position = [626 259 139 22];
+            app.MeasurementfieldfromLabel_2.Text = 'Measurement Field From';
 
             % Create LAB_MEASUREMENTFILEDEditField
             app.LAB_MEASUREMENTFILEDEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
             app.LAB_MEASUREMENTFILEDEditField.Limits = [1 Inf];
             app.LAB_MEASUREMENTFILEDEditField.ValueDisplayFormat = '%.0f';
-            app.LAB_MEASUREMENTFILEDEditField.Position = [772 254 50 22];
+            app.LAB_MEASUREMENTFILEDEditField.Position = [772 259 50 22];
             app.LAB_MEASUREMENTFILEDEditField.Value = 1;
 
             % Create toLabel_3
             app.toLabel_3 = uilabel(app.INSTRUMENTANDLABORATORYTab);
             app.toLabel_3.HorizontalAlignment = 'right';
-            app.toLabel_3.Position = [818 254 25 22];
-            app.toLabel_3.Text = 'to';
+            app.toLabel_3.Position = [818 259 25 22];
+            app.toLabel_3.Text = 'To';
 
             % Create LAB_MEASUREMENTFILEDTOEditField
             app.LAB_MEASUREMENTFILEDTOEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
             app.LAB_MEASUREMENTFILEDTOEditField.Limits = [1 Inf];
             app.LAB_MEASUREMENTFILEDTOEditField.ValueDisplayFormat = '%.0f';
-            app.LAB_MEASUREMENTFILEDTOEditField.Position = [847 254 50 22];
+            app.LAB_MEASUREMENTFILEDTOEditField.Position = [847 259 50 22];
             app.LAB_MEASUREMENTFILEDTOEditField.Value = 1;
 
             % Create DonotusecharacterindescriptionasitisusedforadelimiterLabel
             app.DonotusecharacterindescriptionasitisusedforadelimiterLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
-            app.DonotusecharacterindescriptionasitisusedforadelimiterLabel.Position = [607 674 368 22];
+            app.DonotusecharacterindescriptionasitisusedforadelimiterLabel.Position = [607 679 368 22];
             app.DonotusecharacterindescriptionasitisusedforadelimiterLabel.Text = '* Do not use '' / '' character in description as it is used for a delimiter.';
 
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
             app.PrefixnumberstothedatasetnameLabel.HorizontalAlignment = 'center';
-            app.PrefixnumberstothedatasetnameLabel.Position = [326 56 81 22];
-            app.PrefixnumberstothedatasetnameLabel.Text = 'Number prefix';
+            app.PrefixnumberstothedatasetnameLabel.Position = [326 56 82 22];
+            app.PrefixnumberstothedatasetnameLabel.Text = 'Number Prefix';
 
-            % Create NumberprefixSwitch
-            app.NumberprefixSwitch = uiswitch(app.CambeidgeTHzconverterUIFigure, 'slider');
-            app.NumberprefixSwitch.Position = [435 58 40 18];
+            % Create NumberPrefixSwitch
+            app.NumberPrefixSwitch = uiswitch(app.CambeidgeTHzconverterUIFigure, 'slider');
+            app.NumberPrefixSwitch.Position = [435 58 40 18];
 
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
             app.AttributuesallocationLabel.Position = [519 56 120 22];
-            app.AttributuesallocationLabel.Text = 'Attributues allocation:';
+            app.AttributuesallocationLabel.Text = 'Attributues Allocation:';
 
-            % Create AttributuesallocationSwitch
-            app.AttributuesallocationSwitch = uiswitch(app.CambeidgeTHzconverterUIFigure, 'slider');
-            app.AttributuesallocationSwitch.Items = {'All datasets', 'Only first,'};
-            app.AttributuesallocationSwitch.Position = [712 58 41 18];
-            app.AttributuesallocationSwitch.Value = 'All datasets';
+            % Create AttributuesAllocationSwitch
+            app.AttributuesAllocationSwitch = uiswitch(app.CambeidgeTHzconverterUIFigure, 'slider');
+            app.AttributuesAllocationSwitch.Items = {'All Datasets', 'Only First,'};
+            app.AttributuesAllocationSwitch.Position = [712 58 41 18];
+            app.AttributuesAllocationSwitch.Value = 'All Datasets';
 
-            % Create mustincludeparameterDropDownLabel
-            app.mustincludeparameterDropDownLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
-            app.mustincludeparameterDropDownLabel.HorizontalAlignment = 'right';
-            app.mustincludeparameterDropDownLabel.Position = [627 33 131 22];
-            app.mustincludeparameterDropDownLabel.Text = 'must include parameter';
+            % Create MustincludeParameterDropDownLabel
+            app.MustincludeParameterDropDownLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
+            app.MustincludeParameterDropDownLabel.HorizontalAlignment = 'right';
+            app.MustincludeParameterDropDownLabel.Position = [626 33 132 22];
+            app.MustincludeParameterDropDownLabel.Text = 'Must-include Parameter';
 
-            % Create mustincludeparameterDropDown
-            app.mustincludeparameterDropDown = uidropdown(app.CambeidgeTHzconverterUIFigure);
-            app.mustincludeparameterDropDown.Items = {'10', '14', '15', '16', '17', '18', '19'};
-            app.mustincludeparameterDropDown.Position = [762 33 48 22];
-            app.mustincludeparameterDropDown.Value = '10';
+            % Create MustincludeParameterDropDown
+            app.MustincludeParameterDropDown = uidropdown(app.CambeidgeTHzconverterUIFigure);
+            app.MustincludeParameterDropDown.Items = {'10', '14', '15', '16', '17', '18', '19'};
+            app.MustincludeParameterDropDown.Position = [762 33 48 22];
+            app.MustincludeParameterDropDown.Value = '10';
 
             % Show the figure after all components are created
             app.CambeidgeTHzconverterUIFigure.Visible = 'on';
@@ -1671,7 +1671,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = CambridgeTHzconverter_exported
+        function app = CaTx_exported
 
             % Create UIFigure and components
             createComponents(app)
