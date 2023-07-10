@@ -71,7 +71,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
         THzCONVERTERENGINEDropDownLabel  matlab.ui.control.Label
         ExportTHzfileButton            matlab.ui.control.Button
         DEBUGMsgLabel                  matlab.ui.control.Label
-        CambridgeTHzconverterLabel     matlab.ui.control.Label
+        CaTxLabel                      matlab.ui.control.Label
         DeplaydataButton               matlab.ui.control.Button
         FILESEditField                 matlab.ui.control.EditField
         ImportmeasurementButton        matlab.ui.control.Button
@@ -250,7 +250,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
 
 
             ins_profileHeader = {'1: Number', '2: Model', '3: Manufacturer', '4: Address'}';
-            lab_profileHeader = {'1: Number', '2: OCRID', '3: Name', '4: Email', '5: Institute'}';
+            lab_profileHeader = {'1: Number', '2: ORCID', '3: Name', '4: Email', '5: Institute'}';
             
             app.UITable_INS_header.Data = cell2table(ins_profileHeader);
             app.UITable_LAB_header.Data = cell2table(lab_profileHeader);
@@ -1203,7 +1203,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
 
             % Create CambeidgeTHzconverterUIFigure and hide until all components are created
             app.CambeidgeTHzconverterUIFigure = uifigure('Visible', 'off');
-            app.CambeidgeTHzconverterUIFigure.Position = [100 100 1054 930];
+            app.CambeidgeTHzconverterUIFigure.Position = [100 100 1054 902];
             app.CambeidgeTHzconverterUIFigure.Name = 'Cambeidge THz converter';
             app.CambeidgeTHzconverterUIFigure.Icon = fullfile(pathToMLAPP, 'CaT_logo.png');
 
@@ -1211,39 +1211,39 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.ImportmeasurementButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
             app.ImportmeasurementButton.ButtonPushedFcn = createCallbackFcn(app, @ImportmeasurementButtonPushed, true);
             app.ImportmeasurementButton.FontWeight = 'bold';
-            app.ImportmeasurementButton.Position = [44 857 159 23];
+            app.ImportmeasurementButton.Position = [206 857 159 23];
             app.ImportmeasurementButton.Text = 'Import measurement';
 
             % Create FILESEditField
             app.FILESEditField = uieditfield(app.CambeidgeTHzconverterUIFigure, 'text');
-            app.FILESEditField.Position = [218 858 578 22];
+            app.FILESEditField.Position = [380 858 618 22];
 
             % Create DeplaydataButton
             app.DeplaydataButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
             app.DeplaydataButton.ButtonPushedFcn = createCallbackFcn(app, @DeplaydataButtonPushed, true);
             app.DeplaydataButton.FontWeight = 'bold';
-            app.DeplaydataButton.Position = [683 824 113 25];
+            app.DeplaydataButton.Position = [845 824 153 25];
             app.DeplaydataButton.Text = 'Deplay data';
 
-            % Create CambridgeTHzconverterLabel
-            app.CambridgeTHzconverterLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
-            app.CambridgeTHzconverterLabel.FontSize = 23;
-            app.CambridgeTHzconverterLabel.FontWeight = 'bold';
-            app.CambridgeTHzconverterLabel.FontAngle = 'italic';
-            app.CambridgeTHzconverterLabel.Position = [28 888 288 30];
-            app.CambridgeTHzconverterLabel.Text = 'Cambridge THz converter';
+            % Create CaTxLabel
+            app.CaTxLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
+            app.CaTxLabel.FontSize = 43;
+            app.CaTxLabel.FontWeight = 'bold';
+            app.CaTxLabel.FontAngle = 'italic';
+            app.CaTxLabel.Position = [73 822 110 56];
+            app.CaTxLabel.Text = 'CaTx';
 
             % Create DEBUGMsgLabel
             app.DEBUGMsgLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
             app.DEBUGMsgLabel.FontWeight = 'bold';
-            app.DEBUGMsgLabel.Position = [619 884 219 22];
+            app.DEBUGMsgLabel.Position = [321 31 273 22];
             app.DEBUGMsgLabel.Text = '';
 
             % Create ExportTHzfileButton
             app.ExportTHzfileButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
             app.ExportTHzfileButton.ButtonPushedFcn = createCallbackFcn(app, @ExportTHzfileButtonPushed, true);
             app.ExportTHzfileButton.FontWeight = 'bold';
-            app.ExportTHzfileButton.Position = [825 30 194 56];
+            app.ExportTHzfileButton.Position = [825 27 194 56];
             app.ExportTHzfileButton.Text = 'Export THz file';
 
             % Create THzCONVERTERENGINEDropDownLabel
@@ -1251,7 +1251,7 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.THzCONVERTERENGINEDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.THzCONVERTERENGINEDropDownLabel.HorizontalAlignment = 'right';
             app.THzCONVERTERENGINEDropDownLabel.FontWeight = 'bold';
-            app.THzCONVERTERENGINEDropDownLabel.Position = [45 825 156 22];
+            app.THzCONVERTERENGINEDropDownLabel.Position = [207 825 156 22];
             app.THzCONVERTERENGINEDropDownLabel.Text = 'THz CONVERTER ENGINE';
 
             % Create THzCONVERTERENGINEDropDown
@@ -1259,37 +1259,37 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             app.THzCONVERTERENGINEDropDown.Items = {'No engines available. Please check m files in .\engine folder.'};
             app.THzCONVERTERENGINEDropDown.FontWeight = 'bold';
             app.THzCONVERTERENGINEDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.THzCONVERTERENGINEDropDown.Position = [218 825 448 22];
+            app.THzCONVERTERENGINEDropDown.Position = [380 825 448 22];
             app.THzCONVERTERENGINEDropDown.Value = 'No engines available. Please check m files in .\engine folder.';
 
             % Create ClearmemoryButton
             app.ClearmemoryButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
             app.ClearmemoryButton.ButtonPushedFcn = createCallbackFcn(app, @ClearmemoryButtonPushed, true);
             app.ClearmemoryButton.FontWeight = 'bold';
-            app.ClearmemoryButton.Position = [43 30 122 56];
+            app.ClearmemoryButton.Position = [43 27 122 56];
             app.ClearmemoryButton.Text = 'Clear memory';
 
             % Create ImportTHzfileButton
             app.ImportTHzfileButton = uibutton(app.CambeidgeTHzconverterUIFigure, 'push');
             app.ImportTHzfileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportTHzfileButtonPushed, true);
             app.ImportTHzfileButton.FontWeight = 'bold';
-            app.ImportTHzfileButton.Position = [179 30 121 56];
+            app.ImportTHzfileButton.Position = [179 27 121 56];
             app.ImportTHzfileButton.Text = 'Import THz file';
 
             % Create PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel
             app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
             app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.FontSize = 10;
-            app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.Position = [715 9 337 12];
+            app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.Position = [716 8 337 12];
             app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.Text = 'Powered by Terahertz Applications Group. University of Cambridge';
 
             % Create Image
             app.Image = uiimage(app.CambeidgeTHzconverterUIFigure);
-            app.Image.Position = [825 822 209 84];
+            app.Image.Position = [30 866 65 24];
             app.Image.ImageSource = fullfile(pathToMLAPP, 'dotTHzProject_logo.png');
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.CambeidgeTHzconverterUIFigure);
-            app.TabGroup.Position = [24 97 1010 712];
+            app.TabGroup.Position = [24 94 1010 712];
 
             % Create MEASUREMENTANDMETADATATab
             app.MEASUREMENTANDMETADATATab = uitab(app.TabGroup);
@@ -1631,35 +1631,35 @@ classdef CambridgeTHzconverter_exported < matlab.apps.AppBase
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
             app.PrefixnumberstothedatasetnameLabel.HorizontalAlignment = 'center';
-            app.PrefixnumberstothedatasetnameLabel.Position = [326 57 81 22];
+            app.PrefixnumberstothedatasetnameLabel.Position = [326 54 81 22];
             app.PrefixnumberstothedatasetnameLabel.Text = 'Number prefix';
 
             % Create NumberprefixSwitch
             app.NumberprefixSwitch = uiswitch(app.CambeidgeTHzconverterUIFigure, 'slider');
-            app.NumberprefixSwitch.Position = [435 59 40 18];
+            app.NumberprefixSwitch.Position = [435 56 40 18];
 
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
-            app.AttributuesallocationLabel.Position = [519 57 120 22];
+            app.AttributuesallocationLabel.Position = [519 54 120 22];
             app.AttributuesallocationLabel.Text = 'Attributues allocation:';
 
             % Create AttributuesallocationSwitch
             app.AttributuesallocationSwitch = uiswitch(app.CambeidgeTHzconverterUIFigure, 'slider');
             app.AttributuesallocationSwitch.Items = {'All datasets', 'Only first,'};
-            app.AttributuesallocationSwitch.Position = [712 59 41 18];
+            app.AttributuesallocationSwitch.Position = [712 56 41 18];
             app.AttributuesallocationSwitch.Value = 'All datasets';
 
             % Create mustincludeparameterDropDownLabel
             app.mustincludeparameterDropDownLabel = uilabel(app.CambeidgeTHzconverterUIFigure);
             app.mustincludeparameterDropDownLabel.HorizontalAlignment = 'right';
-            app.mustincludeparameterDropDownLabel.Position = [627 34 131 22];
+            app.mustincludeparameterDropDownLabel.Position = [627 31 131 22];
             app.mustincludeparameterDropDownLabel.Text = 'must include parameter';
 
             % Create mustincludeparameterDropDown
             app.mustincludeparameterDropDown = uidropdown(app.CambeidgeTHzconverterUIFigure);
             app.mustincludeparameterDropDown.Items = {'10', '14', '15', '16', '17', '18', '19'};
-            app.mustincludeparameterDropDown.Position = [762 34 48 22];
+            app.mustincludeparameterDropDown.Position = [762 31 48 22];
             app.mustincludeparameterDropDown.Value = '10';
 
             % Show the figure after all components are created
