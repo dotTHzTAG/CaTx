@@ -3,6 +3,7 @@ classdef CaTx_exported < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         CaTxUIFigure                    matlab.ui.Figure
+        Image                           matlab.ui.control.Image
         MustincludeParameterDropDown    matlab.ui.control.DropDown
         MustincludeParameterDropDownLabel  matlab.ui.control.Label
         AttributuesAllocationSwitch     matlab.ui.control.Switch
@@ -10,8 +11,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         NumberPrefixSwitch              matlab.ui.control.Switch
         PrefixnumberstothedatasetnameLabel  matlab.ui.control.Label
         TabGroup                        matlab.ui.container.TabGroup
-        MEASUREMENTANDMETADATATab       matlab.ui.container.Tab
-        REFERENCEWAVEFORMCHANGEPanel    matlab.ui.container.Panel
+        MeasurementandMetadataTab       matlab.ui.container.Tab
+        ReferenceWaveformChangePanel    matlab.ui.container.Panel
         TargetLabel                     matlab.ui.control.Label
         SourceLabel                     matlab.ui.control.Label
         ApplyButton                     matlab.ui.control.Button
@@ -23,22 +24,22 @@ classdef CaTx_exported < matlab.apps.AppBase
         sDropDownLabel                  matlab.ui.control.Label
         ColumnEditField                 matlab.ui.control.NumericEditField
         ColumnEditFieldLabel            matlab.ui.control.Label
-        UPDATETABLEPanel                matlab.ui.container.Panel
+        TabletUpdatePanel               matlab.ui.container.Panel
         TimeDelayButton                 matlab.ui.control.Button
         ThicknessButton                 matlab.ui.control.Button
         RefractuveIndexButton           matlab.ui.control.Button
-        COLUMNCONTROLPanel              matlab.ui.container.Panel
+        ColumnControlPanel              matlab.ui.container.Panel
         PlotWaveformsButton             matlab.ui.control.Button
         MoveButton_2                    matlab.ui.control.Button
         MoveButton                      matlab.ui.control.Button
         RemoveButton                    matlab.ui.control.Button
-        METADATAPanel                   matlab.ui.container.Panel
+        MetadataPanel                   matlab.ui.container.Panel
         LOADMETAXLS_EditField           matlab.ui.control.EditField
         ImportMetadataFromXLSFileButton  matlab.ui.control.Button
         GengerateMetadataXLSFileButton  matlab.ui.control.Button
         UITable_scan_header             matlab.ui.control.Table
         UITable_measurement             matlab.ui.control.Table
-        INSTRUMENTANDLABORATORYTab      matlab.ui.container.Tab
+        InstrumentandLaboratoryTab      matlab.ui.container.Tab
         DonotusecharacterindescriptionasitisusedforadelimiterLabel  matlab.ui.control.Label
         LAB_MEASUREMENTFILEDTOEditField  matlab.ui.control.NumericEditField
         toLabel_3                       matlab.ui.control.Label
@@ -59,13 +60,12 @@ classdef CaTx_exported < matlab.apps.AppBase
         ADD_INS_COL_Button              matlab.ui.control.Button
         LAB_LINKButton                  matlab.ui.control.Button
         INS_LINKButton                  matlab.ui.control.Button
-        LABORATORYLabel                 matlab.ui.control.Label
-        INSTRUMENTLabel                 matlab.ui.control.Label
+        LaboratoryLabel                 matlab.ui.control.Label
+        InstrumentLabel                 matlab.ui.control.Label
         UITable_LAB_header              matlab.ui.control.Table
         UITable_LAB                     matlab.ui.control.Table
         UITable_INS_header              matlab.ui.control.Table
         UITable_INS                     matlab.ui.control.Table
-        Image                           matlab.ui.control.Image
         PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel  matlab.ui.control.Label
         ImportTHzFileButton             matlab.ui.control.Button
         ClearMemoryButton               matlab.ui.control.Button
@@ -1213,32 +1213,32 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ImportMeasurementButton = uibutton(app.CaTxUIFigure, 'push');
             app.ImportMeasurementButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMeasurementButtonPushed, true);
             app.ImportMeasurementButton.FontWeight = 'bold';
-            app.ImportMeasurementButton.Position = [149 875 142 23];
+            app.ImportMeasurementButton.Position = [176 875 142 23];
             app.ImportMeasurementButton.Text = 'Import Measurement';
 
             % Create FILESEditField
             app.FILESEditField = uieditfield(app.CaTxUIFigure, 'text');
-            app.FILESEditField.Position = [300 876 709 22];
+            app.FILESEditField.Position = [324 875 709 22];
 
             % Create DeplayDataButton
             app.DeplayDataButton = uibutton(app.CaTxUIFigure, 'push');
             app.DeplayDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeplayDataButtonPushed, true);
             app.DeplayDataButton.FontWeight = 'bold';
-            app.DeplayDataButton.Position = [671 842 95 25];
+            app.DeplayDataButton.Position = [698 842 87 25];
             app.DeplayDataButton.Text = 'Deplay Data';
 
             % Create CaTxLabel
             app.CaTxLabel = uilabel(app.CaTxUIFigure);
-            app.CaTxLabel.FontSize = 40;
+            app.CaTxLabel.FontSize = 38;
             app.CaTxLabel.FontWeight = 'bold';
             app.CaTxLabel.FontAngle = 'italic';
-            app.CaTxLabel.Position = [46 835 103 52];
+            app.CaTxLabel.Position = [87 836 98 50];
             app.CaTxLabel.Text = 'CaTx';
 
             % Create DEBUGMsgLabel
             app.DEBUGMsgLabel = uilabel(app.CaTxUIFigure);
             app.DEBUGMsgLabel.FontWeight = 'bold';
-            app.DEBUGMsgLabel.Position = [781 843 238 22];
+            app.DEBUGMsgLabel.Position = [796 843 238 22];
             app.DEBUGMsgLabel.Text = '';
 
             % Create ExportTHzFileButton
@@ -1253,7 +1253,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ConverterEngineDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.ConverterEngineDropDownLabel.HorizontalAlignment = 'right';
             app.ConverterEngineDropDownLabel.FontWeight = 'bold';
-            app.ConverterEngineDropDownLabel.Position = [154 843 108 22];
+            app.ConverterEngineDropDownLabel.Position = [185 843 108 22];
             app.ConverterEngineDropDownLabel.Text = 'Converter Engine';
 
             % Create ConverterEngineDropDown
@@ -1261,44 +1261,39 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ConverterEngineDropDown.Items = {'No engines available. Please check m files in .\Engines folder.'};
             app.ConverterEngineDropDown.FontWeight = 'bold';
             app.ConverterEngineDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.ConverterEngineDropDown.Position = [275 843 385 22];
+            app.ConverterEngineDropDown.Position = [306 843 385 22];
             app.ConverterEngineDropDown.Value = 'No engines available. Please check m files in .\Engines folder.';
 
             % Create ClearMemoryButton
             app.ClearMemoryButton = uibutton(app.CaTxUIFigure, 'push');
             app.ClearMemoryButton.ButtonPushedFcn = createCallbackFcn(app, @ClearMemoryButtonPushed, true);
             app.ClearMemoryButton.FontWeight = 'bold';
-            app.ClearMemoryButton.Position = [43 29 122 56];
+            app.ClearMemoryButton.Position = [43 21 122 64];
             app.ClearMemoryButton.Text = 'Clear Memory';
 
             % Create ImportTHzFileButton
             app.ImportTHzFileButton = uibutton(app.CaTxUIFigure, 'push');
             app.ImportTHzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportTHzFileButtonPushed, true);
             app.ImportTHzFileButton.FontWeight = 'bold';
-            app.ImportTHzFileButton.Position = [179 29 121 56];
+            app.ImportTHzFileButton.Position = [174 21 121 64];
             app.ImportTHzFileButton.Text = 'Import THz File';
 
             % Create PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel
             app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel = uilabel(app.CaTxUIFigure);
             app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.FontSize = 10;
-            app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.Position = [716 10 337 12];
+            app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.Position = [730 10 323 12];
             app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.Text = 'Powered by Terahertz Applications Group. University of Cambridge';
-
-            % Create Image
-            app.Image = uiimage(app.CaTxUIFigure);
-            app.Image.Position = [26 882 65 24];
-            app.Image.ImageSource = fullfile(pathToMLAPP, 'dotTHzProject_logo.png');
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.CaTxUIFigure);
-            app.TabGroup.Position = [24 93 1010 728];
+            app.TabGroup.Position = [24 100 1010 728];
 
-            % Create MEASUREMENTANDMETADATATab
-            app.MEASUREMENTANDMETADATATab = uitab(app.TabGroup);
-            app.MEASUREMENTANDMETADATATab.Title = 'MEASUREMENT AND METADATA';
+            % Create MeasurementandMetadataTab
+            app.MeasurementandMetadataTab = uitab(app.TabGroup);
+            app.MeasurementandMetadataTab.Title = 'Measurement and Metadata';
 
             % Create UITable_measurement
-            app.UITable_measurement = uitable(app.MEASUREMENTANDMETADATATab);
+            app.UITable_measurement = uitable(app.MeasurementandMetadataTab);
             app.UITable_measurement.ColumnName = '';
             app.UITable_measurement.ColumnRearrangeable = 'on';
             app.UITable_measurement.RowName = {};
@@ -1308,165 +1303,165 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.UITable_measurement.Position = [178 151 807 536];
 
             % Create UITable_scan_header
-            app.UITable_scan_header = uitable(app.MEASUREMENTANDMETADATATab);
+            app.UITable_scan_header = uitable(app.MeasurementandMetadataTab);
             app.UITable_scan_header.ColumnName = '';
             app.UITable_scan_header.RowName = {};
             app.UITable_scan_header.FontWeight = 'bold';
             app.UITable_scan_header.Position = [23 151 156 536];
 
-            % Create METADATAPanel
-            app.METADATAPanel = uipanel(app.MEASUREMENTANDMETADATATab);
-            app.METADATAPanel.Title = 'METADATA';
-            app.METADATAPanel.Position = [32 13 243 127];
+            % Create MetadataPanel
+            app.MetadataPanel = uipanel(app.MeasurementandMetadataTab);
+            app.MetadataPanel.Title = 'Metadata';
+            app.MetadataPanel.Position = [32 13 243 127];
 
             % Create GengerateMetadataXLSFileButton
-            app.GengerateMetadataXLSFileButton = uibutton(app.METADATAPanel, 'push');
+            app.GengerateMetadataXLSFileButton = uibutton(app.MetadataPanel, 'push');
             app.GengerateMetadataXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @GengerateMetadataXLSFileButtonPushed, true);
             app.GengerateMetadataXLSFileButton.Position = [15 73 214 25];
             app.GengerateMetadataXLSFileButton.Text = 'Gengerate Metadata XLS File';
 
             % Create ImportMetadataFromXLSFileButton
-            app.ImportMetadataFromXLSFileButton = uibutton(app.METADATAPanel, 'push');
+            app.ImportMetadataFromXLSFileButton = uibutton(app.MetadataPanel, 'push');
             app.ImportMetadataFromXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMetadataFromXLSFileButtonPushed, true);
             app.ImportMetadataFromXLSFileButton.Position = [15 41 214 25];
             app.ImportMetadataFromXLSFileButton.Text = 'Import Metadata From XLS File';
 
             % Create LOADMETAXLS_EditField
-            app.LOADMETAXLS_EditField = uieditfield(app.METADATAPanel, 'text');
+            app.LOADMETAXLS_EditField = uieditfield(app.MetadataPanel, 'text');
             app.LOADMETAXLS_EditField.Editable = 'off';
             app.LOADMETAXLS_EditField.BackgroundColor = [0.9412 0.9412 0.9412];
             app.LOADMETAXLS_EditField.Position = [78 11 152 22];
 
-            % Create COLUMNCONTROLPanel
-            app.COLUMNCONTROLPanel = uipanel(app.MEASUREMENTANDMETADATATab);
-            app.COLUMNCONTROLPanel.Title = 'COLUMN CONTROL';
-            app.COLUMNCONTROLPanel.Position = [291 13 195 127];
+            % Create ColumnControlPanel
+            app.ColumnControlPanel = uipanel(app.MeasurementandMetadataTab);
+            app.ColumnControlPanel.Title = 'Column Control';
+            app.ColumnControlPanel.Position = [291 13 195 127];
 
             % Create RemoveButton
-            app.RemoveButton = uibutton(app.COLUMNCONTROLPanel, 'push');
+            app.RemoveButton = uibutton(app.ColumnControlPanel, 'push');
             app.RemoveButton.ButtonPushedFcn = createCallbackFcn(app, @RemoveButtonPushed, true);
             app.RemoveButton.Position = [11 10 170 25];
             app.RemoveButton.Text = 'Remove';
 
             % Create MoveButton
-            app.MoveButton = uibutton(app.COLUMNCONTROLPanel, 'push');
+            app.MoveButton = uibutton(app.ColumnControlPanel, 'push');
             app.MoveButton.ButtonPushedFcn = createCallbackFcn(app, @MoveButtonPushed, true);
             app.MoveButton.Position = [12 73 80 25];
             app.MoveButton.Text = 'Move <<';
 
             % Create MoveButton_2
-            app.MoveButton_2 = uibutton(app.COLUMNCONTROLPanel, 'push');
+            app.MoveButton_2 = uibutton(app.ColumnControlPanel, 'push');
             app.MoveButton_2.ButtonPushedFcn = createCallbackFcn(app, @MoveButton_2Pushed, true);
             app.MoveButton_2.Position = [101 73 80 25];
             app.MoveButton_2.Text = '>>Move';
 
             % Create PlotWaveformsButton
-            app.PlotWaveformsButton = uibutton(app.COLUMNCONTROLPanel, 'push');
+            app.PlotWaveformsButton = uibutton(app.ColumnControlPanel, 'push');
             app.PlotWaveformsButton.ButtonPushedFcn = createCallbackFcn(app, @PlotWaveformsButtonPushed, true);
             app.PlotWaveformsButton.Position = [11 42 170 25];
             app.PlotWaveformsButton.Text = 'Plot Waveform(s)';
 
-            % Create UPDATETABLEPanel
-            app.UPDATETABLEPanel = uipanel(app.MEASUREMENTANDMETADATATab);
-            app.UPDATETABLEPanel.Title = 'UPDATE TABLE';
-            app.UPDATETABLEPanel.Position = [796 13 178 127];
+            % Create TabletUpdatePanel
+            app.TabletUpdatePanel = uipanel(app.MeasurementandMetadataTab);
+            app.TabletUpdatePanel.Title = 'Tablet Update';
+            app.TabletUpdatePanel.Position = [796 13 178 127];
 
             % Create RefractuveIndexButton
-            app.RefractuveIndexButton = uibutton(app.UPDATETABLEPanel, 'push');
+            app.RefractuveIndexButton = uibutton(app.TabletUpdatePanel, 'push');
             app.RefractuveIndexButton.ButtonPushedFcn = createCallbackFcn(app, @RefractuveIndexButtonPushed, true);
             app.RefractuveIndexButton.Position = [11 74 155 25];
             app.RefractuveIndexButton.Text = 'Refractuve Index';
 
             % Create ThicknessButton
-            app.ThicknessButton = uibutton(app.UPDATETABLEPanel, 'push');
+            app.ThicknessButton = uibutton(app.TabletUpdatePanel, 'push');
             app.ThicknessButton.ButtonPushedFcn = createCallbackFcn(app, @ThicknessButtonPushed, true);
             app.ThicknessButton.Position = [11 42 155 25];
             app.ThicknessButton.Text = 'Thickness';
 
             % Create TimeDelayButton
-            app.TimeDelayButton = uibutton(app.UPDATETABLEPanel, 'push');
+            app.TimeDelayButton = uibutton(app.TabletUpdatePanel, 'push');
             app.TimeDelayButton.ButtonPushedFcn = createCallbackFcn(app, @TimeDelayButtonPushed, true);
             app.TimeDelayButton.Position = [11 10 155 25];
             app.TimeDelayButton.Text = 'Time Delay';
 
-            % Create REFERENCEWAVEFORMCHANGEPanel
-            app.REFERENCEWAVEFORMCHANGEPanel = uipanel(app.MEASUREMENTANDMETADATATab);
-            app.REFERENCEWAVEFORMCHANGEPanel.Title = 'REFERENCE WAVEFORM CHANGE';
-            app.REFERENCEWAVEFORMCHANGEPanel.Position = [503 13 279 127];
+            % Create ReferenceWaveformChangePanel
+            app.ReferenceWaveformChangePanel = uipanel(app.MeasurementandMetadataTab);
+            app.ReferenceWaveformChangePanel.Title = 'Reference Waveform Change';
+            app.ReferenceWaveformChangePanel.Position = [503 13 279 127];
 
             % Create ColumnEditFieldLabel
-            app.ColumnEditFieldLabel = uilabel(app.REFERENCEWAVEFORMCHANGEPanel);
+            app.ColumnEditFieldLabel = uilabel(app.ReferenceWaveformChangePanel);
             app.ColumnEditFieldLabel.HorizontalAlignment = 'right';
             app.ColumnEditFieldLabel.Position = [57 74 46 22];
             app.ColumnEditFieldLabel.Text = 'Column';
 
             % Create ColumnEditField
-            app.ColumnEditField = uieditfield(app.REFERENCEWAVEFORMCHANGEPanel, 'numeric');
+            app.ColumnEditField = uieditfield(app.ReferenceWaveformChangePanel, 'numeric');
             app.ColumnEditField.Limits = [1 Inf];
             app.ColumnEditField.ValueDisplayFormat = '%.0f';
             app.ColumnEditField.Position = [108 74 43 22];
             app.ColumnEditField.Value = 1;
 
             % Create sDropDownLabel
-            app.sDropDownLabel = uilabel(app.REFERENCEWAVEFORMCHANGEPanel);
+            app.sDropDownLabel = uilabel(app.ReferenceWaveformChangePanel);
             app.sDropDownLabel.HorizontalAlignment = 'right';
             app.sDropDownLabel.Position = [153 74 11 22];
             app.sDropDownLabel.Text = '''s';
 
             % Create sDropDown
-            app.sDropDown = uidropdown(app.REFERENCEWAVEFORMCHANGEPanel);
+            app.sDropDown = uidropdown(app.ReferenceWaveformChangePanel);
             app.sDropDown.Items = {'Sample', 'Reference'};
             app.sDropDown.Position = [171 74 96 22];
             app.sDropDown.Value = 'Sample';
 
             % Create ColumnsFromEditFieldLabel
-            app.ColumnsFromEditFieldLabel = uilabel(app.REFERENCEWAVEFORMCHANGEPanel);
+            app.ColumnsFromEditFieldLabel = uilabel(app.ReferenceWaveformChangePanel);
             app.ColumnsFromEditFieldLabel.HorizontalAlignment = 'right';
             app.ColumnsFromEditFieldLabel.Position = [45 43 94 22];
             app.ColumnsFromEditFieldLabel.Text = 'Columns From';
 
             % Create ColumnsFromEditField
-            app.ColumnsFromEditField = uieditfield(app.REFERENCEWAVEFORMCHANGEPanel, 'numeric');
+            app.ColumnsFromEditField = uieditfield(app.ReferenceWaveformChangePanel, 'numeric');
             app.ColumnsFromEditField.Limits = [1 Inf];
             app.ColumnsFromEditField.ValueDisplayFormat = '%.0f';
             app.ColumnsFromEditField.Position = [145 43 50 22];
             app.ColumnsFromEditField.Value = 1;
 
             % Create toLabel
-            app.toLabel = uilabel(app.REFERENCEWAVEFORMCHANGEPanel);
+            app.toLabel = uilabel(app.ReferenceWaveformChangePanel);
             app.toLabel.HorizontalAlignment = 'right';
             app.toLabel.Position = [187 42 25 22];
             app.toLabel.Text = 'To';
 
             % Create FILEDLISTTOEditField
-            app.FILEDLISTTOEditField = uieditfield(app.REFERENCEWAVEFORMCHANGEPanel, 'numeric');
+            app.FILEDLISTTOEditField = uieditfield(app.ReferenceWaveformChangePanel, 'numeric');
             app.FILEDLISTTOEditField.Limits = [1 Inf];
             app.FILEDLISTTOEditField.ValueDisplayFormat = '%.0f';
             app.FILEDLISTTOEditField.Position = [216 42 50 22];
             app.FILEDLISTTOEditField.Value = 1;
 
             % Create ApplyButton
-            app.ApplyButton = uibutton(app.REFERENCEWAVEFORMCHANGEPanel, 'push');
+            app.ApplyButton = uibutton(app.ReferenceWaveformChangePanel, 'push');
             app.ApplyButton.ButtonPushedFcn = createCallbackFcn(app, @ApplyButtonPushed, true);
             app.ApplyButton.Position = [53 10 208 25];
             app.ApplyButton.Text = 'Apply';
 
             % Create SourceLabel
-            app.SourceLabel = uilabel(app.REFERENCEWAVEFORMCHANGEPanel);
+            app.SourceLabel = uilabel(app.ReferenceWaveformChangePanel);
             app.SourceLabel.Position = [11 75 46 22];
             app.SourceLabel.Text = 'Source:';
 
             % Create TargetLabel
-            app.TargetLabel = uilabel(app.REFERENCEWAVEFORMCHANGEPanel);
+            app.TargetLabel = uilabel(app.ReferenceWaveformChangePanel);
             app.TargetLabel.Position = [12 42 42 22];
             app.TargetLabel.Text = 'Target:';
 
-            % Create INSTRUMENTANDLABORATORYTab
-            app.INSTRUMENTANDLABORATORYTab = uitab(app.TabGroup);
-            app.INSTRUMENTANDLABORATORYTab.Title = 'INSTRUMENT AND LABORATORY';
+            % Create InstrumentandLaboratoryTab
+            app.InstrumentandLaboratoryTab = uitab(app.TabGroup);
+            app.InstrumentandLaboratoryTab.Title = 'Instrument and Laboratory';
 
             % Create UITable_INS
-            app.UITable_INS = uitable(app.INSTRUMENTANDLABORATORYTab);
+            app.UITable_INS = uitable(app.InstrumentandLaboratoryTab);
             app.UITable_INS.ColumnName = '';
             app.UITable_INS.RowName = {};
             app.UITable_INS.CellEditCallback = createCallbackFcn(app, @UITable_INSCellEdit, true);
@@ -1475,14 +1470,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.UITable_INS.Position = [174 543 801 112];
 
             % Create UITable_INS_header
-            app.UITable_INS_header = uitable(app.INSTRUMENTANDLABORATORYTab);
+            app.UITable_INS_header = uitable(app.InstrumentandLaboratoryTab);
             app.UITable_INS_header.ColumnName = '';
             app.UITable_INS_header.RowName = {};
             app.UITable_INS_header.FontWeight = 'bold';
             app.UITable_INS_header.Position = [19 543 156 112];
 
             % Create UITable_LAB
-            app.UITable_LAB = uitable(app.INSTRUMENTANDLABORATORYTab);
+            app.UITable_LAB = uitable(app.InstrumentandLaboratoryTab);
             app.UITable_LAB.ColumnName = '';
             app.UITable_LAB.RowName = {};
             app.UITable_LAB.CellEditCallback = createCallbackFcn(app, @UITable_LABCellEdit, true);
@@ -1491,69 +1486,69 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.UITable_LAB.Position = [174 294 801 133];
 
             % Create UITable_LAB_header
-            app.UITable_LAB_header = uitable(app.INSTRUMENTANDLABORATORYTab);
+            app.UITable_LAB_header = uitable(app.InstrumentandLaboratoryTab);
             app.UITable_LAB_header.ColumnName = '';
             app.UITable_LAB_header.RowName = {};
             app.UITable_LAB_header.FontWeight = 'bold';
             app.UITable_LAB_header.Position = [19 294 156 133];
 
-            % Create INSTRUMENTLabel
-            app.INSTRUMENTLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
-            app.INSTRUMENTLabel.FontSize = 13;
-            app.INSTRUMENTLabel.Position = [27 662 96 22];
-            app.INSTRUMENTLabel.Text = 'INSTRUMENT*';
+            % Create InstrumentLabel
+            app.InstrumentLabel = uilabel(app.InstrumentandLaboratoryTab);
+            app.InstrumentLabel.FontSize = 13;
+            app.InstrumentLabel.Position = [27 662 96 22];
+            app.InstrumentLabel.Text = 'Instrument*';
 
-            % Create LABORATORYLabel
-            app.LABORATORYLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
-            app.LABORATORYLabel.FontSize = 13;
-            app.LABORATORYLabel.Position = [27 436 98 22];
-            app.LABORATORYLabel.Text = 'LABORATORY*';
+            % Create LaboratoryLabel
+            app.LaboratoryLabel = uilabel(app.InstrumentandLaboratoryTab);
+            app.LaboratoryLabel.FontSize = 13;
+            app.LaboratoryLabel.Position = [27 436 98 22];
+            app.LaboratoryLabel.Text = 'Laboratory*';
 
             % Create INS_LINKButton
-            app.INS_LINKButton = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
+            app.INS_LINKButton = uibutton(app.InstrumentandLaboratoryTab, 'push');
             app.INS_LINKButton.ButtonPushedFcn = createCallbackFcn(app, @INS_LINKButtonPushed, true);
             app.INS_LINKButton.Position = [904 507 70 25];
             app.INS_LINKButton.Text = 'Link';
 
             % Create LAB_LINKButton
-            app.LAB_LINKButton = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
+            app.LAB_LINKButton = uibutton(app.InstrumentandLaboratoryTab, 'push');
             app.LAB_LINKButton.ButtonPushedFcn = createCallbackFcn(app, @LAB_LINKButtonPushed, true);
             app.LAB_LINKButton.Position = [904 258 71 25];
             app.LAB_LINKButton.Text = 'Link';
 
             % Create ADD_INS_COL_Button
-            app.ADD_INS_COL_Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
+            app.ADD_INS_COL_Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
             app.ADD_INS_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @ADD_INS_COL_ButtonPushed, true);
             app.ADD_INS_COL_Button.Position = [138 506 165 26];
             app.ADD_INS_COL_Button.Text = 'Add Profile';
 
             % Create REMOVE_INS_COL_Button
-            app.REMOVE_INS_COL_Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
+            app.REMOVE_INS_COL_Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
             app.REMOVE_INS_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @REMOVE_INS_COL_ButtonPushed, true);
             app.REMOVE_INS_COL_Button.Position = [312 506 190 26];
             app.REMOVE_INS_COL_Button.Text = 'Remove Selected Profile';
 
             % Create ADD_LAB_COL_Button
-            app.ADD_LAB_COL_Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
+            app.ADD_LAB_COL_Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
             app.ADD_LAB_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @ADD_LAB_COL_ButtonPushed, true);
             app.ADD_LAB_COL_Button.Position = [142 257 165 26];
             app.ADD_LAB_COL_Button.Text = 'Add Profile';
 
             % Create REMOVE_LAB_COL_Button
-            app.REMOVE_LAB_COL_Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
+            app.REMOVE_LAB_COL_Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
             app.REMOVE_LAB_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @REMOVE_LAB_COL_ButtonPushed, true);
             app.REMOVE_LAB_COL_Button.Position = [316 257 190 26];
             app.REMOVE_LAB_COL_Button.Text = 'Remove Selected Profile';
 
             % Create SelectionLabel
-            app.SelectionLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
+            app.SelectionLabel = uilabel(app.InstrumentandLaboratoryTab);
             app.SelectionLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.SelectionLabel.HorizontalAlignment = 'right';
             app.SelectionLabel.Position = [523 508 55 22];
             app.SelectionLabel.Text = 'Selection';
 
             % Create INS_SELECTIONEditField
-            app.INS_SELECTIONEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
+            app.INS_SELECTIONEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
             app.INS_SELECTIONEditField.Limits = [0 Inf];
             app.INS_SELECTIONEditField.ValueDisplayFormat = '%.0f';
             app.INS_SELECTIONEditField.Editable = 'off';
@@ -1561,14 +1556,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.INS_SELECTIONEditField.Position = [586 508 34 22];
 
             % Create SelectionLabel_2
-            app.SelectionLabel_2 = uilabel(app.INSTRUMENTANDLABORATORYTab);
+            app.SelectionLabel_2 = uilabel(app.InstrumentandLaboratoryTab);
             app.SelectionLabel_2.BackgroundColor = [0.9412 0.9412 0.9412];
             app.SelectionLabel_2.HorizontalAlignment = 'right';
             app.SelectionLabel_2.Position = [527 259 55 22];
             app.SelectionLabel_2.Text = 'Selection';
 
             % Create LAB_SELECTIONEditField
-            app.LAB_SELECTIONEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
+            app.LAB_SELECTIONEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
             app.LAB_SELECTIONEditField.Limits = [0 Inf];
             app.LAB_SELECTIONEditField.ValueDisplayFormat = '%.0f';
             app.LAB_SELECTIONEditField.Editable = 'off';
@@ -1576,65 +1571,65 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.LAB_SELECTIONEditField.Position = [590 259 34 22];
 
             % Create ApplyDefaultProfile1Button
-            app.ApplyDefaultProfile1Button = uibutton(app.INSTRUMENTANDLABORATORYTab, 'push');
+            app.ApplyDefaultProfile1Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
             app.ApplyDefaultProfile1Button.ButtonPushedFcn = createCallbackFcn(app, @ApplyDefaultProfile1ButtonPushed, true);
             app.ApplyDefaultProfile1Button.Position = [723 33 252 26];
             app.ApplyDefaultProfile1Button.Text = 'Apply Default Profile (1)';
 
             % Create MeasurementfieldfromLabel
-            app.MeasurementfieldfromLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
+            app.MeasurementfieldfromLabel = uilabel(app.InstrumentandLaboratoryTab);
             app.MeasurementfieldfromLabel.HorizontalAlignment = 'right';
             app.MeasurementfieldfromLabel.Position = [625 508 139 22];
             app.MeasurementfieldfromLabel.Text = 'Measurement Field From';
 
             % Create INS_MEASUREMENTFILEDEditField
-            app.INS_MEASUREMENTFILEDEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
+            app.INS_MEASUREMENTFILEDEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
             app.INS_MEASUREMENTFILEDEditField.Limits = [1 Inf];
             app.INS_MEASUREMENTFILEDEditField.ValueDisplayFormat = '%.0f';
             app.INS_MEASUREMENTFILEDEditField.Position = [771 508 50 22];
             app.INS_MEASUREMENTFILEDEditField.Value = 1;
 
             % Create toLabel_2
-            app.toLabel_2 = uilabel(app.INSTRUMENTANDLABORATORYTab);
+            app.toLabel_2 = uilabel(app.InstrumentandLaboratoryTab);
             app.toLabel_2.HorizontalAlignment = 'right';
             app.toLabel_2.Position = [819 508 25 22];
             app.toLabel_2.Text = 'To';
 
             % Create INS_MEASUREMENTFILEDTOEditField
-            app.INS_MEASUREMENTFILEDTOEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
+            app.INS_MEASUREMENTFILEDTOEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
             app.INS_MEASUREMENTFILEDTOEditField.Limits = [1 Inf];
             app.INS_MEASUREMENTFILEDTOEditField.ValueDisplayFormat = '%.0f';
             app.INS_MEASUREMENTFILEDTOEditField.Position = [848 508 50 22];
             app.INS_MEASUREMENTFILEDTOEditField.Value = 1;
 
             % Create MeasurementfieldfromLabel_2
-            app.MeasurementfieldfromLabel_2 = uilabel(app.INSTRUMENTANDLABORATORYTab);
+            app.MeasurementfieldfromLabel_2 = uilabel(app.InstrumentandLaboratoryTab);
             app.MeasurementfieldfromLabel_2.HorizontalAlignment = 'right';
             app.MeasurementfieldfromLabel_2.Position = [626 259 139 22];
             app.MeasurementfieldfromLabel_2.Text = 'Measurement Field From';
 
             % Create LAB_MEASUREMENTFILEDEditField
-            app.LAB_MEASUREMENTFILEDEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
+            app.LAB_MEASUREMENTFILEDEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
             app.LAB_MEASUREMENTFILEDEditField.Limits = [1 Inf];
             app.LAB_MEASUREMENTFILEDEditField.ValueDisplayFormat = '%.0f';
             app.LAB_MEASUREMENTFILEDEditField.Position = [772 259 50 22];
             app.LAB_MEASUREMENTFILEDEditField.Value = 1;
 
             % Create toLabel_3
-            app.toLabel_3 = uilabel(app.INSTRUMENTANDLABORATORYTab);
+            app.toLabel_3 = uilabel(app.InstrumentandLaboratoryTab);
             app.toLabel_3.HorizontalAlignment = 'right';
             app.toLabel_3.Position = [818 259 25 22];
             app.toLabel_3.Text = 'To';
 
             % Create LAB_MEASUREMENTFILEDTOEditField
-            app.LAB_MEASUREMENTFILEDTOEditField = uieditfield(app.INSTRUMENTANDLABORATORYTab, 'numeric');
+            app.LAB_MEASUREMENTFILEDTOEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
             app.LAB_MEASUREMENTFILEDTOEditField.Limits = [1 Inf];
             app.LAB_MEASUREMENTFILEDTOEditField.ValueDisplayFormat = '%.0f';
             app.LAB_MEASUREMENTFILEDTOEditField.Position = [847 259 50 22];
             app.LAB_MEASUREMENTFILEDTOEditField.Value = 1;
 
             % Create DonotusecharacterindescriptionasitisusedforadelimiterLabel
-            app.DonotusecharacterindescriptionasitisusedforadelimiterLabel = uilabel(app.INSTRUMENTANDLABORATORYTab);
+            app.DonotusecharacterindescriptionasitisusedforadelimiterLabel = uilabel(app.InstrumentandLaboratoryTab);
             app.DonotusecharacterindescriptionasitisusedforadelimiterLabel.Position = [607 679 368 22];
             app.DonotusecharacterindescriptionasitisusedforadelimiterLabel.Text = '* Do not use '' / '' character in description as it is used for a delimiter.';
 
@@ -1671,6 +1666,11 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.MustincludeParameterDropDown.Items = {'10', '14', '15', '16', '17', '18', '19'};
             app.MustincludeParameterDropDown.Position = [762 33 48 22];
             app.MustincludeParameterDropDown.Value = '10';
+
+            % Create Image
+            app.Image = uiimage(app.CaTxUIFigure);
+            app.Image.Position = [25 840 72 72];
+            app.Image.ImageSource = fullfile(pathToMLAPP, 'dotTHz_logo.png');
 
             % Show the figure after all components are created
             app.CaTxUIFigure.Visible = 'on';
