@@ -2,81 +2,81 @@ classdef CaTx_exported < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        CaTxUIFigure                    matlab.ui.Figure
-        Image                           matlab.ui.control.Image
-        MustincludeParameterDropDown    matlab.ui.control.DropDown
-        MustincludeParameterDropDownLabel  matlab.ui.control.Label
-        AttributuesAllocationSwitch     matlab.ui.control.Switch
-        AttributuesallocationLabel      matlab.ui.control.Label
-        NumberPrefixSwitch              matlab.ui.control.Switch
+        CaTxUIFigure                   matlab.ui.Figure
+        Image                          matlab.ui.control.Image
+        MustincludeAttributeinAllDatasetsDropDown  matlab.ui.control.DropDown
+        MustincludeAttributeinAllDatasetsDropDownLabel  matlab.ui.control.Label
+        AttributuesWriteSwitch         matlab.ui.control.Switch
+        AttributuesallocationLabel     matlab.ui.control.Label
+        NumberPrefixSwitch             matlab.ui.control.Switch
         PrefixnumberstothedatasetnameLabel  matlab.ui.control.Label
-        TabGroup                        matlab.ui.container.TabGroup
-        MeasurementandMetadataTab       matlab.ui.container.Tab
-        ReferenceWaveformChangePanel    matlab.ui.container.Panel
-        TargetLabel                     matlab.ui.control.Label
-        SourceLabel                     matlab.ui.control.Label
-        ApplyButton                     matlab.ui.control.Button
-        FILEDLISTTOEditField            matlab.ui.control.NumericEditField
-        toLabel                         matlab.ui.control.Label
-        ColumnsFromEditField            matlab.ui.control.NumericEditField
-        ColumnsFromEditFieldLabel       matlab.ui.control.Label
-        sDropDown                       matlab.ui.control.DropDown
-        sDropDownLabel                  matlab.ui.control.Label
-        ColumnEditField                 matlab.ui.control.NumericEditField
-        ColumnEditFieldLabel            matlab.ui.control.Label
-        TabletUpdatePanel               matlab.ui.container.Panel
-        TimeDelayButton                 matlab.ui.control.Button
-        ThicknessButton                 matlab.ui.control.Button
-        RefractuveIndexButton           matlab.ui.control.Button
-        ColumnControlPanel              matlab.ui.container.Panel
-        PlotWaveformsButton             matlab.ui.control.Button
-        MoveButton_2                    matlab.ui.control.Button
-        MoveButton                      matlab.ui.control.Button
-        RemoveButton                    matlab.ui.control.Button
-        MetadataPanel                   matlab.ui.container.Panel
-        LOADMETAXLS_EditField           matlab.ui.control.EditField
+        TabGroup                       matlab.ui.container.TabGroup
+        MeasurementandMetadataTab      matlab.ui.container.Tab
+        ReferenceWaveformChangePanel   matlab.ui.container.Panel
+        TargetLabel                    matlab.ui.control.Label
+        SourceLabel                    matlab.ui.control.Label
+        ApplyButton                    matlab.ui.control.Button
+        FILEDLISTTOEditField           matlab.ui.control.NumericEditField
+        toLabel                        matlab.ui.control.Label
+        ColumnsFromEditField           matlab.ui.control.NumericEditField
+        ColumnsFromEditFieldLabel      matlab.ui.control.Label
+        sDropDown                      matlab.ui.control.DropDown
+        sDropDownLabel                 matlab.ui.control.Label
+        ColumnEditField                matlab.ui.control.NumericEditField
+        ColumnEditFieldLabel           matlab.ui.control.Label
+        TableUpdatePanel               matlab.ui.container.Panel
+        TimeDelayButton                matlab.ui.control.Button
+        ThicknessButton                matlab.ui.control.Button
+        RefractiveIndexButton          matlab.ui.control.Button
+        ColumnControlPanel             matlab.ui.container.Panel
+        PlotWaveformsButton            matlab.ui.control.Button
+        MoveButton_2                   matlab.ui.control.Button
+        MoveButton                     matlab.ui.control.Button
+        RemoveButton                   matlab.ui.control.Button
+        MetadataPanel                  matlab.ui.container.Panel
+        LOADMETAXLS_EditField          matlab.ui.control.EditField
         ImportMetadataFromXLSFileButton  matlab.ui.control.Button
-        GengerateMetadataXLSFileButton  matlab.ui.control.Button
-        UITable_scan_header             matlab.ui.control.Table
-        UITable_measurement             matlab.ui.control.Table
-        InstrumentandLaboratoryTab      matlab.ui.container.Tab
+        GenerateMetadataXLSFileButton  matlab.ui.control.Button
+        UITable_scan_header            matlab.ui.control.Table
+        UITable_measurement            matlab.ui.control.Table
+        InstrumentandLaboratoryTab     matlab.ui.container.Tab
         DonotusecharacterindescriptionasitisusedforadelimiterLabel  matlab.ui.control.Label
         LAB_MEASUREMENTFILEDTOEditField  matlab.ui.control.NumericEditField
-        toLabel_3                       matlab.ui.control.Label
-        LAB_MEASUREMENTFILEDEditField   matlab.ui.control.NumericEditField
-        MeasurementfieldfromLabel_2     matlab.ui.control.Label
+        toLabel_3                      matlab.ui.control.Label
+        LAB_MEASUREMENTFILEDEditField  matlab.ui.control.NumericEditField
+        MeasurementfieldfromLabel_2    matlab.ui.control.Label
         INS_MEASUREMENTFILEDTOEditField  matlab.ui.control.NumericEditField
-        toLabel_2                       matlab.ui.control.Label
-        INS_MEASUREMENTFILEDEditField   matlab.ui.control.NumericEditField
-        MeasurementfieldfromLabel       matlab.ui.control.Label
-        ApplyDefaultProfile1Button      matlab.ui.control.Button
-        LAB_SELECTIONEditField          matlab.ui.control.NumericEditField
-        SelectionLabel_2                matlab.ui.control.Label
-        INS_SELECTIONEditField          matlab.ui.control.NumericEditField
-        SelectionLabel                  matlab.ui.control.Label
-        REMOVE_LAB_COL_Button           matlab.ui.control.Button
-        ADD_LAB_COL_Button              matlab.ui.control.Button
-        REMOVE_INS_COL_Button           matlab.ui.control.Button
-        ADD_INS_COL_Button              matlab.ui.control.Button
-        LAB_LINKButton                  matlab.ui.control.Button
-        INS_LINKButton                  matlab.ui.control.Button
-        LaboratoryLabel                 matlab.ui.control.Label
-        InstrumentLabel                 matlab.ui.control.Label
-        UITable_LAB_header              matlab.ui.control.Table
-        UITable_LAB                     matlab.ui.control.Table
-        UITable_INS_header              matlab.ui.control.Table
-        UITable_INS                     matlab.ui.control.Table
+        toLabel_2                      matlab.ui.control.Label
+        INS_MEASUREMENTFILEDEditField  matlab.ui.control.NumericEditField
+        MeasurementfieldfromLabel      matlab.ui.control.Label
+        ApplyDefaultProfile1Button     matlab.ui.control.Button
+        LAB_SELECTIONEditField         matlab.ui.control.NumericEditField
+        SelectionLabel_2               matlab.ui.control.Label
+        INS_SELECTIONEditField         matlab.ui.control.NumericEditField
+        SelectionLabel                 matlab.ui.control.Label
+        REMOVE_LAB_COL_Button          matlab.ui.control.Button
+        ADD_LAB_COL_Button             matlab.ui.control.Button
+        REMOVE_INS_COL_Button          matlab.ui.control.Button
+        ADD_INS_COL_Button             matlab.ui.control.Button
+        LAB_LINKButton                 matlab.ui.control.Button
+        INS_LINKButton                 matlab.ui.control.Button
+        LaboratoryLabel                matlab.ui.control.Label
+        InstrumentLabel                matlab.ui.control.Label
+        UITable_LAB_header             matlab.ui.control.Table
+        UITable_LAB                    matlab.ui.control.Table
+        UITable_INS_header             matlab.ui.control.Table
+        UITable_INS                    matlab.ui.control.Table
         PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel  matlab.ui.control.Label
-        ImportTHzFileButton             matlab.ui.control.Button
-        ClearMemoryButton               matlab.ui.control.Button
-        ConverterEngineDropDown         matlab.ui.control.DropDown
-        ConverterEngineDropDownLabel    matlab.ui.control.Label
-        ExportTHzFileButton             matlab.ui.control.Button
-        DEBUGMsgLabel                   matlab.ui.control.Label
-        CaTxLabel                       matlab.ui.control.Label
-        DeplayDataButton                matlab.ui.control.Button
-        FILESEditField                  matlab.ui.control.EditField
-        ImportMeasurementButton         matlab.ui.control.Button
+        ImportTHzFileButton            matlab.ui.control.Button
+        ClearMemoryButton              matlab.ui.control.Button
+        ConverterEngineDropDown        matlab.ui.control.DropDown
+        ConverterEngineDropDownLabel   matlab.ui.control.Label
+        ExportTHzFileButton            matlab.ui.control.Button
+        DEBUGMsgLabel                  matlab.ui.control.Label
+        CaTxLabel                      matlab.ui.control.Label
+        DeployDataButton               matlab.ui.control.Button
+        FILESEditField                 matlab.ui.control.EditField
+        ImportMeasurementButton        matlab.ui.control.Button
     end
 
     
@@ -244,7 +244,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.PRJ_count = 0;
             app.filename = [];
             Tcell_header = {'1: Number','2: Name','3: Description','4: Time ref (ps)','5: Reference (a.u.)','6: Time sample (ps)','7: Sample (a.u.)','8: Instrument profile', '9: Laboratory profile',...
-                '10: Start data and time','11: Mode (TX/RX)', '12: Refractive index', '13: Time delay (ps)','14: Thickness (mm)','15: Weight (mg)', '16: Temperature (K)','17: Concentration (%)',...
+                '10: Start date and time','11: Mode (TX/RX)', '12: Refractive index', '13: Time delay (ps)','14: Thickness (mm)','15: Weight (mg)', '16: Temperature (K)','17: Concentration (%)',...
                 '18: Phase','19: Coordinate (x,y,z)', '20: Ext number', '21: Ext text', '22: Ext vector',...
                 }';
             %Tcell_header = cell(colHeader');
@@ -289,8 +289,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.PRJ_count = PRJ_count;
         end
 
-        % Button pushed function: DeplayDataButton
-        function DeplayDataButtonPushed(app, event)
+        % Button pushed function: DeployDataButton
+        function DeployDataButtonPushed(app, event)
             TDSinstrument = app.ConverterEngineDropDown.Value;
             PRJ_count = app.PRJ_count; % number of files to be imported
             fullpathname = app.fullpathname; % full path for the imported files
@@ -450,11 +450,11 @@ classdef CaTx_exported < matlab.apps.AppBase
             dSet = [];
 
             % Are the attributes assigned to all datasets?
-            if isequal(app.AttributuesAllocationSwitch.Value,"All Datasets")
+            if isequal(app.AttributuesWriteSwitch.Value,"All Datasets")
                 attAll = true;
             else
                 attAll = false;
-                ectAttr = str2num(app.MustincludeParameterDropDown.Value);
+                ectAttr = str2num(app.MustincludeAttributeinAllDatasetsDropDown.Value);
             end
 
             app.DEBUGMsgLabel.Text = "Exporting started";
@@ -704,8 +704,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             updateMeasurementTable(app);            
         end
 
-        % Button pushed function: GengerateMetadataXLSFileButton
-        function GengerateMetadataXLSFileButtonPushed(app, event)
+        % Button pushed function: GenerateMetadataXLSFileButton
+        function GenerateMetadataXLSFileButtonPushed(app, event)
 
             filter = {'*.xls';'*.*'};
             [filename, filepath] = uiputfile(filter);
@@ -728,8 +728,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             
         end
 
-        % Button pushed function: RefractuveIndexButton
-        function RefractuveIndexButtonPushed(app, event)
+        % Button pushed function: RefractiveIndexButton
+        function RefractiveIndexButtonPushed(app, event)
             rowRefractiveindex = 12;
             rowTimedelay = 13;
             rowThickness = 14;
@@ -1220,12 +1220,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.FILESEditField = uieditfield(app.CaTxUIFigure, 'text');
             app.FILESEditField.Position = [324 875 709 22];
 
-            % Create DeplayDataButton
-            app.DeplayDataButton = uibutton(app.CaTxUIFigure, 'push');
-            app.DeplayDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeplayDataButtonPushed, true);
-            app.DeplayDataButton.FontWeight = 'bold';
-            app.DeplayDataButton.Position = [698 842 87 25];
-            app.DeplayDataButton.Text = 'Deplay Data';
+            % Create DeployDataButton
+            app.DeployDataButton = uibutton(app.CaTxUIFigure, 'push');
+            app.DeployDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeployDataButtonPushed, true);
+            app.DeployDataButton.FontWeight = 'bold';
+            app.DeployDataButton.Position = [698 842 87 25];
+            app.DeployDataButton.Text = 'Deploy Data';
 
             % Create CaTxLabel
             app.CaTxLabel = uilabel(app.CaTxUIFigure);
@@ -1314,11 +1314,11 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.MetadataPanel.Title = 'Metadata';
             app.MetadataPanel.Position = [32 13 243 127];
 
-            % Create GengerateMetadataXLSFileButton
-            app.GengerateMetadataXLSFileButton = uibutton(app.MetadataPanel, 'push');
-            app.GengerateMetadataXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @GengerateMetadataXLSFileButtonPushed, true);
-            app.GengerateMetadataXLSFileButton.Position = [15 73 214 25];
-            app.GengerateMetadataXLSFileButton.Text = 'Gengerate Metadata XLS File';
+            % Create GenerateMetadataXLSFileButton
+            app.GenerateMetadataXLSFileButton = uibutton(app.MetadataPanel, 'push');
+            app.GenerateMetadataXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @GenerateMetadataXLSFileButtonPushed, true);
+            app.GenerateMetadataXLSFileButton.Position = [15 73 214 25];
+            app.GenerateMetadataXLSFileButton.Text = 'Generate Metadata XLS File';
 
             % Create ImportMetadataFromXLSFileButton
             app.ImportMetadataFromXLSFileButton = uibutton(app.MetadataPanel, 'push');
@@ -1361,25 +1361,25 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.PlotWaveformsButton.Position = [11 42 170 25];
             app.PlotWaveformsButton.Text = 'Plot Waveform(s)';
 
-            % Create TabletUpdatePanel
-            app.TabletUpdatePanel = uipanel(app.MeasurementandMetadataTab);
-            app.TabletUpdatePanel.Title = 'Tablet Update';
-            app.TabletUpdatePanel.Position = [796 13 178 127];
+            % Create TableUpdatePanel
+            app.TableUpdatePanel = uipanel(app.MeasurementandMetadataTab);
+            app.TableUpdatePanel.Title = 'Table Update';
+            app.TableUpdatePanel.Position = [796 13 178 127];
 
-            % Create RefractuveIndexButton
-            app.RefractuveIndexButton = uibutton(app.TabletUpdatePanel, 'push');
-            app.RefractuveIndexButton.ButtonPushedFcn = createCallbackFcn(app, @RefractuveIndexButtonPushed, true);
-            app.RefractuveIndexButton.Position = [11 74 155 25];
-            app.RefractuveIndexButton.Text = 'Refractuve Index';
+            % Create RefractiveIndexButton
+            app.RefractiveIndexButton = uibutton(app.TableUpdatePanel, 'push');
+            app.RefractiveIndexButton.ButtonPushedFcn = createCallbackFcn(app, @RefractiveIndexButtonPushed, true);
+            app.RefractiveIndexButton.Position = [11 74 155 25];
+            app.RefractiveIndexButton.Text = 'Refractive Index';
 
             % Create ThicknessButton
-            app.ThicknessButton = uibutton(app.TabletUpdatePanel, 'push');
+            app.ThicknessButton = uibutton(app.TableUpdatePanel, 'push');
             app.ThicknessButton.ButtonPushedFcn = createCallbackFcn(app, @ThicknessButtonPushed, true);
             app.ThicknessButton.Position = [11 42 155 25];
             app.ThicknessButton.Text = 'Thickness';
 
             % Create TimeDelayButton
-            app.TimeDelayButton = uibutton(app.TabletUpdatePanel, 'push');
+            app.TimeDelayButton = uibutton(app.TableUpdatePanel, 'push');
             app.TimeDelayButton.ButtonPushedFcn = createCallbackFcn(app, @TimeDelayButtonPushed, true);
             app.TimeDelayButton.Position = [11 10 155 25];
             app.TimeDelayButton.Text = 'Time Delay';
@@ -1646,26 +1646,26 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
-            app.AttributuesallocationLabel.Position = [519 56 120 22];
-            app.AttributuesallocationLabel.Text = 'Attributues Allocation:';
+            app.AttributuesallocationLabel.Position = [540 56 97 22];
+            app.AttributuesallocationLabel.Text = 'Attributues Write:';
 
-            % Create AttributuesAllocationSwitch
-            app.AttributuesAllocationSwitch = uiswitch(app.CaTxUIFigure, 'slider');
-            app.AttributuesAllocationSwitch.Items = {'All Datasets', 'Only First,'};
-            app.AttributuesAllocationSwitch.Position = [712 58 41 18];
-            app.AttributuesAllocationSwitch.Value = 'All Datasets';
+            % Create AttributuesWriteSwitch
+            app.AttributuesWriteSwitch = uiswitch(app.CaTxUIFigure, 'slider');
+            app.AttributuesWriteSwitch.Items = {'All Datasets', 'Only First,'};
+            app.AttributuesWriteSwitch.Position = [712 58 41 18];
+            app.AttributuesWriteSwitch.Value = 'All Datasets';
 
-            % Create MustincludeParameterDropDownLabel
-            app.MustincludeParameterDropDownLabel = uilabel(app.CaTxUIFigure);
-            app.MustincludeParameterDropDownLabel.HorizontalAlignment = 'right';
-            app.MustincludeParameterDropDownLabel.Position = [626 33 132 22];
-            app.MustincludeParameterDropDownLabel.Text = 'Must-include Parameter';
+            % Create MustincludeAttributeinAllDatasetsDropDownLabel
+            app.MustincludeAttributeinAllDatasetsDropDownLabel = uilabel(app.CaTxUIFigure);
+            app.MustincludeAttributeinAllDatasetsDropDownLabel.HorizontalAlignment = 'right';
+            app.MustincludeAttributeinAllDatasetsDropDownLabel.Position = [555 33 201 22];
+            app.MustincludeAttributeinAllDatasetsDropDownLabel.Text = 'Must-include Attribute in All Datasets';
 
-            % Create MustincludeParameterDropDown
-            app.MustincludeParameterDropDown = uidropdown(app.CaTxUIFigure);
-            app.MustincludeParameterDropDown.Items = {'10', '14', '15', '16', '17', '18', '19'};
-            app.MustincludeParameterDropDown.Position = [762 33 48 22];
-            app.MustincludeParameterDropDown.Value = '10';
+            % Create MustincludeAttributeinAllDatasetsDropDown
+            app.MustincludeAttributeinAllDatasetsDropDown = uidropdown(app.CaTxUIFigure);
+            app.MustincludeAttributeinAllDatasetsDropDown.Items = {'10', '14', '15', '16', '17', '18', '19'};
+            app.MustincludeAttributeinAllDatasetsDropDown.Position = [762 33 48 22];
+            app.MustincludeAttributeinAllDatasetsDropDown.Value = '10';
 
             % Create Image
             app.Image = uiimage(app.CaTxUIFigure);
