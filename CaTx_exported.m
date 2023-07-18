@@ -42,7 +42,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         UITable_scan_header            matlab.ui.control.Table
         UITable_measurement            matlab.ui.control.Table
         InstrumentandUserTab           matlab.ui.container.Tab
-        ApplyAnonymousIntrumentProfile0Button  matlab.ui.control.Button
+        AnonymousInstrumentProfile0Button  matlab.ui.control.Button
         DonotusecharacterindescriptionLabel  matlab.ui.control.Label
         LAB_MEASUREMENTFILEDTOEditField  matlab.ui.control.NumericEditField
         toLabel_3                      matlab.ui.control.Label
@@ -52,7 +52,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         toLabel_2                      matlab.ui.control.Label
         INS_MEASUREMENTFILEDEditField  matlab.ui.control.NumericEditField
         MeasurementfieldfromLabel      matlab.ui.control.Label
-        ApplyAnonymousUserProfile0Button  matlab.ui.control.Button
+        AnonymousUserProfile0Button    matlab.ui.control.Button
         LAB_SELECTIONEditField         matlab.ui.control.NumericEditField
         SelectionLabel_2               matlab.ui.control.Label
         INS_SELECTIONEditField         matlab.ui.control.NumericEditField
@@ -310,8 +310,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             
             app.PRJ_count = 0;
             app.filename = [];
-            Tcell_header = {'1: Number','2: Name','3: Description','4: Instrument Profile','5: User Profile','6: Sample Time (ps)','7: Sample Efield (a.u.)',...
-                '8: Ref.1 Time (ps)','9: Ref.1 Efield (a.u.)', '10: Ref.2 Time (ps)',' 11: Ref.2 Efield (a.u.)','12: Ref. Description',...
+            Tcell_header = {'1: Number','2: Name','3: Description','4: Instrument Profile','5: User Profile','6: Sample Time (ps)','7: Sample E.field (a.u.)',...
+                '8: Ref.1 Time (ps)','9: Ref.1 E.field (a.u.)', '10: Ref.2 Time (ps)',' 11: Ref.2 E.field (a.u.)','12: Ref. Description',...
                 '13: Date and Time','14: Refractive Index', '15: Time Delay (ps)','16: Thickness (mm)','17: Weight (mg)', '18: Temperature (K)',...
                 '19: Concentration (%)','20: Phase Info.','21: Coordinate Info.', '22: Numeric Ext.', '23: String Ext.1', '24: String Ext.2',...
                 }';
@@ -520,7 +520,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             delete(fullfile);
             measNum = app.Tcell{1,end};
             incNum = app.NumberPrefixSwitch.Value;
-            varsAttr = ["ref_desription","date_time","n_eff","time_delay","thickness","weight","temperature","concentration","phase","coordinate","ext_num","ext_text","ext_vect"];
+            varsAttr = ["ref_description","date_time","n_eff","time_delay","thickness","weight","temperature","concentration","phase_info","coordinate_info","numeric_ext","string_ext1","string_ext2"];
             digitNum = ceil(log10(measNum));
             digitNumFormat = strcat('%0',num2str(digitNum),'d');
 
@@ -665,8 +665,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             measNum = size(thzInfo.Groups,1);
             ListItems = cell(measNum,1);
             [ListItems{:}] = deal(thzInfo.Groups.Name);
-            attrItems = ["description","ref_description","date_time","mode","n_eff","time_delay",...
-                "thickness","weight","temperature","concentration","phase","coordinate","ext_num","ext_text","ext_vect"];
+            attrItems = ["description","ref_description","date_time","mode","n_eff","time_delay","thickness",...
+                "weight","temperature","concentration","phase_info","coordinate_info","numeric_ext","string_ext1","string_ext2"];
 
             for idx = 1:measNum
                 %dn = strcat('/',ListItems{idx});
@@ -896,8 +896,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: ApplyAnonymousUserProfile0Button
-        function ApplyAnonymousUserProfile0ButtonPushed(app, event)
+        % Button pushed function: AnonymousUserProfile0Button
+        function AnonymousUserProfile0ButtonPushed(app, event)
             updateProfile(app);
 
             Tcell = app.Tcell;
@@ -1265,8 +1265,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: ApplyAnonymousIntrumentProfile0Button
-        function ApplyAnonymousIntrumentProfile0ButtonPushed(app, event)
+        % Button pushed function: AnonymousInstrumentProfile0Button
+        function AnonymousInstrumentProfile0ButtonPushed(app, event)
             updateProfile(app);
 
             Tcell = app.Tcell;
@@ -1676,11 +1676,11 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.LAB_SELECTIONEditField.BackgroundColor = [0.9412 0.9412 0.9412];
             app.LAB_SELECTIONEditField.Position = [590 301 34 22];
 
-            % Create ApplyAnonymousUserProfile0Button
-            app.ApplyAnonymousUserProfile0Button = uibutton(app.InstrumentandUserTab, 'push');
-            app.ApplyAnonymousUserProfile0Button.ButtonPushedFcn = createCallbackFcn(app, @ApplyAnonymousUserProfile0ButtonPushed, true);
-            app.ApplyAnonymousUserProfile0Button.Position = [738 265 238 23];
-            app.ApplyAnonymousUserProfile0Button.Text = 'Apply Anonymous User Profile, 0';
+            % Create AnonymousUserProfile0Button
+            app.AnonymousUserProfile0Button = uibutton(app.InstrumentandUserTab, 'push');
+            app.AnonymousUserProfile0Button.ButtonPushedFcn = createCallbackFcn(app, @AnonymousUserProfile0ButtonPushed, true);
+            app.AnonymousUserProfile0Button.Position = [738 265 238 23];
+            app.AnonymousUserProfile0Button.Text = 'Anonymous User Profile, 0';
 
             % Create MeasurementfieldfromLabel
             app.MeasurementfieldfromLabel = uilabel(app.InstrumentandUserTab);
@@ -1739,11 +1739,11 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DonotusecharacterindescriptionLabel.Position = [755 721 217 22];
             app.DonotusecharacterindescriptionLabel.Text = '* Do not use '' / '' character in description';
 
-            % Create ApplyAnonymousIntrumentProfile0Button
-            app.ApplyAnonymousIntrumentProfile0Button = uibutton(app.InstrumentandUserTab, 'push');
-            app.ApplyAnonymousIntrumentProfile0Button.ButtonPushedFcn = createCallbackFcn(app, @ApplyAnonymousIntrumentProfile0ButtonPushed, true);
-            app.ApplyAnonymousIntrumentProfile0Button.Position = [737 515 238 23];
-            app.ApplyAnonymousIntrumentProfile0Button.Text = 'Apply Anonymous Intrument Profile, 0';
+            % Create AnonymousInstrumentProfile0Button
+            app.AnonymousInstrumentProfile0Button = uibutton(app.InstrumentandUserTab, 'push');
+            app.AnonymousInstrumentProfile0Button.ButtonPushedFcn = createCallbackFcn(app, @AnonymousInstrumentProfile0ButtonPushed, true);
+            app.AnonymousInstrumentProfile0Button.Position = [737 515 238 23];
+            app.AnonymousInstrumentProfile0Button.Text = 'Anonymous Instrument Profile, 0';
 
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CaTxUIFigure);
