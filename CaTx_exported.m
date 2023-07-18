@@ -12,18 +12,20 @@ classdef CaTx_exported < matlab.apps.AppBase
         PrefixnumberstothedatasetnameLabel  matlab.ui.control.Label
         TabGroup                       matlab.ui.container.TabGroup
         MeasurementandMetadataTab      matlab.ui.container.Tab
-        ReferenceWaveformChangePanel   matlab.ui.container.Panel
-        TargetLabel                    matlab.ui.control.Label
-        SourceLabel                    matlab.ui.control.Label
-        ApplyButton                    matlab.ui.control.Button
+        WaveformControlPanel           matlab.ui.container.Panel
+        DeleteButton                   matlab.ui.control.Button
+        TargetWaveformDropDown         matlab.ui.control.DropDown
+        TargetWaveformDropDownLabel    matlab.ui.control.Label
+        MoveButton_3                   matlab.ui.control.Button
+        CopyButton                     matlab.ui.control.Button
+        SourceWaveformDropDown         matlab.ui.control.DropDown
+        SourceWaveformDropDownLabel    matlab.ui.control.Label
         FILEDLISTTOEditField           matlab.ui.control.NumericEditField
         toLabel                        matlab.ui.control.Label
-        ColumnsFromEditField           matlab.ui.control.NumericEditField
-        ColumnsFromEditFieldLabel      matlab.ui.control.Label
-        sDropDown                      matlab.ui.control.DropDown
-        sDropDownLabel                 matlab.ui.control.Label
-        ColumnEditField                matlab.ui.control.NumericEditField
-        ColumnEditFieldLabel           matlab.ui.control.Label
+        ofColumnEditField_2            matlab.ui.control.NumericEditField
+        ofColumnEditField_2Label       matlab.ui.control.Label
+        ofColumnEditField              matlab.ui.control.NumericEditField
+        ofColumnEditFieldLabel         matlab.ui.control.Label
         TableUpdatePanel               matlab.ui.container.Panel
         TimeDelayButton                matlab.ui.control.Button
         ThicknessButton                matlab.ui.control.Button
@@ -39,8 +41,9 @@ classdef CaTx_exported < matlab.apps.AppBase
         GenerateMetadataXLSFileButton  matlab.ui.control.Button
         UITable_scan_header            matlab.ui.control.Table
         UITable_measurement            matlab.ui.control.Table
-        InstrumentandLaboratoryTab     matlab.ui.container.Tab
-        DonotusecharacterindescriptionasitisusedforadelimiterLabel  matlab.ui.control.Label
+        InstrumentandUserTab           matlab.ui.container.Tab
+        ApplyAnonymousIntrumentProfile0Button  matlab.ui.control.Button
+        DonotusecharacterindescriptionLabel  matlab.ui.control.Label
         LAB_MEASUREMENTFILEDTOEditField  matlab.ui.control.NumericEditField
         toLabel_3                      matlab.ui.control.Label
         LAB_MEASUREMENTFILEDEditField  matlab.ui.control.NumericEditField
@@ -49,7 +52,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         toLabel_2                      matlab.ui.control.Label
         INS_MEASUREMENTFILEDEditField  matlab.ui.control.NumericEditField
         MeasurementfieldfromLabel      matlab.ui.control.Label
-        ApplyDefaultProfile1Button     matlab.ui.control.Button
+        ApplyAnonymousUserProfile0Button  matlab.ui.control.Button
         LAB_SELECTIONEditField         matlab.ui.control.NumericEditField
         SelectionLabel_2               matlab.ui.control.Label
         INS_SELECTIONEditField         matlab.ui.control.NumericEditField
@@ -60,13 +63,12 @@ classdef CaTx_exported < matlab.apps.AppBase
         ADD_INS_COL_Button             matlab.ui.control.Button
         LAB_LINKButton                 matlab.ui.control.Button
         INS_LINKButton                 matlab.ui.control.Button
-        LaboratoryLabel                matlab.ui.control.Label
+        UserLabel                      matlab.ui.control.Label
         InstrumentLabel                matlab.ui.control.Label
         UITable_LAB_header             matlab.ui.control.Table
         UITable_LAB                    matlab.ui.control.Table
         UITable_INS_header             matlab.ui.control.Table
         UITable_INS                    matlab.ui.control.Table
-        PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel  matlab.ui.control.Label
         ImportTHzFileButton            matlab.ui.control.Button
         ClearMemoryButton              matlab.ui.control.Button
         ConverterEngineDropDown        matlab.ui.control.DropDown
@@ -98,14 +100,14 @@ classdef CaTx_exported < matlab.apps.AppBase
         
         function updateProfile(app)
             mPath = fileparts(which(mfilename)); % matlab app designer source code folder
-            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'instrument.xls');
-            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'laboratory.xls');
+            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'Instruments.xls');
+            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'Users.xls');
 
             % check instrument profile file and set the default
             if isfile(ins_profilefile)
                 app.ins_profile = 1;
                 app.TcellP1 = readcell(ins_profilefile);
-                app.TcellP1(cellfun(@(x) isa(x,'missing'),app.TcellP1)) = {''};
+                app.TcellP1(cellfun(@(x) isa(x,'missing'),app.TcellP1)) = {""};
                 app.UITable_INS.Data = cell2table(app.TcellP1);
                 app.UITable_INS.ColumnEditable = true;
             else
@@ -117,7 +119,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             if isfile(lab_profilefile)
                 app.lab_profile = 1;
                 app.TcellP2 = readcell(lab_profilefile);
-                app.TcellP2(cellfun(@(x) isa(x,'missing'),app.TcellP2)) = {''};
+                app.TcellP2(cellfun(@(x) isa(x,'missing'),app.TcellP2)) = {""};
                 app.UITable_LAB.Data = cell2table(app.TcellP2);
                 app.UITable_LAB.ColumnEditable = true;
             else
@@ -129,7 +131,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         
         function writeP1Profile(app)            
             mPath = fileparts(which(mfilename));
-            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'instrument.xls');
+            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'Instruments.xls');
             TcellP = app.TcellP1;
 
             if isempty(TcellP)
@@ -146,7 +148,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         
         function writeP2Profile(app)
             mPath = fileparts(which(mfilename));
-            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'laboratory.xls');
+            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'Users.xls');
             TcellP = app.TcellP2;
             
             if isempty(TcellP)
@@ -168,7 +170,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 return;
             end
 
-            rowINSProfile = 8; % instrument profile row number in the measurement table
+            rowINSProfile = 4; % instrument profile row number in the measurement table
             pLinkMat = cell2mat(app.Tcell(rowINSProfile,:)); % profile link matrix
             zLinkMat = zeros(size(pLinkMat));
             colNum = app.INS_SELECTIONEditField.Value;
@@ -188,8 +190,8 @@ classdef CaTx_exported < matlab.apps.AppBase
                 return;
             end
 
-            rowLABProfile = 9; % instrument profile row number in the measurement table
-            pLinkMat = cell2mat(app.Tcell(rowLABProfile,:)); % profile link matrix
+            rowUserProfile = 5; % instrument profile row number in the measurement table
+            pLinkMat = cell2mat(app.Tcell(rowUserProfile,:)); % profile link matrix
             zLinkMat = zeros(size(pLinkMat));
             colNum = app.LAB_SELECTIONEditField.Value;
             pLinkMat(pLinkMat == colNum) = 0;
@@ -198,7 +200,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             pLinkCell = mat2cell(pLinkMat,[1],ones(1,size(pLinkMat,2)));
 
             % meausrement table profile update
-            app.Tcell(rowLABProfile,:) = pLinkCell;
+            app.Tcell(rowUserProfile,:) = pLinkCell;
             updateMeasurementTable(app);
         end
         
@@ -213,6 +215,71 @@ classdef CaTx_exported < matlab.apps.AppBase
                 TcellCompact = [TcellCompact Tcell(:,measNum)];
                 app.UITable_measurement.Data = cell2table(TcellCompact);
             end
+        end
+        
+        function waveformControl(app,Opt)
+            Indices = app.cellIndices;
+            Tcell = app.Tcell;
+            colFrom = app.ofColumnEditField_2.Value;
+            colTo = app.FILEDLISTTOEditField.Value;
+            totalMeasNum = app.totalMeasNum;
+            src = app.SourceWaveformDropDown.Value;
+            trg = app.TargetWaveformDropDown.Value;
+            
+            if isempty(Indices)
+                return;
+            else
+                srcIdx = Indices(2);
+            end
+
+            if isequal(src,"Sample")
+                srcRow = 6;
+            elseif isequal(src,"Ref.1")
+                srcRow = 8;
+            else
+                srcRow = 10;
+            end
+
+            if isequal(trg,"Sample")
+                trgRow = 6;
+            elseif isequal(trg,"Ref.1")
+                trgRow = 8;
+            else
+                trgRow = 10;
+            end
+
+            if isequal(Opt,"Delete")
+                Tcell{srcRow,srcIdx}=[];
+                Tcell{srcRow+1,srcIdx}=[];
+            else
+                srcTime = Tcell(srcRow,srcIdx);
+                srcSig = Tcell(srcRow+1,srcIdx);
+                refLength = length(srcTime);
+    
+                for idx = colFrom:colTo
+                    trgTime = Tcell(6,idx);
+                    trgLength = length(trgTime);
+    
+                    if ~isequal(refLength,trgLength)
+                        fig = app.CaTxUIFigure;
+                        uialert(fig,'Incompatible data length','warning');
+                        return;
+                    end
+    
+                    Tcell(trgRow,idx) = srcTime;
+                    Tcell(trgRow+1,idx) = srcSig;
+    
+                end
+            end
+
+            if isequal(Opt,"Move")
+                Tcell{srcRow,srcIdx}=[];
+                Tcell{srcRow+1,srcIdx}=[];
+            end
+
+            % update the table
+            app.Tcell = Tcell;
+            updateMeasurementTable(app);
         end
     end
     
@@ -243,16 +310,17 @@ classdef CaTx_exported < matlab.apps.AppBase
             
             app.PRJ_count = 0;
             app.filename = [];
-            Tcell_header = {'1: Number','2: Name','3: Description','4: Time ref (ps)','5: Reference (a.u.)','6: Time sample (ps)','7: Sample (a.u.)','8: Instrument profile', '9: Laboratory profile',...
-                '10: Start date and time','11: Mode (TX/RX)', '12: Refractive index', '13: Time delay (ps)','14: Thickness (mm)','15: Weight (mg)', '16: Temperature (K)','17: Concentration (%)',...
-                '18: Phase','19: Coordinate (x,y,z)', '20: Ext number', '21: Ext text', '22: Ext vector',...
+            Tcell_header = {'1: Number','2: Name','3: Description','4: Instrument Profile','5: User Profile','6: Sample Time (ps)','7: Sample Efield (a.u.)',...
+                '8: Ref.1 Time (ps)','9: Ref.1 Efield (a.u.)', '10: Ref.2 Time (ps)',' 11: Ref.2 Efield (a.u.)','12: Ref. Description',...
+                '13: Date and Time','14: Refractive Index', '15: Time Delay (ps)','16: Thickness (mm)','17: Weight (mg)', '18: Temperature (K)',...
+                '19: Concentration (%)','20: Phase Info.','21: Coordinate Info.', '22: Numeric Ext.', '23: String Ext.1', '24: String Ext.2',...
                 }';
             %Tcell_header = cell(colHeader');
             app.UITable_scan_header.Data = cell2table(Tcell_header);
 
 
             ins_profileHeader = {'1: Number', '2: Model', '3: Manufacturer', '4: Address'}';
-            lab_profileHeader = {'1: Number', '2: ORCID', '3: Name', '4: Email', '5: Institute'}';
+            lab_profileHeader = {'1: Number', '2: ORCID', '3: Name', '4: Email', '5: Affiliation'}';
             
             app.UITable_INS_header.Data = cell2table(ins_profileHeader);
             app.UITable_LAB_header.Data = cell2table(lab_profileHeader);
@@ -306,8 +374,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             %assignin("base","ins_profilefile", app.ins_profile);
 
 
-            Tcell(8,:) = num2cell(app.ins_profile);
-            Tcell(9,:) = num2cell(app.lab_profile);
+            Tcell(4,:) = num2cell(app.ins_profile);
+            Tcell(5,:) = num2cell(app.lab_profile);
             measNum = size(Tcell,2);
             app.totalMeasNum = measNum;
             app.Tcell = Tcell;
@@ -351,18 +419,28 @@ classdef CaTx_exported < matlab.apps.AppBase
                 return;
             end
 
-            app.ColumnEditField.Value = indices(2);
+            app.ofColumnEditField.Value = indices(2);
 
-            assignin("base","tcell",app.Tcell);
+            %assignin("base","tcell",app.Tcell);
 
-            if isempty(app.Tcell{5,indices(2)})
-                app.sDropDown.Items = {'Sample'};
-            else
-                app.sDropDown.Items = {'Sample','Reference'};
+            srcDDItems = {}; %app.SourceWaveformDropDown.Items
+
+            if ~isempty(app.Tcell{6,indices(2)})
+                srcDDItems = [srcDDItems,{'Sample'}];
             end
 
+            if ~isempty(app.Tcell{8,indices(2)})
+                srcDDItems = [srcDDItems,{'Ref.1'}];
+            end
+
+            if ~isempty(app.Tcell{10,indices(2)})
+                srcDDItems = [srcDDItems,{'Ref.2'}];
+            end
+
+            app.SourceWaveformDropDown.Items = srcDDItems;
+
             Tcell = app.Tcell(indices(1),indices(2));
-            dataType = [2 1 1 2 2, 2 2 2 2 2, 1 0 2 0 0, 0 0 1 1 0, 1 1]; % 1 for string, 0 for numbers, 2 for do-not-modify
+            dataType = [2 1 1 2 2, 2 2 2 2 2, 2 1 1 0 2, 0 0 0 0 1, 1 0 1 1]; % 1 for string, 0 for numbers, 2 for do-not-modify
 
             if dataType(indices(1)) < 2
                 app.UITable_measurement.ColumnEditable = true;
@@ -383,22 +461,20 @@ classdef CaTx_exported < matlab.apps.AppBase
         function NumericFieldEditFieldValueChanged(app, event)
             value = app.NumericFieldEditField.Value;
             indices = app.cellIndices;
-            timeDelay = cell2mat(app.Tcell(9,indices(2)));
+            timeDelay = cell2mat(app.Tcell(15,indices(2)));
             app.Tcell(indices(1),indices(2)) = {value};
 
-            if indices(1) == 7 % if the input is the sample thickness
+            if indices(1) == 16 % if the input is the sample thickness
                 n_eff = timeDelay*10^-12*3e8/(value*10^-3) + 1;
                 n_eff = floor(n_eff*1000)/1000;
-                etl_t = timeDelay + (2*value*10^-3*n_eff/3e8)*10^12;
-                app.Tcell(6,indices(2)) = {n_eff};
-                app.Tcell(12,indices(2)) = {etl_t};
+                %etl_t = timeDelay + (2*value*10^-3*n_eff/3e8)*10^12;
+                app.Tcell(14,indices(2)) = {n_eff};
 
-            elseif indices(1) == 6 % if the input is the sample refractive index
+            elseif indices(1) == 14 % if the input is the sample refractive index
                 thickness = timeDelay*10^-9*3e8/(value-1);
                 thickness = floor(thickness*10000)/10000;
-                etl_t = timeDelay + (2*thickness*10^-3*value/3e8)*10^12;
-                app.Tcell(7,indices(2)) = {thickness};
-                app.Tcell(12,indices(2)) = {etl_t};
+                %etl_t = timeDelay + (2*thickness*10^-3*value/3e8)*10^12;
+                app.Tcell(16,indices(2)) = {thickness};
             end
 
             updateMeasurementTable(app);
@@ -408,23 +484,22 @@ classdef CaTx_exported < matlab.apps.AppBase
         function UITable_measurementCellEdit(app, event)
             indices = event.Indices;
             newData = event.NewData;
-            timeDelay = cell2mat(app.Tcell(8,indices(2)));
+            timeDelay = cell2mat(app.Tcell(15,indices(2)));
             app.Tcell(indices(1),indices(2)) = {newData};
 
             if indices(1) == 6 % if the input is the sample thickness
                 n_eff = timeDelay*10^-12*3e8/(newData*10^-3) + 1;
                 n_eff = floor(n_eff*1000)/1000;
-                etl_t = timeDelay + (2*newData*10^-3*n_eff/3e8)*10^12;
-                app.Tcell(5,indices(2)) = {n_eff};
-                app.Tcell(12,indices(2)) = {etl_t};
+                %etl_t = timeDelay + (2*newData*10^-3*n_eff/3e8)*10^12;
+                app.Tcell(14,indices(2)) = {n_eff};
 
             elseif indices(1) == 5 % if the input is the sample refractive index
                 thickness = timeDelay*10^-9*3e8/(newData-1);
                 thickness = floor(thickness*10000)/10000;
-                etl_t = timeDelay + (2*thickness*10^-3*newData/3e8)*10^12;
-                app.Tcell(6,indices(2)) = {thickness};
-                app.Tcell(12,indices(2)) = {etl_t};
+                %etl_t = timeDelay + (2*thickness*10^-3*newData/3e8)*10^12;
+                app.Tcell(16,indices(2)) = {thickness};
             end
+
             updateMeasurementTable(app);
         end
 
@@ -442,12 +517,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
                         
             fullfile = strcat(filepath,filename);
+            delete(fullfile);
             measNum = app.Tcell{1,end};
             incNum = app.NumberPrefixSwitch.Value;
-            varsAttr = ["date and time","mode","n_eff","time delay","thickness","weight","temperature","concentration","phase","coordinate","ext_num","ext_text","ext_vect"];
+            varsAttr = ["ref_desription","date_time","n_eff","time_delay","thickness","weight","temperature","concentration","phase","coordinate","ext_num","ext_text","ext_vect"];
             digitNum = ceil(log10(measNum));
             digitNumFormat = strcat('%0',num2str(digitNum),'d');
-            dSet = [];
 
             % Are the attributes assigned to all datasets?
             if isequal(app.AttributuesWriteSwitch.Value,"All Datasets")
@@ -462,7 +537,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             for idx = 1:measNum
                 
-                if isequal(incNum,"On") % prefix numbers to dataset name
+                if isequal(incNum,"On") % prefix numbers to group name
                     dn = strcat('/',sprintf(digitNumFormat,app.Tcell{1,idx}),':',app.Tcell{2,idx});
                 else
                     dn = strcat('/',app.Tcell{2,idx});
@@ -472,26 +547,41 @@ classdef CaTx_exported < matlab.apps.AppBase
                     dn = strcat('/',sprintf(digitNumFormat,app.Tcell{1,idx}));
                 end
 
-                if isempty(app.Tcell{4,idx}) % does the reference waveform exit?
-                    dSet = [app.Tcell{6,idx};app.Tcell{7,idx}];
-                else
-                    dSet = [app.Tcell{4, idx};app.Tcell{5,idx};app.Tcell{6,idx};app.Tcell{7,idx}];
+                if ~isempty(app.Tcell{6,idx}) % sample waveform 
+                    dn01 = strcat(dn,"/ds01");
+                    ds01 = [app.Tcell{6,idx};app.Tcell{7,idx}];
+                    h5create(fullfile,dn01,size(ds01));
+                    h5write(fullfile,dn01,ds01);
+                end
+
+                if ~isempty(app.Tcell{8,idx}) % primary referecen waveform 
+                    dn02 = strcat(dn,"/ds02");
+                    ds02 = [app.Tcell{8,idx};app.Tcell{9,idx}];
+                    h5create(fullfile,dn02,size(ds02));
+                    h5write(fullfile,dn02,ds02);
+                end
+
+                if ~isempty(app.Tcell{10,idx}) % secondary referecen waveform 
+                    dn03 = strcat(dn,"/ds03");
+                    ds03 = [app.Tcell{10,idx};app.Tcell{11,idx}];
+                    h5create(fullfile,dn03,size(ds03));
+                    h5write(fullfile,dn03,ds03);
                 end
                 
                 % create and write HDF5 dataset
-                h5create(fullfile,dn,size(dSet));
-                h5write(fullfile,dn,dSet);
+                %%h5create(fullfile,dn,size(dSet));
+                %%h5write(fullfile,dn,dSet);
 
                 % write HDF5 attributes
                 if attAll || isequal(idx,1)
                     h5writeatt(fullfile,dn,'description',app.Tcell{3,idx});
-                    rowNum = 10;
+                    rowNum = 12;
                     for attrName = varsAttr
                         h5writeatt(fullfile,dn,attrName,app.Tcell{rowNum,idx});
                         rowNum = rowNum + 1;
                     end
-                    insNum = app.Tcell{8,idx};
-                    labNum = app.Tcell{9,idx};
+                    insNum = app.Tcell{4,idx};
+                    userNum = app.Tcell{5,idx};
 
                     % write instrument details as a part of attribute
                     if isequal(insNum,0) % check whether a profile for instrument is assigned
@@ -501,12 +591,12 @@ classdef CaTx_exported < matlab.apps.AppBase
                     end
                     h5writeatt(fullfile,dn,'instrument',insAttr);
 
-                    if isequal(labNum,0) % check whether a profile for laboratory is assigned
-                        labAttr = '';
+                    if isequal(userNum,0) % check whether a profile for user is assigned
+                        userAttr = '';
                     else
-                        labAttr = strcat(app.TcellP2{2, labNum}, '/', app.TcellP2{3,labNum},'/', app.TcellP2{4,labNum},'/', app.TcellP2{5,labNum});
+                        userAttr = strcat(app.TcellP2{2, userNum}, '/', app.TcellP2{3,userNum},'/', app.TcellP2{4,userNum},'/', app.TcellP2{5,userNum});
                     end
-                    h5writeatt(fullfile,dn,'laboratory',labAttr);
+                    h5writeatt(fullfile,dn,'user',userAttr);
                 else
                     attrName = varsAttr(ectAttr-9);
                     h5writeatt(fullfile,dn,attrName,app.Tcell{ectAttr,idx});
@@ -521,6 +611,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             app.DEBUGMsgLabel.Text = "Exporting finished";
+            %h5disp(fullfile)
 
         end
 
@@ -571,31 +662,46 @@ classdef CaTx_exported < matlab.apps.AppBase
             
             fullfile = strcat(filepath,filename);
             thzInfo = h5info(fullfile);
-            measNum = size(thzInfo.Datasets,1);
+            measNum = size(thzInfo.Groups,1);
             ListItems = cell(measNum,1);
-            [ListItems{:}] = deal(thzInfo.Datasets.Name);
-            attrItems = ["description","date and time","mode","n_eff","time delay",...
+            [ListItems{:}] = deal(thzInfo.Groups.Name);
+            attrItems = ["description","ref_description","date_time","mode","n_eff","time_delay",...
                 "thickness","weight","temperature","concentration","phase","coordinate","ext_num","ext_text","ext_vect"];
 
             for idx = 1:measNum
-                dn = strcat('/',ListItems{idx});
-                measData = h5read(fullfile,dn);
+                %dn = strcat('/',ListItems{idx});
+                dn = ListItems{idx};
                 cnt = 1;
+                dn
 
                 Tcell{1,idx} = idx;
-                Tcell{2,idx} = ListItems{idx};
+                Tcell{2,idx} = dn(2:end);
 
-                if size(measData,1)==4
-                    Tcell{4,idx} = measData(1,:);
-                    Tcell{5,idx} = measData(2,:);
-                    Tcell{6,idx} = measData(3,:);
-                    Tcell{7,idx} = measData(4,:);
-                else
-                    Tcell{6,idx} = measData(1,:);
-                    Tcell{7,idx} = measData(2,:);
+                try
+                    dn01 = strcat(dn,'/ds01');
+                    ds01 = h5read(fullfile,dn01);
+                    Tcell{6,idx} = ds01(1,:);
+                    Tcell{7,idx} = ds01(2,:);
+                catch ME
                 end
 
-                for attrLoc = [3 (10:22)]
+                try
+                    dn02 = strcat(dn,'/ds02');
+                    ds02 = h5read(fullfile,dn02);
+                    Tcell{8,idx} = ds02(1,:);
+                    Tcell{9,idx} = ds02(2,:);
+                catch ME
+                end
+
+                try
+                    dn03 = strcat(dn,'/ds03');
+                    ds03 = h5read(fullfile,dn03);
+                    Tcell{10,idx} = ds03(1,:);
+                    Tcell{11,idx} = ds03(2,:);
+                catch ME
+                end
+
+                for attrLoc = [3 (12:24)]
                     try
                         Tcell{attrLoc,idx} = h5readatt(fullfile,dn,attrItems(cnt));
                     catch ME
@@ -613,11 +719,11 @@ classdef CaTx_exported < matlab.apps.AppBase
                 cntP1 = 1;
 
                 if isequal(insProfile,0)
-                        Tcell{8,idx} = 0;
+                        Tcell{4,idx} = 0;
                     else
                         for idxP1 = tempP1Profile
                             if isequal({insProfile},idxP1)
-                                Tcell{8,idx} = cntP1;
+                                Tcell{4,idx} = cntP1;
                                 break;
                             else
                                 cntP1 = cntP1 + 1;
@@ -626,27 +732,27 @@ classdef CaTx_exported < matlab.apps.AppBase
 
                         if cntP1 > length(tempP1Profile)
                             tempP1Profile = [tempP1Profile, {insProfile}];
-                            Tcell{8,idx} = cntP1;
+                            Tcell{4,idx} = cntP1;
                             app.TcellP1 = [app.TcellP1, [cntP1;split(insProfile,"/")]];
                             writeP1Profile(app);
                         end
                 end
 
-                % laboratory profile matching
+                % user profile matching
                 try
-                    labProfile = h5readatt(fullfile,dn,"laboratory");
+                    userProfile = h5readatt(fullfile,dn,"user");
                 catch ME
-                    labProfile = 0;
+                    userProfile = 0;
                 end
 
                 cntP2 = 1;
 
-                if isequal(labProfile,0)
-                        Tcell{9,idx} = 0;
+                if isequal(userProfile,0)
+                        Tcell{5,idx} = 0;
                     else
                         for idxP2 = tempP2Profile
-                            if isequal({labProfile},idxP2);
-                                Tcell{9,idx} = cntP2;
+                            if isequal({userProfile},idxP2);
+                                Tcell{5,idx} = cntP2;
                                 break;
                             else
                                 cntP2 = cntP2 + 1;
@@ -654,9 +760,9 @@ classdef CaTx_exported < matlab.apps.AppBase
                         end
 
                         if cntP2 > length(tempP2Profile)
-                            tempP2Profile = [tempP2Profile, {labProfile}];
-                            Tcell{9,idx} = cntP2;
-                            app.TcellP2 = [app.TcellP2, [cntP2;split(labProfile,"/")]];
+                            tempP2Profile = [tempP2Profile, {userProfile}];
+                            Tcell{5,idx} = cntP2;
+                            app.TcellP2 = [app.TcellP2, [cntP2;split(userProfile,"/")]];
                             writeP2Profile(app);
                         end
                 end
@@ -699,7 +805,9 @@ classdef CaTx_exported < matlab.apps.AppBase
                 return;
             end
 
-            Tcell(12:end,:)=Tcellxls(2:end,:);
+            Tcell(2:3,:)=Tcellxls(2:3,:);
+            Tcell(12:end,:)=Tcellxls(4:end,:);
+            Tcell(cellfun(@(x) isa(x,'missing'),Tcell)) = {""};
             app.Tcell = Tcell;
             updateMeasurementTable(app);            
         end
@@ -720,7 +828,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             Tcell_header = app.UITable_scan_header.Data;
 
             Tcellxls = [Tcell_header Tcell];
-            Tcellxls(2:11,:) = [];
+            Tcellxls(4:11,:) = [];
             
 
             writetable(Tcellxls,fullfile,WriteVariableNames=false);
@@ -730,9 +838,9 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: RefractiveIndexButton
         function RefractiveIndexButtonPushed(app, event)
-            rowRefractiveindex = 12;
-            rowTimedelay = 13;
-            rowThickness = 14;
+            rowRefractiveindex = 14;
+            rowTimedelay = 15;
+            rowThickness = 16;
             TcellPart = app.Tcell([rowRefractiveindex, rowTimedelay, rowThickness],:);
             nIdx = 1;
             tdIdx = 2;
@@ -760,9 +868,9 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ThicknessButton
         function ThicknessButtonPushed(app, event)
-            rowRefractiveindex = 12;
-            rowTimedelay = 13;
-            rowThickness = 14;
+            rowRefractiveindex = 14;
+            rowTimedelay = 15;
+            rowThickness = 16;
             TcellPart = app.Tcell([rowRefractiveindex, rowTimedelay, rowThickness],:);
             nIdx = 1;
             tdIdx = 2;
@@ -788,18 +896,15 @@ classdef CaTx_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: ApplyDefaultProfile1Button
-        function ApplyDefaultProfile1ButtonPushed(app, event)
+        % Button pushed function: ApplyAnonymousUserProfile0Button
+        function ApplyAnonymousUserProfile0ButtonPushed(app, event)
             updateProfile(app);
 
             Tcell = app.Tcell;
-            Tcell(8,:) = num2cell(app.ins_profile);
-            Tcell(9,:) = num2cell(app.lab_profile);
-
-            %assignin("base","Tcell",Tcell);
+            Tcell(5,:) = num2cell(0);
             app.Tcell = Tcell;
-            updateMeasurementTable(app);
 
+            updateMeasurementTable(app);
         end
 
         % Cell edit callback: UITable_INS
@@ -824,7 +929,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         function ADD_INS_COL_ButtonPushed(app, event)
             
             mPath = fileparts(which(mfilename));
-            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'instrument.xls');
+            ins_profilefile = strcat(mPath,filesep,'Profiles',filesep,'Instruments.xls');
 
             if isfile(ins_profilefile)
                 TcellP = app.TcellP1;
@@ -866,7 +971,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         function ADD_LAB_COL_ButtonPushed(app, event)
             
             mPath = fileparts(which(mfilename));
-            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'laboratory.xls');
+            lab_profilefile = strcat(mPath,filesep,'Profiles',filesep,'Users.xls');
 
             if isfile(lab_profilefile)
                 TcellP = app.TcellP2;
@@ -1003,16 +1108,14 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: PlotWaveformsButton
         function PlotWaveformsButtonPushed(app, event)
-            Indices = app.cellIndices;
+            indices = app.cellIndices;
             Tcell = app.Tcell;
 
-            if isempty(Indices)
+            if isempty(indices)
                 return;
             end
 
-            sampleName = Tcell{2,Indices(2)};
-            samXdata = Tcell{6,Indices(2)};
-            samYdata = Tcell{7,Indices(2)};
+            sampleName = Tcell{2,indices(2)};
 
             fig = uifigure('Visible', 'on');
             fig.Position = [100 100 800 600];
@@ -1030,62 +1133,31 @@ classdef CaTx_exported < matlab.apps.AppBase
             ylabel(ax, 'THz E field (a.u.)');
             ax.Position = [20 10 750 550];
             
-            plot(ax,samXdata,samYdata);
+            legendItems = {};
 
-            try
-                refXdata = Tcell{4,Indices(2)};
-                refYdata = Tcell{5,Indices(2)};
-                plot(ax,refXdata,refYdata);
-                legend(ax,"Sample","Reference");
-            catch ME
-                legend(ax,"Sample");
+            if ~isempty(app.Tcell{6,indices(2)})
+                samXdata = Tcell{6,indices(2)};
+                samYdata = Tcell{7,indices(2)};
+                plot(ax,samXdata,samYdata);
+                legendItems = [legendItems,{'Sample'}];
             end
 
-        end
+            if ~isempty(app.Tcell{8,indices(2)})
+                ref1Xdata = Tcell{8,indices(2)};
+                ref1Ydata = Tcell{9,indices(2)};
+                plot(ax,ref1Xdata,ref1Ydata);
+                legendItems = [legendItems,{'Ref.1'}];
+            end
 
-        % Button pushed function: ApplyButton
-        function ApplyButtonPushed(app, event)
-            Indices = app.cellIndices;
-            Tcell = app.Tcell;
-            colFrom = app.ColumnsFromEditField.Value;
-            colTo = app.FILEDLISTTOEditField.Value;
-            totalMeasNum = app.totalMeasNum;
+            if ~isempty(app.Tcell{10,indices(2)})
+                ref2Xdata = Tcell{10,indices(2)};
+                ref2Ydata = Tcell{11,indices(2)};
+                plot(ax,ref2Xdata,ref2Ydata);
+                legendItems = [legendItems,{'Ref.2'}];
+            end
+
+            legend(ax,legendItems);
             
-            if isempty(Indices)
-                return;
-            else
-                refIdx = Indices(2);
-            end
-
-            if isequal(app.sDropDown.Value,"Sample")
-                refTime = Tcell(6,refIdx);
-                refSig = Tcell(7,refIdx);
-                refLength = length(refTime);
-            else
-                refTime = Tcell(4,refIdx);
-                refSig = Tcell(5,refIdx);
-                refLength = length(refTime);
-            end
-
-
-            for idx = colFrom:colTo
-                samTime = Tcell(6,idx);
-                samLength = length(samTime);
-
-                if ~isequal(refLength,samLength)
-                    fig = app.CaTxUIFigure;
-                    uialert(fig,'Incompatible data length','warning');
-                    return;
-                end
-
-                Tcell(4,idx) = refTime;
-                Tcell(5,idx) = refSig;
-
-            end
-
-            % update the table
-            app.Tcell = Tcell;
-            updateMeasurementTable(app);
         end
 
         % Button pushed function: INS_LINKButton
@@ -1093,7 +1165,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             profileNum = app.INS_SELECTIONEditField.Value;
             fieldFrom = app.INS_MEASUREMENTFILEDEditField.Value;
             fieldTo = app.INS_MEASUREMENTFILEDTOEditField.Value;
-            rowINSProfile = 8;
+            rowINSProfile = 4;
 
             if isequal(profileNum,0) || isempty(app.Tcell)
                 return;
@@ -1121,7 +1193,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             profileNum = app.LAB_SELECTIONEditField.Value;
             fieldFrom = app.LAB_MEASUREMENTFILEDEditField.Value;
             fieldTo = app.LAB_MEASUREMENTFILEDTOEditField.Value;
-            rowLABProfile = 9;
+            rowUserProfile = 5;
 
             if isequal(profileNum,0) || isempty(app.Tcell)
                 return;
@@ -1135,7 +1207,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             try
-                app.Tcell(rowLABProfile,fieldFrom:fieldTo) = {profileNum};
+                app.Tcell(rowUserProfile,fieldFrom:fieldTo) = {profileNum};
             catch ME
                 fig = app.CaTxUIFigure;
                 uialert(fig,'Invalid measurement fields','warning');
@@ -1147,7 +1219,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: TimeDelayButton
         function TimeDelayButtonPushed(app, event)
-            rowTimeDelay = 13; % time delay row
+            rowTimeDelay = 15; % time delay row
             maxPer = 0.80;
 
             try
@@ -1161,10 +1233,10 @@ classdef CaTx_exported < matlab.apps.AppBase
             meaNum = size(Tcell,2);
 
             for idx = 1:meaNum
-                refTime = Tcell{4,idx};
-                refSig = Tcell{5,idx};
                 samTime = Tcell{6,idx};
                 samSig = Tcell{7,idx};
+                refTime = Tcell{8,idx};
+                refSig = Tcell{9,idx};
 
                 if isempty(refTime)
 
@@ -1182,8 +1254,8 @@ classdef CaTx_exported < matlab.apps.AppBase
                     maxLoc = maxPerLocs(round(length(maxPerLocs)/2));
                     tDelay = (round(samTime(maxLoc)*10^3))/10^3;
                     
-                    Tcell(4,idx) = {refTime};
                     Tcell(6,idx) = {samTime};
+                    Tcell(8,idx) = {refTime};
                     Tcell(rowTimeDelay,idx) = {tDelay};
                 end
                 
@@ -1191,6 +1263,32 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             app.Tcell = Tcell;
             updateMeasurementTable(app);
+        end
+
+        % Button pushed function: ApplyAnonymousIntrumentProfile0Button
+        function ApplyAnonymousIntrumentProfile0ButtonPushed(app, event)
+            updateProfile(app);
+
+            Tcell = app.Tcell;
+            Tcell(4,:) = num2cell(0);
+            app.Tcell = Tcell;
+
+            updateMeasurementTable(app);
+        end
+
+        % Button pushed function: DeleteButton
+        function DeleteButtonPushed(app, event)
+            waveformControl(app,"Delete");
+        end
+
+        % Button pushed function: MoveButton_3
+        function MoveButton_3Pushed(app, event)
+            waveformControl(app,"Move");
+        end
+
+        % Button pushed function: CopyButton
+        function CopyButtonPushed(app, event)
+            waveformControl(app,"Copy");
         end
     end
 
@@ -1205,7 +1303,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create CaTxUIFigure and hide until all components are created
             app.CaTxUIFigure = uifigure('Visible', 'off');
-            app.CaTxUIFigure.Position = [100 100 1052 917];
+            app.CaTxUIFigure.Position = [100 100 1058 944];
             app.CaTxUIFigure.Name = 'CaTx';
             app.CaTxUIFigure.Icon = fullfile(pathToMLAPP, 'CaT_logo.png');
 
@@ -1213,18 +1311,18 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ImportMeasurementButton = uibutton(app.CaTxUIFigure, 'push');
             app.ImportMeasurementButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMeasurementButtonPushed, true);
             app.ImportMeasurementButton.FontWeight = 'bold';
-            app.ImportMeasurementButton.Position = [176 875 142 23];
+            app.ImportMeasurementButton.Position = [190 902 142 23];
             app.ImportMeasurementButton.Text = 'Import Measurement';
 
             % Create FILESEditField
             app.FILESEditField = uieditfield(app.CaTxUIFigure, 'text');
-            app.FILESEditField.Position = [324 875 709 22];
+            app.FILESEditField.Position = [340 902 693 22];
 
             % Create DeployDataButton
             app.DeployDataButton = uibutton(app.CaTxUIFigure, 'push');
             app.DeployDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeployDataButtonPushed, true);
             app.DeployDataButton.FontWeight = 'bold';
-            app.DeployDataButton.Position = [698 842 87 25];
+            app.DeployDataButton.Position = [698 869 87 25];
             app.DeployDataButton.Text = 'Deploy Data';
 
             % Create CaTxLabel
@@ -1232,20 +1330,20 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.CaTxLabel.FontSize = 38;
             app.CaTxLabel.FontWeight = 'bold';
             app.CaTxLabel.FontAngle = 'italic';
-            app.CaTxLabel.Position = [87 836 98 50];
+            app.CaTxLabel.Position = [87 863 98 50];
             app.CaTxLabel.Text = 'CaTx';
 
             % Create DEBUGMsgLabel
             app.DEBUGMsgLabel = uilabel(app.CaTxUIFigure);
             app.DEBUGMsgLabel.FontWeight = 'bold';
-            app.DEBUGMsgLabel.Position = [796 843 238 22];
+            app.DEBUGMsgLabel.Position = [796 870 238 22];
             app.DEBUGMsgLabel.Text = '';
 
             % Create ExportTHzFileButton
             app.ExportTHzFileButton = uibutton(app.CaTxUIFigure, 'push');
             app.ExportTHzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ExportTHzFileButtonPushed, true);
             app.ExportTHzFileButton.FontWeight = 'bold';
-            app.ExportTHzFileButton.Position = [825 29 194 56];
+            app.ExportTHzFileButton.Position = [825 18 194 56];
             app.ExportTHzFileButton.Text = 'Export THz File';
 
             % Create ConverterEngineDropDownLabel
@@ -1253,7 +1351,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ConverterEngineDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.ConverterEngineDropDownLabel.HorizontalAlignment = 'right';
             app.ConverterEngineDropDownLabel.FontWeight = 'bold';
-            app.ConverterEngineDropDownLabel.Position = [185 843 108 22];
+            app.ConverterEngineDropDownLabel.Position = [185 870 108 22];
             app.ConverterEngineDropDownLabel.Text = 'Converter Engine';
 
             % Create ConverterEngineDropDown
@@ -1261,32 +1359,26 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ConverterEngineDropDown.Items = {'No engines available. Please check m files in .\Engines folder.'};
             app.ConverterEngineDropDown.FontWeight = 'bold';
             app.ConverterEngineDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.ConverterEngineDropDown.Position = [306 843 385 22];
+            app.ConverterEngineDropDown.Position = [306 870 385 22];
             app.ConverterEngineDropDown.Value = 'No engines available. Please check m files in .\Engines folder.';
 
             % Create ClearMemoryButton
             app.ClearMemoryButton = uibutton(app.CaTxUIFigure, 'push');
             app.ClearMemoryButton.ButtonPushedFcn = createCallbackFcn(app, @ClearMemoryButtonPushed, true);
             app.ClearMemoryButton.FontWeight = 'bold';
-            app.ClearMemoryButton.Position = [43 21 122 64];
+            app.ClearMemoryButton.Position = [43 18 122 56];
             app.ClearMemoryButton.Text = 'Clear Memory';
 
             % Create ImportTHzFileButton
             app.ImportTHzFileButton = uibutton(app.CaTxUIFigure, 'push');
             app.ImportTHzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportTHzFileButtonPushed, true);
             app.ImportTHzFileButton.FontWeight = 'bold';
-            app.ImportTHzFileButton.Position = [174 21 121 64];
+            app.ImportTHzFileButton.Position = [174 18 121 56];
             app.ImportTHzFileButton.Text = 'Import THz File';
-
-            % Create PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel
-            app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel = uilabel(app.CaTxUIFigure);
-            app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.FontSize = 10;
-            app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.Position = [730 10 323 12];
-            app.PoweredbyTerahertzApplicationsGroupUniversityofCambridgeLabel.Text = 'Powered by Terahertz Applications Group. University of Cambridge';
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.CaTxUIFigure);
-            app.TabGroup.Position = [24 100 1010 728];
+            app.TabGroup.Position = [24 85 1014 770];
 
             % Create MeasurementandMetadataTab
             app.MeasurementandMetadataTab = uitab(app.TabGroup);
@@ -1300,42 +1392,42 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.UITable_measurement.CellEditCallback = createCallbackFcn(app, @UITable_measurementCellEdit, true);
             app.UITable_measurement.CellSelectionCallback = createCallbackFcn(app, @UITable_measurementCellSelection, true);
             app.UITable_measurement.Multiselect = 'off';
-            app.UITable_measurement.Position = [178 151 807 536];
+            app.UITable_measurement.Position = [183 151 802 578];
 
             % Create UITable_scan_header
             app.UITable_scan_header = uitable(app.MeasurementandMetadataTab);
             app.UITable_scan_header.ColumnName = '';
             app.UITable_scan_header.RowName = {};
             app.UITable_scan_header.FontWeight = 'bold';
-            app.UITable_scan_header.Position = [23 151 156 536];
+            app.UITable_scan_header.Position = [23 151 161 578];
 
             % Create MetadataPanel
             app.MetadataPanel = uipanel(app.MeasurementandMetadataTab);
             app.MetadataPanel.Title = 'Metadata';
-            app.MetadataPanel.Position = [32 13 243 127];
+            app.MetadataPanel.Position = [28 15 200 127];
 
             % Create GenerateMetadataXLSFileButton
             app.GenerateMetadataXLSFileButton = uibutton(app.MetadataPanel, 'push');
             app.GenerateMetadataXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @GenerateMetadataXLSFileButtonPushed, true);
-            app.GenerateMetadataXLSFileButton.Position = [15 73 214 25];
+            app.GenerateMetadataXLSFileButton.Position = [10 73 180 25];
             app.GenerateMetadataXLSFileButton.Text = 'Generate Metadata XLS File';
 
             % Create ImportMetadataFromXLSFileButton
             app.ImportMetadataFromXLSFileButton = uibutton(app.MetadataPanel, 'push');
             app.ImportMetadataFromXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMetadataFromXLSFileButtonPushed, true);
-            app.ImportMetadataFromXLSFileButton.Position = [15 41 214 25];
+            app.ImportMetadataFromXLSFileButton.Position = [10 41 180 25];
             app.ImportMetadataFromXLSFileButton.Text = 'Import Metadata From XLS File';
 
             % Create LOADMETAXLS_EditField
             app.LOADMETAXLS_EditField = uieditfield(app.MetadataPanel, 'text');
             app.LOADMETAXLS_EditField.Editable = 'off';
             app.LOADMETAXLS_EditField.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.LOADMETAXLS_EditField.Position = [78 11 152 22];
+            app.LOADMETAXLS_EditField.Position = [11 11 179 22];
 
             % Create ColumnControlPanel
             app.ColumnControlPanel = uipanel(app.MeasurementandMetadataTab);
             app.ColumnControlPanel.Title = 'Column Control';
-            app.ColumnControlPanel.Position = [291 13 195 127];
+            app.ColumnControlPanel.Position = [236 15 195 127];
 
             % Create RemoveButton
             app.RemoveButton = uibutton(app.ColumnControlPanel, 'push');
@@ -1364,312 +1456,332 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create TableUpdatePanel
             app.TableUpdatePanel = uipanel(app.MeasurementandMetadataTab);
             app.TableUpdatePanel.Title = 'Table Update';
-            app.TableUpdatePanel.Position = [796 13 178 127];
+            app.TableUpdatePanel.Position = [843 15 135 127];
 
             % Create RefractiveIndexButton
             app.RefractiveIndexButton = uibutton(app.TableUpdatePanel, 'push');
             app.RefractiveIndexButton.ButtonPushedFcn = createCallbackFcn(app, @RefractiveIndexButtonPushed, true);
-            app.RefractiveIndexButton.Position = [11 74 155 25];
+            app.RefractiveIndexButton.Position = [9 73 115 25];
             app.RefractiveIndexButton.Text = 'Refractive Index';
 
             % Create ThicknessButton
             app.ThicknessButton = uibutton(app.TableUpdatePanel, 'push');
             app.ThicknessButton.ButtonPushedFcn = createCallbackFcn(app, @ThicknessButtonPushed, true);
-            app.ThicknessButton.Position = [11 42 155 25];
+            app.ThicknessButton.Position = [8 41 116 25];
             app.ThicknessButton.Text = 'Thickness';
 
             % Create TimeDelayButton
             app.TimeDelayButton = uibutton(app.TableUpdatePanel, 'push');
             app.TimeDelayButton.ButtonPushedFcn = createCallbackFcn(app, @TimeDelayButtonPushed, true);
-            app.TimeDelayButton.Position = [11 10 155 25];
+            app.TimeDelayButton.Position = [8 9 116 25];
             app.TimeDelayButton.Text = 'Time Delay';
 
-            % Create ReferenceWaveformChangePanel
-            app.ReferenceWaveformChangePanel = uipanel(app.MeasurementandMetadataTab);
-            app.ReferenceWaveformChangePanel.Title = 'Reference Waveform Change';
-            app.ReferenceWaveformChangePanel.Position = [503 13 279 127];
+            % Create WaveformControlPanel
+            app.WaveformControlPanel = uipanel(app.MeasurementandMetadataTab);
+            app.WaveformControlPanel.Title = 'Waveform Control';
+            app.WaveformControlPanel.Position = [439 15 395 127];
 
-            % Create ColumnEditFieldLabel
-            app.ColumnEditFieldLabel = uilabel(app.ReferenceWaveformChangePanel);
-            app.ColumnEditFieldLabel.HorizontalAlignment = 'right';
-            app.ColumnEditFieldLabel.Position = [57 74 46 22];
-            app.ColumnEditFieldLabel.Text = 'Column';
+            % Create ofColumnEditFieldLabel
+            app.ofColumnEditFieldLabel = uilabel(app.WaveformControlPanel);
+            app.ofColumnEditFieldLabel.HorizontalAlignment = 'right';
+            app.ofColumnEditFieldLabel.Position = [195 75 60 22];
+            app.ofColumnEditFieldLabel.Text = 'of Column';
 
-            % Create ColumnEditField
-            app.ColumnEditField = uieditfield(app.ReferenceWaveformChangePanel, 'numeric');
-            app.ColumnEditField.Limits = [1 Inf];
-            app.ColumnEditField.ValueDisplayFormat = '%.0f';
-            app.ColumnEditField.Position = [108 74 43 22];
-            app.ColumnEditField.Value = 1;
+            % Create ofColumnEditField
+            app.ofColumnEditField = uieditfield(app.WaveformControlPanel, 'numeric');
+            app.ofColumnEditField.Limits = [1 Inf];
+            app.ofColumnEditField.ValueDisplayFormat = '%.0f';
+            app.ofColumnEditField.Position = [260 75 43 22];
+            app.ofColumnEditField.Value = 1;
 
-            % Create sDropDownLabel
-            app.sDropDownLabel = uilabel(app.ReferenceWaveformChangePanel);
-            app.sDropDownLabel.HorizontalAlignment = 'right';
-            app.sDropDownLabel.Position = [153 74 11 22];
-            app.sDropDownLabel.Text = '''s';
+            % Create ofColumnEditField_2Label
+            app.ofColumnEditField_2Label = uilabel(app.WaveformControlPanel);
+            app.ofColumnEditField_2Label.HorizontalAlignment = 'right';
+            app.ofColumnEditField_2Label.Position = [195 40 60 22];
+            app.ofColumnEditField_2Label.Text = 'of Column';
 
-            % Create sDropDown
-            app.sDropDown = uidropdown(app.ReferenceWaveformChangePanel);
-            app.sDropDown.Items = {'Sample', 'Reference'};
-            app.sDropDown.Position = [171 74 96 22];
-            app.sDropDown.Value = 'Sample';
-
-            % Create ColumnsFromEditFieldLabel
-            app.ColumnsFromEditFieldLabel = uilabel(app.ReferenceWaveformChangePanel);
-            app.ColumnsFromEditFieldLabel.HorizontalAlignment = 'right';
-            app.ColumnsFromEditFieldLabel.Position = [45 43 94 22];
-            app.ColumnsFromEditFieldLabel.Text = 'Columns From';
-
-            % Create ColumnsFromEditField
-            app.ColumnsFromEditField = uieditfield(app.ReferenceWaveformChangePanel, 'numeric');
-            app.ColumnsFromEditField.Limits = [1 Inf];
-            app.ColumnsFromEditField.ValueDisplayFormat = '%.0f';
-            app.ColumnsFromEditField.Position = [145 43 50 22];
-            app.ColumnsFromEditField.Value = 1;
+            % Create ofColumnEditField_2
+            app.ofColumnEditField_2 = uieditfield(app.WaveformControlPanel, 'numeric');
+            app.ofColumnEditField_2.Limits = [1 Inf];
+            app.ofColumnEditField_2.ValueDisplayFormat = '%.0f';
+            app.ofColumnEditField_2.Position = [259 40 50 22];
+            app.ofColumnEditField_2.Value = 1;
 
             % Create toLabel
-            app.toLabel = uilabel(app.ReferenceWaveformChangePanel);
+            app.toLabel = uilabel(app.WaveformControlPanel);
             app.toLabel.HorizontalAlignment = 'right';
-            app.toLabel.Position = [187 42 25 22];
+            app.toLabel.Position = [305 40 25 22];
             app.toLabel.Text = 'To';
 
             % Create FILEDLISTTOEditField
-            app.FILEDLISTTOEditField = uieditfield(app.ReferenceWaveformChangePanel, 'numeric');
+            app.FILEDLISTTOEditField = uieditfield(app.WaveformControlPanel, 'numeric');
             app.FILEDLISTTOEditField.Limits = [1 Inf];
             app.FILEDLISTTOEditField.ValueDisplayFormat = '%.0f';
-            app.FILEDLISTTOEditField.Position = [216 42 50 22];
+            app.FILEDLISTTOEditField.Position = [334 40 50 22];
             app.FILEDLISTTOEditField.Value = 1;
 
-            % Create ApplyButton
-            app.ApplyButton = uibutton(app.ReferenceWaveformChangePanel, 'push');
-            app.ApplyButton.ButtonPushedFcn = createCallbackFcn(app, @ApplyButtonPushed, true);
-            app.ApplyButton.Position = [53 10 208 25];
-            app.ApplyButton.Text = 'Apply';
+            % Create SourceWaveformDropDownLabel
+            app.SourceWaveformDropDownLabel = uilabel(app.WaveformControlPanel);
+            app.SourceWaveformDropDownLabel.HorizontalAlignment = 'right';
+            app.SourceWaveformDropDownLabel.Position = [3 75 101 22];
+            app.SourceWaveformDropDownLabel.Text = 'Source Waveform';
 
-            % Create SourceLabel
-            app.SourceLabel = uilabel(app.ReferenceWaveformChangePanel);
-            app.SourceLabel.Position = [11 75 46 22];
-            app.SourceLabel.Text = 'Source:';
+            % Create SourceWaveformDropDown
+            app.SourceWaveformDropDown = uidropdown(app.WaveformControlPanel);
+            app.SourceWaveformDropDown.Items = {'Sample', 'Ref.1', 'Ref.2'};
+            app.SourceWaveformDropDown.Position = [111 75 81 22];
+            app.SourceWaveformDropDown.Value = 'Sample';
 
-            % Create TargetLabel
-            app.TargetLabel = uilabel(app.ReferenceWaveformChangePanel);
-            app.TargetLabel.Position = [12 42 42 22];
-            app.TargetLabel.Text = 'Target:';
+            % Create CopyButton
+            app.CopyButton = uibutton(app.WaveformControlPanel, 'push');
+            app.CopyButton.ButtonPushedFcn = createCallbackFcn(app, @CopyButtonPushed, true);
+            app.CopyButton.Position = [267 8 118 24];
+            app.CopyButton.Text = 'Copy';
 
-            % Create InstrumentandLaboratoryTab
-            app.InstrumentandLaboratoryTab = uitab(app.TabGroup);
-            app.InstrumentandLaboratoryTab.Title = 'Instrument and Laboratory';
+            % Create MoveButton_3
+            app.MoveButton_3 = uibutton(app.WaveformControlPanel, 'push');
+            app.MoveButton_3.ButtonPushedFcn = createCallbackFcn(app, @MoveButton_3Pushed, true);
+            app.MoveButton_3.Position = [141 8 118 24];
+            app.MoveButton_3.Text = 'Move';
+
+            % Create TargetWaveformDropDownLabel
+            app.TargetWaveformDropDownLabel = uilabel(app.WaveformControlPanel);
+            app.TargetWaveformDropDownLabel.HorizontalAlignment = 'right';
+            app.TargetWaveformDropDownLabel.Position = [4 41 96 22];
+            app.TargetWaveformDropDownLabel.Text = 'Target Waveform';
+
+            % Create TargetWaveformDropDown
+            app.TargetWaveformDropDown = uidropdown(app.WaveformControlPanel);
+            app.TargetWaveformDropDown.Items = {'Sample', 'Ref.1', 'Ref.2'};
+            app.TargetWaveformDropDown.Position = [112 41 81 22];
+            app.TargetWaveformDropDown.Value = 'Ref.1';
+
+            % Create DeleteButton
+            app.DeleteButton = uibutton(app.WaveformControlPanel, 'push');
+            app.DeleteButton.ButtonPushedFcn = createCallbackFcn(app, @DeleteButtonPushed, true);
+            app.DeleteButton.Position = [314 73 69 24];
+            app.DeleteButton.Text = 'Delete';
+
+            % Create InstrumentandUserTab
+            app.InstrumentandUserTab = uitab(app.TabGroup);
+            app.InstrumentandUserTab.Title = 'Instrument and User';
 
             % Create UITable_INS
-            app.UITable_INS = uitable(app.InstrumentandLaboratoryTab);
+            app.UITable_INS = uitable(app.InstrumentandUserTab);
             app.UITable_INS.ColumnName = '';
             app.UITable_INS.RowName = {};
             app.UITable_INS.CellEditCallback = createCallbackFcn(app, @UITable_INSCellEdit, true);
             app.UITable_INS.CellSelectionCallback = createCallbackFcn(app, @UITable_INSCellSelection, true);
             app.UITable_INS.Multiselect = 'off';
-            app.UITable_INS.Position = [174 543 801 112];
+            app.UITable_INS.Position = [174 585 801 112];
 
             % Create UITable_INS_header
-            app.UITable_INS_header = uitable(app.InstrumentandLaboratoryTab);
+            app.UITable_INS_header = uitable(app.InstrumentandUserTab);
             app.UITable_INS_header.ColumnName = '';
             app.UITable_INS_header.RowName = {};
             app.UITable_INS_header.FontWeight = 'bold';
-            app.UITable_INS_header.Position = [19 543 156 112];
+            app.UITable_INS_header.Position = [19 585 156 112];
 
             % Create UITable_LAB
-            app.UITable_LAB = uitable(app.InstrumentandLaboratoryTab);
+            app.UITable_LAB = uitable(app.InstrumentandUserTab);
             app.UITable_LAB.ColumnName = '';
             app.UITable_LAB.RowName = {};
             app.UITable_LAB.CellEditCallback = createCallbackFcn(app, @UITable_LABCellEdit, true);
             app.UITable_LAB.CellSelectionCallback = createCallbackFcn(app, @UITable_LABCellSelection, true);
             app.UITable_LAB.Multiselect = 'off';
-            app.UITable_LAB.Position = [174 294 801 133];
+            app.UITable_LAB.Position = [174 336 801 133];
 
             % Create UITable_LAB_header
-            app.UITable_LAB_header = uitable(app.InstrumentandLaboratoryTab);
+            app.UITable_LAB_header = uitable(app.InstrumentandUserTab);
             app.UITable_LAB_header.ColumnName = '';
             app.UITable_LAB_header.RowName = {};
             app.UITable_LAB_header.FontWeight = 'bold';
-            app.UITable_LAB_header.Position = [19 294 156 133];
+            app.UITable_LAB_header.Position = [19 336 156 133];
 
             % Create InstrumentLabel
-            app.InstrumentLabel = uilabel(app.InstrumentandLaboratoryTab);
+            app.InstrumentLabel = uilabel(app.InstrumentandUserTab);
             app.InstrumentLabel.FontSize = 13;
-            app.InstrumentLabel.Position = [27 662 96 22];
+            app.InstrumentLabel.Position = [27 704 96 22];
             app.InstrumentLabel.Text = 'Instrument*';
 
-            % Create LaboratoryLabel
-            app.LaboratoryLabel = uilabel(app.InstrumentandLaboratoryTab);
-            app.LaboratoryLabel.FontSize = 13;
-            app.LaboratoryLabel.Position = [27 436 98 22];
-            app.LaboratoryLabel.Text = 'Laboratory*';
+            % Create UserLabel
+            app.UserLabel = uilabel(app.InstrumentandUserTab);
+            app.UserLabel.FontSize = 13;
+            app.UserLabel.Position = [27 478 98 22];
+            app.UserLabel.Text = 'User*';
 
             % Create INS_LINKButton
-            app.INS_LINKButton = uibutton(app.InstrumentandLaboratoryTab, 'push');
+            app.INS_LINKButton = uibutton(app.InstrumentandUserTab, 'push');
             app.INS_LINKButton.ButtonPushedFcn = createCallbackFcn(app, @INS_LINKButtonPushed, true);
-            app.INS_LINKButton.Position = [904 507 70 25];
+            app.INS_LINKButton.Position = [904 549 70 25];
             app.INS_LINKButton.Text = 'Link';
 
             % Create LAB_LINKButton
-            app.LAB_LINKButton = uibutton(app.InstrumentandLaboratoryTab, 'push');
+            app.LAB_LINKButton = uibutton(app.InstrumentandUserTab, 'push');
             app.LAB_LINKButton.ButtonPushedFcn = createCallbackFcn(app, @LAB_LINKButtonPushed, true);
-            app.LAB_LINKButton.Position = [904 258 71 25];
+            app.LAB_LINKButton.Position = [904 300 71 25];
             app.LAB_LINKButton.Text = 'Link';
 
             % Create ADD_INS_COL_Button
-            app.ADD_INS_COL_Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
+            app.ADD_INS_COL_Button = uibutton(app.InstrumentandUserTab, 'push');
             app.ADD_INS_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @ADD_INS_COL_ButtonPushed, true);
-            app.ADD_INS_COL_Button.Position = [138 506 165 26];
+            app.ADD_INS_COL_Button.Position = [138 548 165 26];
             app.ADD_INS_COL_Button.Text = 'Add Profile';
 
             % Create REMOVE_INS_COL_Button
-            app.REMOVE_INS_COL_Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
+            app.REMOVE_INS_COL_Button = uibutton(app.InstrumentandUserTab, 'push');
             app.REMOVE_INS_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @REMOVE_INS_COL_ButtonPushed, true);
-            app.REMOVE_INS_COL_Button.Position = [312 506 190 26];
+            app.REMOVE_INS_COL_Button.Position = [312 548 190 26];
             app.REMOVE_INS_COL_Button.Text = 'Remove Selected Profile';
 
             % Create ADD_LAB_COL_Button
-            app.ADD_LAB_COL_Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
+            app.ADD_LAB_COL_Button = uibutton(app.InstrumentandUserTab, 'push');
             app.ADD_LAB_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @ADD_LAB_COL_ButtonPushed, true);
-            app.ADD_LAB_COL_Button.Position = [142 257 165 26];
+            app.ADD_LAB_COL_Button.Position = [142 299 165 26];
             app.ADD_LAB_COL_Button.Text = 'Add Profile';
 
             % Create REMOVE_LAB_COL_Button
-            app.REMOVE_LAB_COL_Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
+            app.REMOVE_LAB_COL_Button = uibutton(app.InstrumentandUserTab, 'push');
             app.REMOVE_LAB_COL_Button.ButtonPushedFcn = createCallbackFcn(app, @REMOVE_LAB_COL_ButtonPushed, true);
-            app.REMOVE_LAB_COL_Button.Position = [316 257 190 26];
+            app.REMOVE_LAB_COL_Button.Position = [316 299 190 26];
             app.REMOVE_LAB_COL_Button.Text = 'Remove Selected Profile';
 
             % Create SelectionLabel
-            app.SelectionLabel = uilabel(app.InstrumentandLaboratoryTab);
+            app.SelectionLabel = uilabel(app.InstrumentandUserTab);
             app.SelectionLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.SelectionLabel.HorizontalAlignment = 'right';
-            app.SelectionLabel.Position = [523 508 55 22];
+            app.SelectionLabel.Position = [523 550 55 22];
             app.SelectionLabel.Text = 'Selection';
 
             % Create INS_SELECTIONEditField
-            app.INS_SELECTIONEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
+            app.INS_SELECTIONEditField = uieditfield(app.InstrumentandUserTab, 'numeric');
             app.INS_SELECTIONEditField.Limits = [0 Inf];
             app.INS_SELECTIONEditField.ValueDisplayFormat = '%.0f';
             app.INS_SELECTIONEditField.Editable = 'off';
             app.INS_SELECTIONEditField.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.INS_SELECTIONEditField.Position = [586 508 34 22];
+            app.INS_SELECTIONEditField.Position = [586 550 34 22];
 
             % Create SelectionLabel_2
-            app.SelectionLabel_2 = uilabel(app.InstrumentandLaboratoryTab);
+            app.SelectionLabel_2 = uilabel(app.InstrumentandUserTab);
             app.SelectionLabel_2.BackgroundColor = [0.9412 0.9412 0.9412];
             app.SelectionLabel_2.HorizontalAlignment = 'right';
-            app.SelectionLabel_2.Position = [527 259 55 22];
+            app.SelectionLabel_2.Position = [527 301 55 22];
             app.SelectionLabel_2.Text = 'Selection';
 
             % Create LAB_SELECTIONEditField
-            app.LAB_SELECTIONEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
+            app.LAB_SELECTIONEditField = uieditfield(app.InstrumentandUserTab, 'numeric');
             app.LAB_SELECTIONEditField.Limits = [0 Inf];
             app.LAB_SELECTIONEditField.ValueDisplayFormat = '%.0f';
             app.LAB_SELECTIONEditField.Editable = 'off';
             app.LAB_SELECTIONEditField.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.LAB_SELECTIONEditField.Position = [590 259 34 22];
+            app.LAB_SELECTIONEditField.Position = [590 301 34 22];
 
-            % Create ApplyDefaultProfile1Button
-            app.ApplyDefaultProfile1Button = uibutton(app.InstrumentandLaboratoryTab, 'push');
-            app.ApplyDefaultProfile1Button.ButtonPushedFcn = createCallbackFcn(app, @ApplyDefaultProfile1ButtonPushed, true);
-            app.ApplyDefaultProfile1Button.Position = [723 33 252 26];
-            app.ApplyDefaultProfile1Button.Text = 'Apply Default Profile (1)';
+            % Create ApplyAnonymousUserProfile0Button
+            app.ApplyAnonymousUserProfile0Button = uibutton(app.InstrumentandUserTab, 'push');
+            app.ApplyAnonymousUserProfile0Button.ButtonPushedFcn = createCallbackFcn(app, @ApplyAnonymousUserProfile0ButtonPushed, true);
+            app.ApplyAnonymousUserProfile0Button.Position = [738 265 238 23];
+            app.ApplyAnonymousUserProfile0Button.Text = 'Apply Anonymous User Profile, 0';
 
             % Create MeasurementfieldfromLabel
-            app.MeasurementfieldfromLabel = uilabel(app.InstrumentandLaboratoryTab);
+            app.MeasurementfieldfromLabel = uilabel(app.InstrumentandUserTab);
             app.MeasurementfieldfromLabel.HorizontalAlignment = 'right';
-            app.MeasurementfieldfromLabel.Position = [625 508 139 22];
+            app.MeasurementfieldfromLabel.Position = [625 550 139 22];
             app.MeasurementfieldfromLabel.Text = 'Measurement Field From';
 
             % Create INS_MEASUREMENTFILEDEditField
-            app.INS_MEASUREMENTFILEDEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
+            app.INS_MEASUREMENTFILEDEditField = uieditfield(app.InstrumentandUserTab, 'numeric');
             app.INS_MEASUREMENTFILEDEditField.Limits = [1 Inf];
             app.INS_MEASUREMENTFILEDEditField.ValueDisplayFormat = '%.0f';
-            app.INS_MEASUREMENTFILEDEditField.Position = [771 508 50 22];
+            app.INS_MEASUREMENTFILEDEditField.Position = [771 550 50 22];
             app.INS_MEASUREMENTFILEDEditField.Value = 1;
 
             % Create toLabel_2
-            app.toLabel_2 = uilabel(app.InstrumentandLaboratoryTab);
+            app.toLabel_2 = uilabel(app.InstrumentandUserTab);
             app.toLabel_2.HorizontalAlignment = 'right';
-            app.toLabel_2.Position = [819 508 25 22];
+            app.toLabel_2.Position = [819 550 25 22];
             app.toLabel_2.Text = 'To';
 
             % Create INS_MEASUREMENTFILEDTOEditField
-            app.INS_MEASUREMENTFILEDTOEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
+            app.INS_MEASUREMENTFILEDTOEditField = uieditfield(app.InstrumentandUserTab, 'numeric');
             app.INS_MEASUREMENTFILEDTOEditField.Limits = [1 Inf];
             app.INS_MEASUREMENTFILEDTOEditField.ValueDisplayFormat = '%.0f';
-            app.INS_MEASUREMENTFILEDTOEditField.Position = [848 508 50 22];
+            app.INS_MEASUREMENTFILEDTOEditField.Position = [848 550 50 22];
             app.INS_MEASUREMENTFILEDTOEditField.Value = 1;
 
             % Create MeasurementfieldfromLabel_2
-            app.MeasurementfieldfromLabel_2 = uilabel(app.InstrumentandLaboratoryTab);
+            app.MeasurementfieldfromLabel_2 = uilabel(app.InstrumentandUserTab);
             app.MeasurementfieldfromLabel_2.HorizontalAlignment = 'right';
-            app.MeasurementfieldfromLabel_2.Position = [626 259 139 22];
+            app.MeasurementfieldfromLabel_2.Position = [626 301 139 22];
             app.MeasurementfieldfromLabel_2.Text = 'Measurement Field From';
 
             % Create LAB_MEASUREMENTFILEDEditField
-            app.LAB_MEASUREMENTFILEDEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
+            app.LAB_MEASUREMENTFILEDEditField = uieditfield(app.InstrumentandUserTab, 'numeric');
             app.LAB_MEASUREMENTFILEDEditField.Limits = [1 Inf];
             app.LAB_MEASUREMENTFILEDEditField.ValueDisplayFormat = '%.0f';
-            app.LAB_MEASUREMENTFILEDEditField.Position = [772 259 50 22];
+            app.LAB_MEASUREMENTFILEDEditField.Position = [772 301 50 22];
             app.LAB_MEASUREMENTFILEDEditField.Value = 1;
 
             % Create toLabel_3
-            app.toLabel_3 = uilabel(app.InstrumentandLaboratoryTab);
+            app.toLabel_3 = uilabel(app.InstrumentandUserTab);
             app.toLabel_3.HorizontalAlignment = 'right';
-            app.toLabel_3.Position = [818 259 25 22];
+            app.toLabel_3.Position = [818 301 25 22];
             app.toLabel_3.Text = 'To';
 
             % Create LAB_MEASUREMENTFILEDTOEditField
-            app.LAB_MEASUREMENTFILEDTOEditField = uieditfield(app.InstrumentandLaboratoryTab, 'numeric');
+            app.LAB_MEASUREMENTFILEDTOEditField = uieditfield(app.InstrumentandUserTab, 'numeric');
             app.LAB_MEASUREMENTFILEDTOEditField.Limits = [1 Inf];
             app.LAB_MEASUREMENTFILEDTOEditField.ValueDisplayFormat = '%.0f';
-            app.LAB_MEASUREMENTFILEDTOEditField.Position = [847 259 50 22];
+            app.LAB_MEASUREMENTFILEDTOEditField.Position = [847 301 50 22];
             app.LAB_MEASUREMENTFILEDTOEditField.Value = 1;
 
-            % Create DonotusecharacterindescriptionasitisusedforadelimiterLabel
-            app.DonotusecharacterindescriptionasitisusedforadelimiterLabel = uilabel(app.InstrumentandLaboratoryTab);
-            app.DonotusecharacterindescriptionasitisusedforadelimiterLabel.Position = [607 679 368 22];
-            app.DonotusecharacterindescriptionasitisusedforadelimiterLabel.Text = '* Do not use '' / '' character in description as it is used for a delimiter.';
+            % Create DonotusecharacterindescriptionLabel
+            app.DonotusecharacterindescriptionLabel = uilabel(app.InstrumentandUserTab);
+            app.DonotusecharacterindescriptionLabel.Position = [755 721 217 22];
+            app.DonotusecharacterindescriptionLabel.Text = '* Do not use '' / '' character in description';
+
+            % Create ApplyAnonymousIntrumentProfile0Button
+            app.ApplyAnonymousIntrumentProfile0Button = uibutton(app.InstrumentandUserTab, 'push');
+            app.ApplyAnonymousIntrumentProfile0Button.ButtonPushedFcn = createCallbackFcn(app, @ApplyAnonymousIntrumentProfile0ButtonPushed, true);
+            app.ApplyAnonymousIntrumentProfile0Button.Position = [737 515 238 23];
+            app.ApplyAnonymousIntrumentProfile0Button.Text = 'Apply Anonymous Intrument Profile, 0';
 
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CaTxUIFigure);
             app.PrefixnumberstothedatasetnameLabel.HorizontalAlignment = 'center';
-            app.PrefixnumberstothedatasetnameLabel.Position = [326 56 82 22];
+            app.PrefixnumberstothedatasetnameLabel.Position = [326 45 82 22];
             app.PrefixnumberstothedatasetnameLabel.Text = 'Number Prefix';
 
             % Create NumberPrefixSwitch
             app.NumberPrefixSwitch = uiswitch(app.CaTxUIFigure, 'slider');
-            app.NumberPrefixSwitch.Position = [435 58 40 18];
+            app.NumberPrefixSwitch.Position = [435 47 40 18];
 
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
-            app.AttributuesallocationLabel.Position = [540 56 97 22];
+            app.AttributuesallocationLabel.Position = [540 45 97 22];
             app.AttributuesallocationLabel.Text = 'Attributues Write:';
 
             % Create AttributuesWriteSwitch
             app.AttributuesWriteSwitch = uiswitch(app.CaTxUIFigure, 'slider');
             app.AttributuesWriteSwitch.Items = {'All Datasets', 'Only First,'};
-            app.AttributuesWriteSwitch.Position = [712 58 41 18];
+            app.AttributuesWriteSwitch.Position = [712 47 41 18];
             app.AttributuesWriteSwitch.Value = 'All Datasets';
 
             % Create MustincludeAttributeinAllDatasetsDropDownLabel
             app.MustincludeAttributeinAllDatasetsDropDownLabel = uilabel(app.CaTxUIFigure);
             app.MustincludeAttributeinAllDatasetsDropDownLabel.HorizontalAlignment = 'right';
-            app.MustincludeAttributeinAllDatasetsDropDownLabel.Position = [555 33 201 22];
+            app.MustincludeAttributeinAllDatasetsDropDownLabel.Position = [555 22 201 22];
             app.MustincludeAttributeinAllDatasetsDropDownLabel.Text = 'Must-include Attribute in All Datasets';
 
             % Create MustincludeAttributeinAllDatasetsDropDown
             app.MustincludeAttributeinAllDatasetsDropDown = uidropdown(app.CaTxUIFigure);
-            app.MustincludeAttributeinAllDatasetsDropDown.Items = {'10', '14', '15', '16', '17', '18', '19'};
-            app.MustincludeAttributeinAllDatasetsDropDown.Position = [762 33 48 22];
-            app.MustincludeAttributeinAllDatasetsDropDown.Value = '10';
+            app.MustincludeAttributeinAllDatasetsDropDown.Items = {'13', '14', '16', '17', '18', '19', '20', '21'};
+            app.MustincludeAttributeinAllDatasetsDropDown.Position = [762 22 48 22];
+            app.MustincludeAttributeinAllDatasetsDropDown.Value = '13';
 
             % Create Image
             app.Image = uiimage(app.CaTxUIFigure);
-            app.Image.Position = [25 840 72 72];
+            app.Image.Position = [25 867 72 72];
             app.Image.ImageSource = fullfile(pathToMLAPP, 'dotTHz_logo.png');
 
             % Show the figure after all components are created

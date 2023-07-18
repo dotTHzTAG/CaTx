@@ -42,9 +42,9 @@ function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcel
                     return;
                 end
 
-                ScanStartDateTime = '';
-                measurementMode = ' ';
-                description = ' ';
+                scanStartDateTime = "";
+                ref_description = ""; % Reference description
+                description = "";
                 timeDelay = 0;
                 thickness = 0;
 
@@ -54,29 +54,31 @@ function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcel
                 Tcell{1,PRJcnt} = PRJcnt;
                 Tcell{2,PRJcnt} = sampleName;
                 Tcell{3,PRJcnt} = description;
+                Tcell{4,PRJcnt} = 0; % Instrument profile
+                Tcell{5,PRJcnt} = 0; % User profile
 
-                Tcell{4,PRJcnt} = refTime;
-                Tcell{5,PRJcnt} = refSig;
                 Tcell{6,PRJcnt} = samTime;
                 Tcell{7,PRJcnt} = samSig;
+                Tcell{8,PRJcnt} = refTime;
+                Tcell{9,PRJcnt} = refSig;
+                Tcell{10,PRJcnt} = [];
+                Tcell{11,PRJcnt} = [];
 
-                Tcell{8,PRJcnt} = 0; % instrument profile
-                Tcell{9,PRJcnt} = 0; % laboratory profile
+                Tcell{12,PRJcnt} = ref_description;
+                Tcell{13,PRJcnt} = scanStartDateTime;
 
-                Tcell{10,PRJcnt} = ScanStartDateTime;
-                Tcell{11,PRJcnt} = measurementMode;
-                Tcell{12,PRJcnt} = 0; % refractive index
-                Tcell{13,PRJcnt} = timeDelay; % time dalay (ps)
-                Tcell{14,PRJcnt} = thickness; % thickness (mm)
-                Tcell{15,PRJcnt} = 0; % weight (mg)
-                Tcell{16,PRJcnt} = 0; % temperature (ps)
-                Tcell{17,PRJcnt} = 0; % concentration(%)
-                Tcell{18,PRJcnt} = char('*'); % phase
-                Tcell{19,PRJcnt} = char('0,0,0'); % cooridnate (x,y,z) (string to vector conversion needed)
+                Tcell{14,PRJcnt} = 0; % refractive index
+                Tcell{15,PRJcnt} = timeDelay; % time dalay (ps)
+                Tcell{16,PRJcnt} = thickness; % thickness (mm)
+                Tcell{17,PRJcnt} = 0; % weight (mg)
+                Tcell{18,PRJcnt} = 0; % temperature (ps)
+                Tcell{19,PRJcnt} = 0; % concentration(%)
+                Tcell{20,PRJcnt} = char('*'); % phase
+                Tcell{21,PRJcnt} = char('0,0,0'); % cooridnate (x,y,z) (string to vector conversion needed)
 
-                Tcell{20,PRJcnt} = 0; % numeric data extension
-                Tcell{21,PRJcnt} = char('*'); % text data extension
-                Tcell{22,PRJcnt} = char('0,0,0'); % vector data extension (string to vector conversion needed)
+                Tcell{22,PRJcnt} = 0; % numeric data extension
+                Tcell{23,PRJcnt} = char('*'); % text data extension
+                Tcell{24,PRJcnt} = char('0,0,0'); % vector data extension (string to vector conversion needed)
 
                 
                 progressP = PRJcnt/PRJ_count*100;

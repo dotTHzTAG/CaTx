@@ -40,7 +40,7 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     return;
                 end
                 
-                assignin('base',"HDFinfo",HDFDataInfo);
+               % assignin('base',"HDFinfo",HDFDataInfo);
                 
                 MeasCount = size(HDFDataInfo.Groups,1);
         
@@ -62,21 +62,9 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     waveformRate = str2num(extractBefore(extractAfter(settingInfo,'waveform_rate":'),'}'));
                     coaverage = str2num(extractBefore(extractAfter(settingInfo,'coaverages":'),','));
                     description = char(extractBefore(extractAfter(settingInfo,'description":"'),'",'));
-                    ScanStartDateTime = char(extractBefore(extractAfter(settingInfo,'ScanStartDateTime":"'),'.'));
+                    scanStartDateTime = char(extractBefore(extractAfter(settingInfo,'ScanStartDateTime":"'),'.'));
+                    ref_description = ""; % Reference description
                     
-                    try
-                        scannerName = char(extractBefore(extractAfter(settingInfo,'scanner_name":"'),'"'));
-                    catch ME
-                        scannerName = "SpectraSeries";
-                    end
-                    
-                    if isequal(scannerName,"SpectraSeries")
-                        measurementMode = 'TX';
-                    else
-                        measurementMode = ' ';
-                    end
-
-
                     try
                             sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
 
@@ -122,29 +110,31 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     Tcell{1,MeasCount-idx+idxStr} = MeasCount-idx+idxStr;
                     Tcell{2,MeasCount-idx+idxStr} = sampleName;
                     Tcell{3,MeasCount-idx+idxStr} = description;
+                    Tcell{4,MeasCount-idx+idxStr} = 0; % Instrument profile
+                    Tcell{5,MeasCount-idx+idxStr} = 0; % User profile
 
-                    Tcell{4,MeasCount-idx+idxStr} = refTime;
-                    Tcell{5,MeasCount-idx+idxStr} = refSig;
                     Tcell{6,MeasCount-idx+idxStr} = samTime;
                     Tcell{7,MeasCount-idx+idxStr} = samSig;
+                    Tcell{8,MeasCount-idx+idxStr} = refTime;
+                    Tcell{9,MeasCount-idx+idxStr} = refSig;
+                    Tcell{10,MeasCount-idx+idxStr} = [];
+                    Tcell{11,MeasCount-idx+idxStr} = [];
 
-                    Tcell{8,MeasCount-idx+idxStr} = 0; % instrument profile
-                    Tcell{9,MeasCount-idx+idxStr} = 0; % laboratory profile
+                    Tcell{12,MeasCount-idx+idxStr} = ref_description;
+                    Tcell{13,MeasCount-idx+idxStr} = scanStartDateTime;
 
-                    Tcell{10,MeasCount-idx+idxStr} = ScanStartDateTime;
-                    Tcell{11,MeasCount-idx+idxStr} = measurementMode;
-                    Tcell{12,MeasCount-idx+idxStr} = 0; % refractive index
-                    Tcell{13,MeasCount-idx+idxStr} = timeDelay; % time dalay (ps)
-                    Tcell{14,MeasCount-idx+idxStr} = thickness; % thickness (mm)
-                    Tcell{15,MeasCount-idx+idxStr} = 0; % weight (mg)
-                    Tcell{16,MeasCount-idx+idxStr} = 0; % temperature (ps)
-                    Tcell{17,MeasCount-idx+idxStr} = 0; % concentration(%)
-                    Tcell{18,MeasCount-idx+idxStr} = char('*'); % phase
-                    Tcell{19,MeasCount-idx+idxStr} = char('0,0,0'); % cooridnate (x,y,z) (string to vector conversion needed)
+                    Tcell{14,MeasCount-idx+idxStr} = 0; % refractive index
+                    Tcell{15,MeasCount-idx+idxStr} = timeDelay; % time dalay (ps)
+                    Tcell{16,MeasCount-idx+idxStr} = thickness; % thickness (mm)
+                    Tcell{17,MeasCount-idx+idxStr} = 0; % weight (mg)
+                    Tcell{18,MeasCount-idx+idxStr} = 0; % temperature (ps)
+                    Tcell{19,MeasCount-idx+idxStr} = 0; % concentration(%)
+                    Tcell{20,MeasCount-idx+idxStr} = ""; % phase
+                    Tcell{21,MeasCount-idx+idxStr} = "0,0,0"; % cooridnate (x,y,z) (string to vector conversion needed)
 
-                    Tcell{20,MeasCount-idx+idxStr} = 0; % numeric data extension
-                    Tcell{21,MeasCount-idx+idxStr} = char('*'); % text data extension
-                    Tcell{22,MeasCount-idx+idxStr} = char('0,0,0'); % vector data extension (string to vector conversion needed)
+                    Tcell{22,MeasCount-idx+idxStr} = 0; % numeric data extension
+                    Tcell{23,MeasCount-idx+idxStr} = ""; % text data extension
+                    Tcell{24,MeasCount-idx+idxStr} = "0,0,0"; % vector data extension (string to vector conversion needed)
 
                     
                     progressP = idx/MeasCount*100;
