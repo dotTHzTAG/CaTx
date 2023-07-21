@@ -1,8 +1,8 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% the dotTHz project 2023 TAG, University of Cambridge
-% MenloSystems_UCAM.m file for the Cambridge THz converter
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the dotTHz project 2023
+% MenloSystems_UCAM.m file for CaTx Engine
+% Coded by Terahertz Applications Group, University of Cambridge
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function Tcell = MenloSystems_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
            
@@ -33,7 +33,7 @@ function Tcell = MenloSystems_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure
                 catch ME
                     fig = uiFigure;
                     uialert(fig,'Incorrect Data Set','Warning');
-                    DEBUGMsgLabel.Text = 'Loading cancelled';
+                    DEBUGMsgLabel.Text = 'Loading Cancelled';
                     return;
                 end
 
@@ -45,11 +45,15 @@ function Tcell = MenloSystems_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure
                     measDate = "";
                 end
                         
-                scanStartDateTime = measDate;
-                ref_description = ""; % Reference description
+                
                 description = "";
-                timeDelay = 0;
-                thickness = 0;
+                mtDescription = "para1,para2";
+                dsDescription = "ds1:Sample, ds2:Ref"; % dataset description
+                date = measDate;
+                mode = "";
+                time = [];
+                para1 = [];
+                para2 = [];
 
                 scanLength = length(refTime);
                 xSpacing = mean(diff(refTime));
@@ -60,29 +64,25 @@ function Tcell = MenloSystems_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure
                 Tcell{4,PRJcnt} = 0; % Instrument profile
                 Tcell{5,PRJcnt} = 0; % User profile
 
-                Tcell{6,PRJcnt} = samTime;
-                Tcell{7,PRJcnt} = samSig;
-                Tcell{8,PRJcnt} = refTime;
-                Tcell{9,PRJcnt} = refSig;
-                Tcell{10,PRJcnt} = [];
-                Tcell{11,PRJcnt} = [];
+                Tcell{6,PRJcnt} = date; % measurement start date
+                Tcell{7,PRJcnt} = time; % measurement start time
+                Tcell{8,PRJcnt} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
+                Tcell{9,PRJcnt} = []; % coordinates
+                Tcell{10,PRJcnt} = mtDescription; % metadata description
+                Tcell{11,PRJcnt} = para1; % thickness (mm)
+                Tcell{12,PRJcnt} = para2; % temperature (K)
+                Tcell{13,PRJcnt} = []; % weight (mg)
+                Tcell{14,PRJcnt} = []; % concentration  (%)
 
-                Tcell{12,PRJcnt} = ref2Description;
-                Tcell{13,PRJcnt} = scanStartDateTime;
+                Tcell{15,PRJcnt} = []; % not used
+                Tcell{16,PRJcnt} = []; % not used
+                Tcell{17,PRJcnt} = []; % not used
 
-                Tcell{14,PRJcnt} = 0; % refractive index
-                Tcell{15,PRJcnt} = timeDelay; % time dalay (ps)
-                Tcell{16,PRJcnt} = thickness; % thickness (mm)
-                Tcell{17,PRJcnt} = 0; % weight (mg)
-                Tcell{18,PRJcnt} = 0; % temperature (ps)
-                Tcell{19,PRJcnt} = 0; % concentration(%)
-                Tcell{20,PRJcnt} = ""; % phase
-                Tcell{21,PRJcnt} = "0,0,0"; % cooridnate (x,y,z) (string to vector conversion needed)
-
-                Tcell{22,PRJcnt} = 0; % numeric data extension
-                Tcell{23,PRJcnt} = ""; % text data extension
-                Tcell{24,PRJcnt} = "0,0,0"; % vector data extension (string to vector conversion needed)
-
+                Tcell{18,PRJcnt} = dsDescription; % dataset description
+                Tcell{19,PRJcnt} = [samTime;samSig];
+                Tcell{20,PRJcnt} = [refTime;refSig];
+                Tcell{21,PRJcnt} = []; % not used
+                Tcell{22,PRJcnt} = []; % not used
                 
                 progressP = PRJcnt/PRJ_count*100;
                 progressP = num2str(progressP,'%.0f');
@@ -91,5 +91,5 @@ function Tcell = MenloSystems_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure
                 drawnow          
             end
 
-            DEBUGMsgLabel.Text = "Complete conversion";
+            DEBUGMsgLabel.Text = "Complete Conversion";
 end

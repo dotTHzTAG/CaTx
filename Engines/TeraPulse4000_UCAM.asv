@@ -1,8 +1,8 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% The dotTHz project 2023 
-% TeraPulse4000_UCAM.m file for CaTx Engine
-% Coded by Terahertz Applications Group, University of Cambridge
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The dotTHz project 2023 TAG, University of Cambridge
+% TeraPulse4000_UCAM.m file for the Cambridge THz converter
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
 
@@ -66,10 +66,6 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     date = char(extractBefore(scanStartDateTime,'T'));
                     time = char(extractAfter(scanStartDateTime,'T'));
                     dsDescription = "ds1:Sample, ds2:Ref"; % dataset description
-                    mode = "THz-TDS/Transmission";
-                    temperature = [];
-                    concentration = [];
-                    weight = [];
                     
                     try
                             sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
@@ -81,7 +77,7 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                         catch ME
                             fig = uiFigure;
                             uialert(fig,'Please check the measurement mode.','Warning');
-                            DEBUGMsgLabel.Text = 'Loading Aborted';
+                            DEBUGMsgLabel.Text = 'Loading aborted';
                             return
                         end
                     end                        
@@ -133,7 +129,7 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     Tcell{16,MeasCount-idx+idxStr} = []; % not used
                     Tcell{17,MeasCount-idx+idxStr} = []; % not used
 
-                    Tcell{18,MeasCount-idx+idxStr} = dsDescription; % dataset description
+                    Tcell{18,MeasCount-idx+idxStr} = ; % dataset description
                     Tcell{19,MeasCount-idx+idxStr} = [samTime;samSig];
                     Tcell{20,MeasCount-idx+idxStr} = [refTime;refSig];
                     Tcell{21,MeasCount-idx+idxStr} = []; % not used
@@ -145,7 +141,7 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     DEBUGMsgLabel.Text = progressP;
                     drawnow
                 end
-                DEBUGMsgLabel.Text = "Complete Conversion";                
+                DEBUGMsgLabel.Text = "Complete conversion";                
                 idxStr = idxStr + MeasCount;
                 %assignin("base","Tcell",Tcell);
             end
