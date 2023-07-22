@@ -81,6 +81,8 @@ classdef CaTx_exported < matlab.apps.AppBase
     
     properties (Access = private)
         Tcell % cell array for table display, keep in mind that Tcell is not a table array
+        Tcell_header % table header cell array
+        Tcell_headerDefault % tablet default header cell array
         PRJ_count % Description
         fullpathname % Description
         filename;
@@ -310,7 +312,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 }';
 
             Tcell_guideCol3 = {"3","THz-TDS Example","Data Assignment Guide","", "","date","time",...
-                "THz-TDS/Transmission","","thickness (mm), weight (mg), temperature (K)","0.520","50","293",...
+                "THz-TDS/Transmission","","thickness (mm), temperature (K), weight (mg)","0.520","293","50",...
                 "","","","1.00","Sample, Ref1:air, Ref2:PTFE","sample [time(ps); E.field(a.u.)]","Reference 1 [time(ps); E.field(a.u.)]","Reference 2 [time(ps); E.field(a.u.)]","*More datasets can be added if necessary.",...
                 }';
 
@@ -359,6 +361,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             
             app.UITable_InsHeader.Data = cell2table(insProfileHeader);
             app.UITable_UserHeader.Data = cell2table(userProfileHeader);
+            app.Tcell_header = Tcell_header;
+            app.Tcell_headerDefault = Tcell_header;
             app.manualMode = 1;
             updateProfile(app);
         end
@@ -417,6 +421,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.totalMeasNum = measNum;
             app.Tcell = Tcell;
 
+            app.UITable_Header.Data = app.Tcell_headerDefault;
             updateMeasurementTable(app);
             app.Ins_MeasurementFieldToEditField.Value = app.totalMeasNum;
             app.User_MeasurementFieldToEditField.Value = app.totalMeasNum;
@@ -444,6 +449,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.UITable_User.Data = [];
                 app.ins_profile = [];
                 app.user_profile = [];
+                app.UITable_Header.Data = app.Tcell_headerDefault;
             end
         end
 
@@ -499,9 +505,44 @@ classdef CaTx_exported < matlab.apps.AppBase
         % Cell edit callback: UITable_Measurement
         function UITable_MeasurementCellEdit(app, event)
             indices = event.Indices;
-            newData = event.NewData;
-            timeDelay = cell2mat(app.Tcell(15,indices(2)));
-            app.Tcell(indices(1),indices(2)) = {newData};
+            newData = event.NewData; 
+
+            if app.manualMode
+                return;
+            end
+
+            switch indices(1)
+                case 10
+                    app.Tcell(10,:) = {newData};
+                    mtList = split(newData,',');
+                    Tcell_header = app.Tcell_header;
+                    for idx = 1:6
+                        mtDRow = 10; % metadata description row
+                        if idx<=size(mtList,1)
+                            Tcell_header{idx+mtDRow} = strcat(num2str(idx+mtDRow),": ",mtList(idx,1));
+                        else
+                            Tcell_header{idx+mtDRow} = strcat(num2str(idx+mtDRow),": -");
+                        end
+                    end
+                    app.UITable_Header.Data = cell2table(Tcell_header);
+                    app.Tcell_header = Tcell_header;
+                case 18
+                    app.Tcell(18,:) = {newData};
+                    dsList = split(newData,',');
+                    Tcell_header = app.Tcell_header;
+                    for idx = 1:4
+                        dsDRow = 18; % dataset description row
+                        if idx<=size(dsList,1)
+                            Tcell_header{idx+dsDRow} = strcat(num2str(idx+dsDRow),": ",dsList(idx,1));
+                        else
+                            Tcell_header{idx+dsDRow} = strcat(num2str(idx+dsDRow),": -");
+                        end
+                    end
+                    app.UITable_Header.Data = cell2table(Tcell_header);
+                    app.Tcell_header = Tcell_header;
+                otherwise
+                    app.Tcell(indices(1),indices(2)) = {newData};
+            end
 
             updateMeasurementTable(app);
         end
@@ -1450,7 +1491,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create DeleteButton
             app.DeleteButton = uibutton(app.DatasetControlPanel, 'push');
             app.DeleteButton.ButtonPushedFcn = createCallbackFcn(app, @DeleteButtonPushed, true);
-            app.DeleteButton.Position = [337 74 65 24];
+            app.DeleteButton.Position = [337 74 78 24];
             app.DeleteButton.Text = 'Delete';
 
             % Create InstrumentsandUsersTab
