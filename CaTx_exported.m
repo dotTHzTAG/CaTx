@@ -870,8 +870,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             Tcellxls = [Tcell_header Tcell];
             Tcellxls([4:9, 17:end],:) = [];
             
-
-            writetable(Tcellxls,fullfile,'WriteVariableNames',false);
+            try
+                writetable(Tcellxls,fullfile,'WriteVariableNames',false);
+            catch ME
+                writecell(Tcellxls,fullfile);
+            end
+            
             fileattrib(fullfile,'+w');
             
         end
