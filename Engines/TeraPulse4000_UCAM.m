@@ -9,7 +9,6 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
             % peak location is calcuated based on the center position of
             % two points at maxPer of the maximum value.
             maxPer = 0.70;
-            startRowLoc = 18;
             idxStr = 1;
             
             for PRJcnt = 1:PRJ_count

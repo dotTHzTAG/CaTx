@@ -4,8 +4,8 @@ classdef CaTx_exported < matlab.apps.AppBase
     properties (Access = public)
         CaTxUIFigure                   matlab.ui.Figure
         Image                          matlab.ui.control.Image
-        ExceptAttributeDropDown        matlab.ui.control.DropDown
-        ExceptAttributeDropDownLabel   matlab.ui.control.Label
+        exceptItemDropDown             matlab.ui.control.DropDown
+        exceptItemDropDownLabel        matlab.ui.control.Label
         AttributueInclusionSwitch      matlab.ui.control.Switch
         AttributuesallocationLabel     matlab.ui.control.Label
         NumberPrefixSwitch             matlab.ui.control.Switch
@@ -573,7 +573,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 attAll = true;
             else
                 attAll = false;
-                ectAttr = str2num(app.ExceptAttributeDropDown.Value);
+                ectAttr = str2num(app.exceptItemDropDown.Value);
             end
 
             app.DEBUGMsgLabel.Text = "Exporting started";
@@ -1694,26 +1694,26 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
-            app.AttributuesallocationLabel.Position = [401 18 110 22];
+            app.AttributuesallocationLabel.Position = [429 18 110 22];
             app.AttributuesallocationLabel.Text = 'Attributue Inclusion:';
 
             % Create AttributueInclusionSwitch
             app.AttributueInclusionSwitch = uiswitch(app.CaTxUIFigure, 'slider');
             app.AttributueInclusionSwitch.Items = {'All Measurements', 'Only First,'};
-            app.AttributueInclusionSwitch.Position = [617 20 41 18];
+            app.AttributueInclusionSwitch.Position = [645 20 41 18];
             app.AttributueInclusionSwitch.Value = 'All Measurements';
 
-            % Create ExceptAttributeDropDownLabel
-            app.ExceptAttributeDropDownLabel = uilabel(app.CaTxUIFigure);
-            app.ExceptAttributeDropDownLabel.HorizontalAlignment = 'right';
-            app.ExceptAttributeDropDownLabel.Position = [723 18 89 22];
-            app.ExceptAttributeDropDownLabel.Text = 'Except Attribute';
+            % Create exceptItemDropDownLabel
+            app.exceptItemDropDownLabel = uilabel(app.CaTxUIFigure);
+            app.exceptItemDropDownLabel.HorizontalAlignment = 'right';
+            app.exceptItemDropDownLabel.Position = [745 18 67 22];
+            app.exceptItemDropDownLabel.Text = 'except Item';
 
-            % Create ExceptAttributeDropDown
-            app.ExceptAttributeDropDown = uidropdown(app.CaTxUIFigure);
-            app.ExceptAttributeDropDown.Items = {'7', '9', '11', '12', '13', '14', '15', '16'};
-            app.ExceptAttributeDropDown.Position = [818 18 48 22];
-            app.ExceptAttributeDropDown.Value = '7';
+            % Create exceptItemDropDown
+            app.exceptItemDropDown = uidropdown(app.CaTxUIFigure);
+            app.exceptItemDropDown.Items = {'7', '9', '11', '12', '13', '14', '15', '16'};
+            app.exceptItemDropDown.Position = [818 18 48 22];
+            app.exceptItemDropDown.Value = '7';
 
             % Create Image
             app.Image = uiimage(app.CaTxUIFigure);

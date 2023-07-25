@@ -1,16 +1,11 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% The dotTHz project, 2023 TAG, University of Cambridge
-% TeraPulse4000_RX_Focus_UCAM.m for the Cambridge THz converter
-% Reflection mode measurement data extraction script
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The dotTHz project 2023
+% TeraPulse4000_RX_Focus_UCAM.m file for CaTx Engine
+% Coded by Terahertz Applications Group, University of Cambridge
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
 
-            % peak location is calcuated based on the center position of
-            % two points at maxPer of the maximum value.
-            maxPer = 0.70;
-            startRowLoc = 18;
             idxStr = 1;
             
             for PRJcnt = 1:PRJ_count
@@ -36,7 +31,7 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                 catch ME
                     fig = uiFigure;
                     uialert(fig,'Incorrect HDF5 Data Set','Warning');
-                    DEBUGMsgLabel.Text = 'Loading cancelled';
+                    DEBUGMsgLabel.Text = 'Loading Cancelled';
                     return;
                 end
                 
@@ -56,7 +51,10 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     coaverage = str2num(extractBefore(extractAfter(settingInfo,'coaverages":'),','));
                     description = char(extractBefore(extractAfter(settingInfo,'description":"'),'",'));
                     scanStartDateTime = char(extractBefore(extractAfter(settingInfo,'ScanStartDateTime":"'),'.'));
-                    ref_description = ""; % Reference description
+                    dsDescription = "Sample"; % Reference description
+                    date = char(extractBefore(scanStartDateTime,'T'));
+                    time = char(extractAfter(scanStartDateTime,'T'));
+                    mode = "THz-Imaging/Reflection";
 
                     try
                             sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
@@ -68,10 +66,14 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                         catch ME
                             fig = uiFigure;
                             uialert(fig,'Please check the measurement mode.','Warning');
-                            DEBUGMsgLabel.Text = 'Loading aborted';
+                            DEBUGMsgLabel.Text = 'Loading Aborted';
                             return
                         end
                     end                        
+
+                    % metadata description, each item is corresponding
+                    % metadata entries sequentially.
+                    mtDescription = "Thickness (mm)";
 
                     try
                         thickness = char(extractBefore(extractAfter(extractAfter(sampleName,'_'),'_'),'mm'));
@@ -89,35 +91,36 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     xSpacing = mean(diff(samTime));
                     timeDelay = 0;
 
+                    mt1 = thickness;
+                    mt2 = [];
+                    mt3 = [];
+                    mt4 = [];
+
                     Tcell{1,MeasCount-idx+idxStr} = MeasCount-idx+idxStr;
                     Tcell{2,MeasCount-idx+idxStr} = sampleName;
                     Tcell{3,MeasCount-idx+idxStr} = description;
                     Tcell{4,MeasCount-idx+idxStr} = 0; % Instrument profile
                     Tcell{5,MeasCount-idx+idxStr} = 0; % User profile
 
-                    Tcell{6,MeasCount-idx+idxStr} = samTime;
-                    Tcell{7,MeasCount-idx+idxStr} = samSig;
-                    Tcell{8,MeasCount-idx+idxStr} = refTime;
-                    Tcell{9,MeasCount-idx+idxStr} = refSig;
-                    Tcell{10,MeasCount-idx+idxStr} = [];
-                    Tcell{11,MeasCount-idx+idxStr} = [];
+                    Tcell{6,MeasCount-idx+idxStr} = date; % measurement start date
+                    Tcell{7,MeasCount-idx+idxStr} = time; % measurement start time
+                    Tcell{8,MeasCount-idx+idxStr} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
+                    Tcell{9,MeasCount-idx+idxStr} = []; % coordinates
+                    Tcell{10,MeasCount-idx+idxStr} = mtDescription; % metadata description
+                    Tcell{11,MeasCount-idx+idxStr} = mt1; % metadata 1 value
+                    Tcell{12,MeasCount-idx+idxStr} = mt2; % metadata 2 value
+                    Tcell{13,MeasCount-idx+idxStr} = mt3; % metadata 3 value
+                    Tcell{14,MeasCount-idx+idxStr} = mt4; % metadata 4 value
 
-                    Tcell{12,MeasCount-idx+idxStr} = ref_description;
-                    Tcell{13,MeasCount-idx+idxStr} = scanStartDateTime;
+                    Tcell{15,MeasCount-idx+idxStr} = []; % not used
+                    Tcell{16,MeasCount-idx+idxStr} = []; % not used
+                    Tcell{17,MeasCount-idx+idxStr} = []; % dotTHz version is added by CaTx
 
-                    Tcell{14,MeasCount-idx+idxStr} = 0; % refractive index
-                    Tcell{15,MeasCount-idx+idxStr} = timeDelay; % time dalay (ps)
-                    Tcell{16,MeasCount-idx+idxStr} = thickness; % thickness (mm)
-                    Tcell{17,MeasCount-idx+idxStr} = 0; % weight (mg)
-                    Tcell{18,MeasCount-idx+idxStr} = 0; % temperature (ps)
-                    Tcell{19,MeasCount-idx+idxStr} = 0; % concentration(%)
-                    Tcell{20,MeasCount-idx+idxStr} = ""; % phase
-                    Tcell{21,MeasCount-idx+idxStr} = "0,0,0"; % cooridnate (x,y,z) (string to vector conversion needed)
-
-                    Tcell{22,MeasCount-idx+idxStr} = 0; % numeric data extension
-                    Tcell{23,MeasCount-idx+idxStr} = ""; % text data extension
-                    Tcell{24,MeasCount-idx+idxStr} = "0,0,0"; % vector data extension (string to vector conversion needed)
-
+                    Tcell{18,MeasCount-idx+idxStr} = dsDescription; % dataset description
+                    Tcell{19,MeasCount-idx+idxStr} = [samTime;samSig];
+                    Tcell{20,MeasCount-idx+idxStr} = []; % not used
+                    Tcell{21,MeasCount-idx+idxStr} = []; % not used
+                    Tcell{22,MeasCount-idx+idxStr} = []; % not used
                     
                     progressP = idx/MeasCount*100;
                     progressP = num2str(progressP,'%.0f');
@@ -125,7 +128,7 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     DEBUGMsgLabel.Text = progressP;
                     drawnow
                 end
-                DEBUGMsgLabel.Text = "Complete conversion";                
+                DEBUGMsgLabel.Text = "Complete Conversion";                
                 idxStr = idxStr + MeasCount;
                 %assignin("base","Tcell",Tcell);
             end
