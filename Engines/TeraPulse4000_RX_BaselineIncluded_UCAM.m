@@ -4,7 +4,7 @@
 % Coded by Terahertz Applications Group, University of Cambridge
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
+function Tcell = TeraPulse4000_RX_BaselineIncluded_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
 
             idxStr = 1;
             
@@ -35,7 +35,7 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     return;
                 end
                 
-                %assignin('base',"HDFinfo",HDFDataInfo);
+                assignin('base',"HDFinfo",HDFDataInfo);
                 
                 MeasCount = size(HDFDataInfo.Groups,1);
         
@@ -57,16 +57,16 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     mode = "THz-Imaging/Reflection";
 
                     try
-                            sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
-
+                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value);
+                            sampleName = strcat("sample",idx);
                     catch ME
                         try
-                            sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value);
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value)
                             %sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(19).Value);
                         catch ME
-                            fig = uiFigure;
-                            uialert(fig,'Please check the measurement mode.','Warning');
-                            DEBUGMsgLabel.Text = 'Loading Aborted';
+                            %fig = app.CaTxUIFigure;
+                            %uialert(fig,'Please check the measurement mode.','Warning');
+                            %DEBUGMsgLabel.Text = 'Loading Aborted';
                             return
                         end
                     end                        
@@ -130,6 +130,6 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                 end
                 DEBUGMsgLabel.Text = "Complete Conversion";                
                 idxStr = idxStr + MeasCount;
-                %assignin("base","Tcell",Tcell);
+                assignin("base","Tcell",Tcell);
             end
 end

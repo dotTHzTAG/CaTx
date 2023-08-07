@@ -1,10 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The dotTHz project 2023
-% TeraPulse4000_RX_Focus_UCAM.m file for CaTx Engine
+% TeraPulse4000_RX_Imaging_KNUCH.m file for CaTx Engine
 % Coded by Terahertz Applications Group, University of Cambridge
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
+function Tcell = TeraPulse4000_RX_Imaging_KNUCH(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
 
             idxStr = 1;
             
