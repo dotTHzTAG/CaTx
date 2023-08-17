@@ -84,7 +84,7 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     
                     % metadata description, each item is corresponding
                     % metadata entries sequentially.
-                    mtDescription = "thickness (mm), temperature (K), weight (mg)";
+                    mdDescription = "thickness (mm), temperature (K), weight (mg)";
 
                     try
                         thickness = char(extractBefore(extractAfter(extractAfter(sampleName,'_'),'_'),'mm'));
@@ -95,10 +95,10 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     temperature = [];
                     weight = [];
 
-                    mt1 = thickness;
-                    mt2 = temperature;
-                    mt3 = weight;
-                    mt4 = [];
+                    md1 = thickness;
+                    md2 = temperature;
+                    md3 = weight;
+                    md4 = [];
                    
                     % dataset description
                     dsDescription = "ds1:Sample, ds2:Ref"; % dataset description
@@ -123,6 +123,11 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     maxLoc = maxPerLocs(round(length(maxPerLocs)/2));
                     timeDelay = (round(samTime(maxLoc)*10^3))/10^3;
 
+                    ds1 = [samTime;samSig];
+                    ds2 = [refTime;refSig];
+                    ds3 = [];
+                    ds4 = [];
+
                     Tcell{1,MeasCount-idx+idxStr} = MeasCount-idx+idxStr;
                     Tcell{2,MeasCount-idx+idxStr} = sampleName;
                     Tcell{3,MeasCount-idx+idxStr} = description;
@@ -133,21 +138,21 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                     Tcell{7,MeasCount-idx+idxStr} = time; % measurement start time
                     Tcell{8,MeasCount-idx+idxStr} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
                     Tcell{9,MeasCount-idx+idxStr} = []; % coordinates
-                    Tcell{10,MeasCount-idx+idxStr} = mtDescription; % metadata description
-                    Tcell{11,MeasCount-idx+idxStr} = mt1; % metadata 1 value
-                    Tcell{12,MeasCount-idx+idxStr} = mt2; % metadata 2 value
-                    Tcell{13,MeasCount-idx+idxStr} = mt3; % metadata 3 value
-                    Tcell{14,MeasCount-idx+idxStr} = mt4; % metadata 4 value
+                    Tcell{10,MeasCount-idx+idxStr} = mdDescription; % metadata description
+                    Tcell{11,MeasCount-idx+idxStr} = md1; % metadata 1 value
+                    Tcell{12,MeasCount-idx+idxStr} = md2; % metadata 2 value
+                    Tcell{13,MeasCount-idx+idxStr} = md3; % metadata 3 value
+                    Tcell{14,MeasCount-idx+idxStr} = md4; % metadata 4 value
 
                     Tcell{15,MeasCount-idx+idxStr} = []; % not used
                     Tcell{16,MeasCount-idx+idxStr} = []; % not used
                     Tcell{17,MeasCount-idx+idxStr} = []; % dotTHz version is added by CaTx
 
                     Tcell{18,MeasCount-idx+idxStr} = dsDescription; % dataset description
-                    Tcell{19,MeasCount-idx+idxStr} = [samTime;samSig];
-                    Tcell{20,MeasCount-idx+idxStr} = [refTime;refSig];
-                    Tcell{21,MeasCount-idx+idxStr} = []; % not used
-                    Tcell{22,MeasCount-idx+idxStr} = []; % not used
+                    Tcell{19,MeasCount-idx+idxStr} = ds1;
+                    Tcell{20,MeasCount-idx+idxStr} = ds2;
+                    Tcell{21,MeasCount-idx+idxStr} = ds3;
+                    Tcell{22,MeasCount-idx+idxStr} = ds4;
                     
                     progressP = idx/MeasCount*100;
                     progressP = num2str(progressP,'%.0f');

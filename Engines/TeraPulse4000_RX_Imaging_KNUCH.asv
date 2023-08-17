@@ -1,10 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The dotTHz project 2023
-% TeraPulse4000_RX_Focus_UCAM.m file for CaTx Engine
+% TeraPulse4000_RX_Imaging_KNUCH.m file for CaTx Engine
 % Coded by Terahertz Applications Group, University of Cambridge
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
+function Tcell = TeraPulse4000_RX_Imaging_KNUCH(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
 
             idxStr = 1;
             
@@ -95,10 +95,6 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     md2 = []; % optional refractive index
                     md3 = [];
                     md4 = [];
-                    ds1 = [samTime;samSig];
-                    ds2 = [];
-                    ds3 = [];
-                    ds4 = [];
 
                     Tcell{1,MeasCount-idx+idxStr} = MeasCount-idx+idxStr;
                     Tcell{2,MeasCount-idx+idxStr} = sampleName;
@@ -121,10 +117,10 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     Tcell{17,MeasCount-idx+idxStr} = []; % dotTHz version is added by CaTx
 
                     Tcell{18,MeasCount-idx+idxStr} = dsDescription; % dataset description
-                    Tcell{19,MeasCount-idx+idxStr} = ds1;
-                    Tcell{20,MeasCount-idx+idxStr} = ds2;
-                    Tcell{21,MeasCount-idx+idxStr} = ds3;
-                    Tcell{22,MeasCount-idx+idxStr} = ds4;
+                    Tcell{19,MeasCount-idx+idxStr} = ;
+                    Tcell{20,MeasCount-idx+idxStr} = []; % not used
+                    Tcell{21,MeasCount-idx+idxStr} = []; % not used
+                    Tcell{22,MeasCount-idx+idxStr} = []; % not used
                     
                     progressP = idx/MeasCount*100;
                     progressP = num2str(progressP,'%.0f');

@@ -300,8 +300,8 @@ classdef CaTx_exported < matlab.apps.AppBase
                 }';
 
             Tcell_guideCol1 = {"1","HDF5","Category (name)","attribute (instrument)", "attribute (user)","attribute (date)","attribute (time)",...
-                "attribute (mode)","attribute (coordinate)","attribute (mtDescription)","attribute (mt1)","attribue (mt2)","attribute (mt3)",...
-                "attribute (mt4)","attribute (mt5)","attribute (mt6)","attribute (thzVer)","attribute (dsDescription)",...
+                "attribute (mode)","attribute (coordinate)","attribute (mdDescription)","attribute (md1)","attribue (md2)","attribute (md3)",...
+                "attribute (md4)","attribute (md5)","attribute (md6)","attribute (thzVer)","attribute (dsDescription)",...
                 "dataset (ds1)","dataset (ds2)","dataset (ds3)","dataset (ds4)"
                 }';
 
@@ -514,14 +514,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             switch indices(1)
                 case 10
                     app.Tcell(10,:) = {newData};
-                    mtList = split(newData,',');
+                    mdList = split(newData,',');
                     Tcell_header = app.Tcell_header;
                     for idx = 1:6
-                        mtDRow = 10; % metadata description row
-                        if idx<=size(mtList,1)
-                            Tcell_header{idx+mtDRow} = strcat(num2str(idx+mtDRow),": ",mtList(idx,1));
+                        mdDRow = 10; % metadata description row
+                        if idx<=size(mdList,1)
+                            Tcell_header{idx+mdDRow} = strcat(num2str(idx+mdDRow),": ",mdList(idx,1));
                         else
-                            Tcell_header{idx+mtDRow} = strcat(num2str(idx+mtDRow),": -");
+                            Tcell_header{idx+mdDRow} = strcat(num2str(idx+mdDRow),": -");
                         end
                     end
                     app.UITable_Header.Data = cell2table(Tcell_header);
@@ -564,7 +564,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             delete(fullfile);
             measNum = app.Tcell{1,end};
             incNum = app.NumberPrefixSwitch.Value;
-            varsAttr = ["date","time","mode","coordinates","mtDescription","mt1","mt2","mt3","mt4","mt5","mt6","thzVer"];
+            varsAttr = ["date","time","mode","coordinates","mdDescription","md1","md2","md3","md4","md5","md6","thzVer"];
             digitNum = ceil(log10(measNum));
             digitNumFormat = strcat('%0',num2str(digitNum),'d');
 
@@ -712,8 +712,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             measNum = size(thzInfo.Groups,1);
             ListItems = cell(measNum,1);
             [ListItems{:}] = deal(thzInfo.Groups.Name);
-            attrItems = ["description","date","time","mode","coordinates","mtDescription",...
-                "mt1","mt2","mt3","mt4","mt5","mt6","thzVer","dsDescription"];
+            attrItems = ["description","date","time","mode","coordinates","mdDescription",...
+                "md1","md2","md3","md4","md5","md6","thzVer","dsDescription"];
             maxDatasetNum = 1000; % maximum number of datasets
             ds1Row = 19; % dataset 1 row in the table
 

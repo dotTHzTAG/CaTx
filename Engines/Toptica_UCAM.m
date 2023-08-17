@@ -46,11 +46,16 @@ function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcel
                 date = "";
                 time = "";
                 mode = "";
-                para1 = [];
-                para2 = [];
-                mtDescription = "para1,para2";
+                mdDescription = "para1,para2";
                 dsDescription = "ds1:Sample, ds2:Ref "; % dataset description
-                
+                md1 = [];
+                md2 = [];
+                md3 = [];
+                md4 = [];
+                ds1 = [samTime;samSig];
+                ds2 = [refTime;refSig];
+                ds3 = [];
+                ds4 = [];
 
                 scanLength = length(refTime);
                 xSpacing = mean(diff(refTime));
@@ -65,21 +70,21 @@ function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcel
                 Tcell{7,PRJcnt} = time; % measurement start time
                 Tcell{8,PRJcnt} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
                 Tcell{9,PRJcnt} = []; % coordinates
-                Tcell{10,PRJcnt} = mtDescription; % metadata description
-                Tcell{11,PRJcnt} = para1; % thickness (mm)
-                Tcell{12,PRJcnt} = para2; % temperature (K)
-                Tcell{13,PRJcnt} = []; % weight (mg)
-                Tcell{14,PRJcnt} = []; % concentration  (%)
+                Tcell{10,PRJcnt} = mdDescription; % metadata description
+                Tcell{11,PRJcnt} = md1; % thickness (mm)
+                Tcell{12,PRJcnt} = md2; % temperature (K)
+                Tcell{13,PRJcnt} = md3; % weight (mg)
+                Tcell{14,PRJcnt} = md4; % concentration  (%)
 
                 Tcell{15,PRJcnt} = []; % not used
                 Tcell{16,PRJcnt} = []; % not used
                 Tcell{17,PRJcnt} = []; % not used
 
                 Tcell{18,PRJcnt} = dsDescription; % dataset description
-                Tcell{19,PRJcnt} = [samTime;samSig];
-                Tcell{20,PRJcnt} = [refTime;refSig];
-                Tcell{21,PRJcnt} = []; % not used
-                Tcell{22,PRJcnt} = []; % not used
+                Tcell{19,PRJcnt} = ds1;
+                Tcell{20,PRJcnt} = ds2;
+                Tcell{21,PRJcnt} = ds3;
+                Tcell{22,PRJcnt} = ds4;
                 
                 progressP = PRJcnt/PRJ_count*100;
                 progressP = num2str(progressP,'%.0f');
