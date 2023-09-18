@@ -11,7 +11,7 @@ The MATLAB App-Designer file (*.mlapp) is a binary file, and a text editor canno
 
 **Please follow the instructions below.**
 1. MATLAB needs to be installed in your computer to use CaTx.
-2. Download 'Install_releaseDate.zip' file. [Download](Install_r230918.zip)
+2. Download 'Install_releaseDate.zip' file. <a href="/" download="Install_r230918.zip">Download</a>
 3. Unzip the package file into the folder where you'd like to keep them.
 4. You are now ready to proceed. Double-click 'CambridgeTHzconveter.mlapp' or open it with MATLAB Appdesigner.
 5. Once the tool is launched, select an appropriate converter engine using the 'THz CONVERTER ENGINE' dropdown menu.
