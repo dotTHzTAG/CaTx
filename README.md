@@ -17,3 +17,5 @@ The MATLAB App-Designer file (*.mlapp) is a binary file, and a text editor canno
 5. Once the tool is launched, select an appropriate converter engine using the 'THz CONVERTER ENGINE' dropdown menu.
 
 Please note that the converter engines are listed based on the MATLAB *.m script files in the engine subfolder. While a set of engines are provided, you may need to modify them or create your own engine for your own project.
+
+For detailed descriptions for CaTx and step-by-step tutorial, please visit [dotTHz documentation](https://github.com/dotTHzTAG/Documentation).
