@@ -331,10 +331,15 @@ classdef CaTx_exported < matlab.apps.AppBase
                 "","","","1.01","da1, ds2","ds1 [row1; row2; row3; row4]","ds2 [row1; row2; row3; row4]","","",...
                 }';
 
+           Tcell_guideCol7 = {"7","CaTTrans_Focus Example","Data Assignment Guide","", "","","time",...
+                "THz-Imaging/Reflection","","Thickness (mm), Refractive Index","4.78","1.72","",...
+                "","","","1.00","Sample","Sample [time(ps); E.field(a.u.)]","","","",...
+                }';
+
             % More dataset and metadata guidelines can be displayed by
             % concatenating and editing Tcell_guideCol# entries.
 
-            Tcell_guide = [Tcell_guideCol1, Tcell_guideCol2, Tcell_guideCol3, Tcell_guideCol4, Tcell_guideCol5, Tcell_guideCol6];
+            Tcell_guide = [Tcell_guideCol1, Tcell_guideCol2, Tcell_guideCol3, Tcell_guideCol4, Tcell_guideCol5, Tcell_guideCol6, Tcell_guideCol7];
 
             %Tcell_header = cell(colHeader');
             app.UITable_Header.Data = cell2table(Tcell_header);
