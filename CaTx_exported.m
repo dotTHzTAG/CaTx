@@ -570,7 +570,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             measNum = app.Tcell{1,end};
             incNum = app.NumberPrefixSwitch.Value;
             varsAttr = ["date","time","mode","coordinates","mdDescription","md1","md2","md3","md4","md5","md6","thzVer"];
-            digitNum = ceil(log10(measNum));
+            digitNum = ceil(log10(measNum+1));
             digitNumFormat = strcat('%0',num2str(digitNum),'d');
 
             % Are the attributes assigned to all datasets?
