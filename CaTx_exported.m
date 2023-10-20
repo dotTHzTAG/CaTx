@@ -420,6 +420,10 @@ classdef CaTx_exported < matlab.apps.AppBase
 
 
             Tcell(4,:) = num2cell(app.ins_profile);
+            % In case you have an error message related to this line (ex:
+            % "Conversion to double from cell is not possible"), it
+            % will be most likely due to a conversion Engine issue.
+            % Please check the Engine script.
             Tcell(5,:) = num2cell(app.user_profile);
             Tcell(17,:) = {app.thzVer};
             measNum = size(Tcell,2);

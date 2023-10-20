@@ -35,7 +35,7 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     return;
                 end
                 
-                %assignin('base',"HDFinfo",HDFDataInfo);
+                assignin('base',"HDFinfo",HDFDataInfo);
                 
                 MeasCount = size(HDFDataInfo.Groups,1);
         
@@ -57,7 +57,8 @@ function Tcell = TeraPulse4000_RX_Focus_UCAM(PRJ_count,fullpathname,DEBUGMsgLabe
                     mode = "THz-Imaging/Reflection";
 
                     try
-                            sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
+                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(3).Attributes(9).Value); 
 
                     catch ME
                         try
