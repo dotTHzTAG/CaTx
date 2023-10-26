@@ -13,7 +13,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         TabGroup                       matlab.ui.container.TabGroup
         MeasurementsandMetadataTab     matlab.ui.container.Tab
         DatasetControlPanel            matlab.ui.container.Panel
-        DeleteButton                   matlab.ui.control.Button
+        Label                          matlab.ui.control.Label
+        DeletesourceButton             matlab.ui.control.Button
         TargetDatasetDropDown          matlab.ui.control.DropDown
         TargetWaveformDropDownLabel    matlab.ui.control.Label
         MoveButton_3                   matlab.ui.control.Button
@@ -22,8 +23,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         SourceWaveformDropDownLabel    matlab.ui.control.Label
         FILEDLISTTOEditField           matlab.ui.control.NumericEditField
         toLabel                        matlab.ui.control.Label
-        ofColumnEditField_2            matlab.ui.control.NumericEditField
-        ofColumnEditField_2Label       matlab.ui.control.Label
+        ofColumnsEditField             matlab.ui.control.NumericEditField
+        ofColumnsEditFieldLabel        matlab.ui.control.Label
         ofColumnEditField              matlab.ui.control.NumericEditField
         ofColumnEditFieldLabel         matlab.ui.control.Label
         ColumnControlPanel             matlab.ui.container.Panel
@@ -225,7 +226,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         function datasetControl(app,Opt)
             Indices = app.cellIndices;
             Tcell = app.Tcell;
-            colFrom = app.ofColumnEditField_2.Value;
+            colFrom = app.ofColumnsEditField.Value;
             colTo = app.FILEDLISTTOEditField.Value;
             totalMeasNum = app.totalMeasNum;
             srcRow = str2num(app.SourceDatasetDropDown.Value);
@@ -1231,8 +1232,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: DeleteButton
-        function DeleteButtonPushed(app, event)
+        % Button pushed function: DeletesourceButton
+        function DeletesourceButtonPushed(app, event)
             question = "Do you want to delete the dataset?";
             answer = questdlg(question,'Warning');
                 
@@ -1437,30 +1438,30 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ofColumnEditField.Position = [260 75 55 22];
             app.ofColumnEditField.Value = 1;
 
-            % Create ofColumnEditField_2Label
-            app.ofColumnEditField_2Label = uilabel(app.DatasetControlPanel);
-            app.ofColumnEditField_2Label.HorizontalAlignment = 'right';
-            app.ofColumnEditField_2Label.Position = [195 40 60 22];
-            app.ofColumnEditField_2Label.Text = 'of Column';
+            % Create ofColumnsEditFieldLabel
+            app.ofColumnsEditFieldLabel = uilabel(app.DatasetControlPanel);
+            app.ofColumnsEditFieldLabel.HorizontalAlignment = 'right';
+            app.ofColumnsEditFieldLabel.Position = [193 40 73 22];
+            app.ofColumnsEditFieldLabel.Text = 'of Columns (';
 
-            % Create ofColumnEditField_2
-            app.ofColumnEditField_2 = uieditfield(app.DatasetControlPanel, 'numeric');
-            app.ofColumnEditField_2.Limits = [1 Inf];
-            app.ofColumnEditField_2.ValueDisplayFormat = '%.0f';
-            app.ofColumnEditField_2.Position = [259 40 55 22];
-            app.ofColumnEditField_2.Value = 1;
+            % Create ofColumnsEditField
+            app.ofColumnsEditField = uieditfield(app.DatasetControlPanel, 'numeric');
+            app.ofColumnsEditField.Limits = [1 Inf];
+            app.ofColumnsEditField.ValueDisplayFormat = '%.0f';
+            app.ofColumnsEditField.Position = [272 41 55 22];
+            app.ofColumnsEditField.Value = 1;
 
             % Create toLabel
             app.toLabel = uilabel(app.DatasetControlPanel);
             app.toLabel.HorizontalAlignment = 'right';
-            app.toLabel.Position = [325 40 25 22];
-            app.toLabel.Text = 'To';
+            app.toLabel.Position = [329 40 12 22];
+            app.toLabel.Text = '-';
 
             % Create FILEDLISTTOEditField
             app.FILEDLISTTOEditField = uieditfield(app.DatasetControlPanel, 'numeric');
             app.FILEDLISTTOEditField.Limits = [1 Inf];
             app.FILEDLISTTOEditField.ValueDisplayFormat = '%.0f';
-            app.FILEDLISTTOEditField.Position = [354 40 55 22];
+            app.FILEDLISTTOEditField.Position = [349 40 55 22];
             app.FILEDLISTTOEditField.Value = 1;
 
             % Create SourceWaveformDropDownLabel
@@ -1479,13 +1480,13 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create CopyButton
             app.CopyButton = uibutton(app.DatasetControlPanel, 'push');
             app.CopyButton.ButtonPushedFcn = createCallbackFcn(app, @CopyButtonPushed, true);
-            app.CopyButton.Position = [353 8 120 24];
+            app.CopyButton.Position = [224 8 120 24];
             app.CopyButton.Text = 'Copy';
 
             % Create MoveButton_3
             app.MoveButton_3 = uibutton(app.DatasetControlPanel, 'push');
             app.MoveButton_3.ButtonPushedFcn = createCallbackFcn(app, @MoveButton_3Pushed, true);
-            app.MoveButton_3.Position = [224 8 120 24];
+            app.MoveButton_3.Position = [91 8 120 24];
             app.MoveButton_3.Text = 'Move';
 
             % Create TargetWaveformDropDownLabel
@@ -1501,11 +1502,16 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.TargetDatasetDropDown.Position = [112 41 81 22];
             app.TargetDatasetDropDown.Value = '20';
 
-            % Create DeleteButton
-            app.DeleteButton = uibutton(app.DatasetControlPanel, 'push');
-            app.DeleteButton.ButtonPushedFcn = createCallbackFcn(app, @DeleteButtonPushed, true);
-            app.DeleteButton.Position = [337 74 78 24];
-            app.DeleteButton.Text = 'Delete';
+            % Create DeletesourceButton
+            app.DeletesourceButton = uibutton(app.DatasetControlPanel, 'push');
+            app.DeletesourceButton.ButtonPushedFcn = createCallbackFcn(app, @DeletesourceButtonPushed, true);
+            app.DeletesourceButton.Position = [357 8 120 24];
+            app.DeletesourceButton.Text = 'Delete (source)';
+
+            % Create Label
+            app.Label = uilabel(app.DatasetControlPanel);
+            app.Label.Position = [408 41 25 22];
+            app.Label.Text = ')';
 
             % Create InstrumentsandUsersTab
             app.InstrumentsandUsersTab = uitab(app.TabGroup);
