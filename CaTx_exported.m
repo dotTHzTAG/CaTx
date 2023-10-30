@@ -239,7 +239,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             trgRow = str2num(app.TargetDatasetDropDown.Value);
             
-            if isempty(Indices)||app.manualMode
+            if app.manualMode
                 return;
             else
                 %srcCol = Indices(2);
