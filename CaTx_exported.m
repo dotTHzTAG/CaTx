@@ -14,10 +14,9 @@ classdef CaTx_exported < matlab.apps.AppBase
         MeasurementsandMetadataTab     matlab.ui.container.Tab
         DatasetControlPanel            matlab.ui.container.Panel
         Label                          matlab.ui.control.Label
-        DeletedatasetButton            matlab.ui.control.Button
+        DeleteSourceWaveformButton     matlab.ui.control.Button
         TargetDatasetDropDown          matlab.ui.control.DropDown
         TargetWaveformDropDownLabel    matlab.ui.control.Label
-        MoveButton_3                   matlab.ui.control.Button
         CopyButton                     matlab.ui.control.Button
         SourceDatasetDropDown          matlab.ui.control.DropDown
         SourceWaveformDropDownLabel    matlab.ui.control.Label
@@ -229,6 +228,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             colFrom = app.ofColumnsEditField.Value;
             colTo = app.FILEDLISTTOEditField.Value;
             totalMeasNum = app.totalMeasNum;
+
             try
                 srcRow = str2num(app.SourceDatasetDropDown.Value);
             catch ME
@@ -242,13 +242,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             if isempty(Indices)||app.manualMode
                 return;
             else
-                srcIdx = Indices(2);
+                %srcCol = Indices(2);
+                srcCol = app.ofColumnEditField.Value;
             end
             
             if isequal(Opt,"Delete")
-                Tcell{srcRow,srcIdx}=[];
+                Tcell{srcRow,srcCol}=[];
             else
-                srcDs = Tcell(srcRow,srcIdx); % source dataset
+                srcDs = Tcell(srcRow,srcCol); % source dataset
                 srcLength = length(srcDs);
     
                 for idx = colFrom:colTo
@@ -263,10 +264,6 @@ classdef CaTx_exported < matlab.apps.AppBase
     
                     Tcell(trgRow,idx) = srcDs;    
                 end
-            end
-
-            if isequal(Opt,"Move")
-                Tcell{srcRow,srcIdx}=[];
             end
 
             % update the table
@@ -382,7 +379,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ImportMeasurementButton
         function ImportMeasurementButtonPushed(app, event)
-            [filename, pathname] = uigetfile('*.*');figure(app.CaTxUIFigure);
+            [filename, pathname] = uigetfile('*.*','All Files(*,*)','MultiSelect','on');figure(app.CaTxUIFigure);
             % PRJ_count: number of project files imported
             PRJ_count = app.PRJ_count;
             
@@ -390,22 +387,26 @@ classdef CaTx_exported < matlab.apps.AppBase
                 return;          
             end
             
-            % if the imported file is already exist in the list,
-            % just return
-            for cnt = 1:PRJ_count
-                if isequal(app.filename{cnt},filename)
-                    return;
+            for idx = 1:length(filename)
+                % if the imported file is already exist in the list,
+                % just return
+                for cnt = 1:PRJ_count
+                    if isequal(app.filename{cnt},filename{idx})
+                        return;
+                    end
                 end
+
+                PRJ_count = PRJ_count + 1;
+
+                fileinfo = strcat(pathname,filename{idx});
+                app.filename{PRJ_count} = filename{idx};
+                app.fullpathname{PRJ_count} = fileinfo;
+                           
+                allFileList = strjoin(app.filename,',');       
+                app.FILESEditField.Value = allFileList;
             end
-            
-            PRJ_count = PRJ_count + 1;
-            
-            fileinfo = strcat(pathname,filename);
-            app.filename{PRJ_count} = filename;
-            app.fullpathname{PRJ_count} = fileinfo;
-                       
-            allFileList = strjoin(app.filename,',');       
-            app.FILESEditField.Value = allFileList;
+
+
             app.PRJ_count = PRJ_count;
         end
 
@@ -595,7 +596,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             app.DEBUGMsgLabel.Text = "Exporting started";
             drawnow;
-            maxDatasetNum = 1000; % maximum number of datasets
+            maxDatasetNum = 20; % maximum number of datasets
             ds1Row = 19; % dataset 1 row in the table
 
             for idx = 1:measNum
@@ -614,7 +615,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 %%h5create(fullfile,dn,size(dSet));
                 %%h5write(fullfile,dn,dSet);
 
-                for dsIdx = 1:maxDatasetNum
+                for dsIdx = 1:maxDatasetNum % dsIdx : dataset index
 
                     try 
                         chk = isempty(app.Tcell{ds1Row+dsIdx-1,idx});
@@ -624,7 +625,6 @@ classdef CaTx_exported < matlab.apps.AppBase
                     
                     if chk
                         break;
-                        %dsIdx = maxDatasetNum;
                     else
                         dsn = strcat(dn,"/ds",num2str(dsIdx)); % dataset name
                         ds = app.Tcell{ds1Row+dsIdx-1,idx}; % dataset data
@@ -1239,19 +1239,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
 
-        % Button pushed function: DeletedatasetButton
-        function DeletedatasetButtonPushed(app, event)
+        % Button pushed function: DeleteSourceWaveformButton
+        function DeleteSourceWaveformButtonPushed(app, event)
             question = "Do you want to delete the dataset?";
             answer = questdlg(question,'Warning');
                 
             if isequal(answer,"Yes")
                 datasetControl(app,"Delete");
             end            
-        end
-
-        % Button pushed function: MoveButton_3
-        function MoveButton_3Pushed(app, event)
-            datasetControl(app,"Move");
         end
 
         % Button pushed function: CopyButton
@@ -1285,6 +1280,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create FILESEditField
             app.FILESEditField = uieditfield(app.CaTxUIFigure, 'text');
             app.FILESEditField.Position = [340 851 741 22];
+            app.FILESEditField.Value = ' * Use below [Import .thz File] for .thz file loading.';
 
             % Create DeployDataButton
             app.DeployDataButton = uibutton(app.CaTxUIFigure, 'push');
@@ -1487,14 +1483,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create CopyButton
             app.CopyButton = uibutton(app.DatasetControlPanel, 'push');
             app.CopyButton.ButtonPushedFcn = createCallbackFcn(app, @CopyButtonPushed, true);
-            app.CopyButton.Position = [323 8 153 24];
+            app.CopyButton.Position = [204 10 261 24];
             app.CopyButton.Text = 'Copy';
-
-            % Create MoveButton_3
-            app.MoveButton_3 = uibutton(app.DatasetControlPanel, 'push');
-            app.MoveButton_3.ButtonPushedFcn = createCallbackFcn(app, @MoveButton_3Pushed, true);
-            app.MoveButton_3.Position = [160 8 153 24];
-            app.MoveButton_3.Text = 'Move';
 
             % Create TargetWaveformDropDownLabel
             app.TargetWaveformDropDownLabel = uilabel(app.DatasetControlPanel);
@@ -1509,11 +1499,11 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.TargetDatasetDropDown.Position = [112 41 81 22];
             app.TargetDatasetDropDown.Value = '20';
 
-            % Create DeletedatasetButton
-            app.DeletedatasetButton = uibutton(app.DatasetControlPanel, 'push');
-            app.DeletedatasetButton.ButtonPushedFcn = createCallbackFcn(app, @DeletedatasetButtonPushed, true);
-            app.DeletedatasetButton.Position = [323 74 153 24];
-            app.DeletedatasetButton.Text = 'Delete (dataset)';
+            % Create DeleteSourceWaveformButton
+            app.DeleteSourceWaveformButton = uibutton(app.DatasetControlPanel, 'push');
+            app.DeleteSourceWaveformButton.ButtonPushedFcn = createCallbackFcn(app, @DeleteSourceWaveformButtonPushed, true);
+            app.DeleteSourceWaveformButton.Position = [44 10 153 24];
+            app.DeleteSourceWaveformButton.Text = 'Delete Source Waveform';
 
             % Create Label
             app.Label = uilabel(app.DatasetControlPanel);
