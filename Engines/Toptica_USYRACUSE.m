@@ -1,10 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % the dotTHz project, 2023
-% MenloSystems_UCAM.m file for CaTx Engine
+% Topitica Instrument file converter for CaTx
 % Coded by Terahertz Applications Group, University of Cambridge
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
+function Tcell = Toptica_USYRACUSE(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
            
             for PRJcnt = 1:PRJ_count
                 fullpath = fullpathname{PRJcnt};
@@ -43,19 +43,20 @@ function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcel
                 end
 
                 description = "";
-                date = "";
                 time = "";
-                mode = "";
-                mdDescription = "Thickness(mm), Temperature(K), Ref.Thickness(mm)";
-                dsDescription = "ds1:Sample, ds2:Reference "; % dataset description
+                mode = "Pellet TX";
+                mdDescription = "Sample Thickness(mm), Ref.Thickness(mm), Temperature(K),"; % metadata description
+                dsDescription = "Sample, Reference "; % dataset description
                 md1 = [];
                 md2 = [];
                 md3 = [];
                 md4 = [];
+                md5 = [];
+
                 ds1 = [samTime;samSig];
                 ds2 = [refTime;refSig];
                 ds3 = [];
-                ds4 = [];
+                ds4 = [];               
 
                 scanLength = length(refTime);
                 xSpacing = mean(diff(refTime));
@@ -66,15 +67,15 @@ function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcel
                 Tcell{4,PRJcnt} = 0; % Instrument profile
                 Tcell{5,PRJcnt} = 0; % User profile
 
-                Tcell{6,PRJcnt} = date; % measurement start date
-                Tcell{7,PRJcnt} = time; % measurement start time
-                Tcell{8,PRJcnt} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
-                Tcell{9,PRJcnt} = []; % coordinates
-                Tcell{10,PRJcnt} = mdDescription; % metadata description
-                Tcell{11,PRJcnt} = md1; % thickness (mm)
-                Tcell{12,PRJcnt} = md2; % temperature (K)
-                Tcell{13,PRJcnt} = md3; % weight (mg)
-                Tcell{14,PRJcnt} = md4; % concentration  (%)
+                Tcell{6,PRJcnt} = time; % measurement start time
+                Tcell{7,PRJcnt} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
+                Tcell{8,PRJcnt} = []; % coordinates
+                Tcell{9,PRJcnt} = mdDescription; % metadata description
+                Tcell{10,PRJcnt} = md1; 
+                Tcell{11,PRJcnt} = md2; 
+                Tcell{12,PRJcnt} = md3; 
+                Tcell{13,PRJcnt} = md4; 
+                Tcell{14,PRJcnt} = md5; 
 
                 Tcell{15,PRJcnt} = []; % not used
                 Tcell{16,PRJcnt} = []; % not used

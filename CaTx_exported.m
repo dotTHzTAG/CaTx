@@ -299,46 +299,45 @@ classdef CaTx_exported < matlab.apps.AppBase
             
             app.PRJ_count = 0;
             app.filename = [];
-            Tcell_header = {'01: Number','02: Name','03: Description','04: Instrument Profile','05: User Profile','06: Date','07: Time','08: Mode','09: Coordinates',...
-                '10: Metadata Description', '11: Metadata 1','12: Metadata 2','13: Metadata 3','14: Metadata 4','15: Metadata 5','16: Metadata 6','17: dotTHz Version',...
-                '18: Dataset Description','19: Dataset 1','20: Dataset 2','21: Dataset 3','22: Dataset 4'
+            Tcell_header = {'01: Number','02: Name','03: Description','04: Instrument Profile','05: User Profile','06: Date and Time','07: Measurement Mode','08: Coordinates',...
+                '09: Metadata Description', '10: Metadata 1','11: Metadata 2','12: Metadata 3','13: Metadata 4','14: Metadata 5','15: Metadata 6','16: Metadata 7',...
+                '17: dotTHz Version','18: Dataset Description','19: Dataset 1','20: Dataset 2','21: Dataset 3','22: Dataset 4'
                 }';
 
-            Tcell_guideCol1 = {"1","HDF5","Category (name)","attribute (instrument)", "attribute (user)","attribute (date)","attribute (time)",...
-                "attribute (mode)","attribute (coordinate)","attribute (mdDescription)","attribute (md1)","attribute (md2)","attribute (md3)",...
-                "attribute (md4)","attribute (md5)","attribute (md6)","attribute (thzVer)","attribute (dsDescription)",...
-                "dataset (ds1)","dataset (ds2)","dataset (ds3)","dataset (ds4)"
+            Tcell_guideCol1 = {"1","HDF5","Category (name)","attribute (instrument)", "attribute (user)","attribute (time)","attribute (mode)","attribute (coordinate)",...
+                "attribute (mdDescription)","attribute (md1)","attribute (md2)","attribute (md3)","attribute (md4)","attribute (md5)","attribute (md6)","attribute (md7)",...
+                "attribute (thzVer)","attribute (dsDescription)","dataset (ds1)","dataset (ds2)","dataset (ds3)","dataset (ds4)"
                 }';
 
-            Tcell_guideCol2 = {"2","HDF5","Data Format","string scalar", "string scalar","string scalar","string scalar",...
-                "string scalar","numeric vector","string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar",...
+            Tcell_guideCol2 = {"2","HDF5","Data Format","string scalar", "string scalar","string scalar","string scalar","numeric vector",...
+                "string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar",...
                 "numeric value/vector, string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar","string scalar","string scalar",...
                 "numeric matrix","numeric matrix","numeric matrix","numeric matrix"
                 }';
 
-            Tcell_guideCol3 = {"3","THz-TDS Example","Data Assignment Guide","", "","date","time",...
-                "THz-TDS/Transmission","","thickness (mm), temperature (K), weight (mg)","0.520","293","50",...
-                "","","*More metadata can be added if necessary.","1.00","Sample, Ref1:air, Ref2:PTFE","sample [time(ps); E.field(a.u.)]","Reference 1 [time(ps); E.field(a.u.)]","Reference 2 [time(ps); E.field(a.u.)]","*More datasets can be added if necessary.",...
+            Tcell_guideCol3 = {"3","THz-TDS Example","Data Assignment Guide","", "","Date and Time (ISO8601 format)","THz-TDS/Transmission","",...
+                "Sample Thickness (mm), Reference Thickness (mm), Temperature (K)","1.50","1.00","293","","","","*More metadata can be added if necessary.",...
+                "1.00","Sample, Ref1:air, Ref2:PTFE","sample [time(ps); E.field(a.u.)]","Reference 1 [time(ps); E.field(a.u.)]","Reference 2 [time(ps); E.field(a.u.)]","*More datasets can be added if necessary.",...
                 }';
 
-            Tcell_guideCol4 = {"4","THz-Imaging Example","Data Assignment Guide","", "","date","time",...
-                "THz-Imaging/Reflection","[x,y,z]","","","","",...
-                "","","","1.00","Sample, Ref, Baseline","Sample [time(ps); E.field(a.u.)]","Reference [time(ps); E.field(a.u.)]","Baseline [time(ps); E.field(a.u.)]","",...
+            Tcell_guideCol4 = {"4","THz-Imaging Example","Data Assignment Guide","", "","2023-11-25T12:24:13.876+00:00 or","THz-Imaging/Reflection","[x,y,z]",...
+                "","","","","","","","",...
+                "1.00","Sample, Ref, Baseline","Sample [time(ps); E.field(a.u.)]","Reference [time(ps); E.field(a.u.)]","Baseline [time(ps); E.field(a.u.)]","",...
                 }';
 
-            Tcell_guideCol5 = {"5","Frequency-domain Datasets","Data Assignment Guide","", "","date","time",...
-                "FMCW/Reflection","meta1, meta2, meta3, meta4","meta1","meta2","meta3","meta4",...
-                "","","","1.00","da1, ds2, ds3, ds4","ds1 [frequency; amplitude; phase]","ds2 [frequency; amplitude; phase]","ds1 [frequency; amplitude; phase]","ds1 [frequency; amplitude; phase]",...
+            Tcell_guideCol5 = {"5","Frequency-domain Datasets","Data Assignment Guide","", "","T12:24:13.876+00:00 or","FMCW/Reflection","",...
+                "meta1, meta2, meta3, meta4","meta1","meta2","meta3","meta4","","","",...
+                "1.00","da1, ds2, ds3, ds4","ds1 [frequency; amplitude; phase]","ds2 [frequency; amplitude; phase]","ds1 [frequency; amplitude; phase]","ds1 [frequency; amplitude; phase]",...
                 }';
 
-            Tcell_guideCol6 = {"6","Further Application","Data Assignment Guide","", "","date","time",...
-                "APPLICATION1/Transmission","meta1, meta2","meta1","meta2","","",...
-                "","","","1.01","da1, ds2","ds1 [row1; row2; row3; row4]","ds2 [row1; row2; row3; row4]","","",...
+            Tcell_guideCol6 = {"6","Further Application","Data Assignment Guide","", "","T12:24:13","APPLICATION1/Transmission","",...
+                "meta1, meta2","meta1","meta2","","","","","",...
+                "1.01","da1, ds2","ds1 [row1; row2; row3; row4]","ds2 [row1; row2; row3; row4]","","",...
                 }';
 
-           Tcell_guideCol7 = {"7","CaTTrans_Focus Example","Data Assignment Guide","", "","","time",...
-                "THz-Imaging/Reflection","","Thickness (mm), Refractive Index","4.78","1.72","",...
-                "","","","1.00","Sample","Sample [time(ps); E.field(a.u.)]","","","",...
+           Tcell_guideCol7 = {"7","CaTTrans_Focus Example","Data Assignment Guide","", "","2022-05-27T12:48:55","THz-Imaging/Reflection","",...
+               "Thickness (mm), Refractive Index","4.78","1.72","","","","","",...
+               "1.00","Sample","Sample [time(ps); E.field(a.u.)]","","","",...
                 }';
 
             % More dataset and metadata guidelines can be displayed by
@@ -359,12 +358,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             addStyle(app.UITable_Measurement,sGrBg,"row",(2:5));
             addStyle(app.UITable_Measurement,sWtBg,"row",(6:17));
             addStyle(app.UITable_Measurement,sGrBg,"row",(19:22));
-            addStyle(app.UITable_Measurement,sDGrBg,"row",[1,10,18]);
+            addStyle(app.UITable_Measurement,sDGrBg,"row",[1,9,17,18]);
 
             addStyle(app.UITable_Header,sGrBg,"row",(2:5));
             addStyle(app.UITable_Header,sWtBg,"row",(6:17));
             addStyle(app.UITable_Header,sGrBg,"row",(19:22));
-            addStyle(app.UITable_Header,sDGrBg,"row",[1,10,18]);
+            addStyle(app.UITable_Header,sDGrBg,"row",[1,9,17,18]);
 
             insProfileHeader = {'1: Number', '2: Model', '3: Manufacturer', '4: Address'}';
             userProfileHeader = {'1: Number', '2: ORCID', '3: Name', '4: Email', '5: Affiliation'}';
@@ -379,27 +378,35 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ImportMeasurementButton
         function ImportMeasurementButtonPushed(app, event)
-            [filename, pathname] = uigetfile('*.*','All Files(*,*)','MultiSelect','on');figure(app.CaTxUIFigure);
+            [file, pathname] = uigetfile('*.*','All Files(*,*)','MultiSelect','on');figure(app.CaTxUIFigure);
             % PRJ_count: number of project files imported
             PRJ_count = app.PRJ_count;
             
-            if isequal(filename,0)||isequal(pathname,0)
+            if isequal(file,0)
+                disp('Importing Cancelled');
                 return;          
             end
-            
-            for idx = 1:length(filename)
+
+            if iscell(file)
+                fileNum = length(file);
+            else
+                file = {file};
+                fileNum = 1;
+            end
+               
+            for idx = 1:fileNum
                 % if the imported file is already exist in the list,
                 % just return
                 for cnt = 1:PRJ_count
-                    if isequal(app.filename{cnt},filename{idx})
+                    if isequal(app.filename{cnt},file{idx})
                         return;
                     end
                 end
 
                 PRJ_count = PRJ_count + 1;
 
-                fileinfo = strcat(pathname,filename{idx});
-                app.filename{PRJ_count} = filename{idx};
+                fileinfo = strcat(pathname,file{idx});
+                app.filename{PRJ_count} = file{idx};
                 app.fullpathname{PRJ_count} = fileinfo;
                            
                 allFileList = strjoin(app.filename,',');       
@@ -503,7 +510,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.SourceDatasetDropDown.Items = srcDDItems;
 
             Tcell = app.Tcell(indices(1),indices(2));
-            dataType = [2 1 1 2 2, 2 2 2 2 1, 1 1 1 1 1, 1 2 1 2 2, 2 2]; % 1 for string, 0 for numbers, 2 for do-not-modify
+            dataType = [2 1 1 2 2, 2 2 2 1 1, 1 1 1 1 1, 1 2 1 2 2, 2 2]; % 1 for modifiables, 2 for non-modifiables
 
             if dataType(indices(1)) < 2
                 app.UITable_Measurement.ColumnEditable = true;
@@ -530,12 +537,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             switch indices(1)
-                case 10
-                    app.Tcell(10,:) = {newData};
+                case 9
+                    app.Tcell(9,:) = {newData};
                     mdList = split(newData,',');
                     Tcell_header = app.Tcell_header;
                     for idx = 1:6
-                        mdDRow = 10; % metadata description row
+                        mdDRow = 9; % metadata description row
                         if idx<=size(mdList,1)
                             Tcell_header{idx+mdDRow} = strcat(num2str(idx+mdDRow),": ",mdList(idx,1));
                         else
@@ -582,7 +589,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             delete(fullfile);
             measNum = app.Tcell{1,end};
             incNum = app.NumberPrefixSwitch.Value;
-            varsAttr = ["date","time","mode","coordinates","mdDescription","md1","md2","md3","md4","md5","md6","thzVer"];
+            varsAttr = ["time","mode","coordinates","mdDescription","md1","md2","md3","md4","md5","md6","md7","thzVer"];
             digitNum = ceil(log10(measNum+1));
             digitNumFormat = strcat('%0',num2str(digitNum),'d');
 
@@ -716,22 +723,22 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             
 
-            [filename, filepath] = uigetfile('*.thz');
+            [file, filepath] = uigetfile('*.thz');
             
-            if isequal(filename,0)||isequal(filepath,0)
+            if isequal(file,0)
                 return;
             end
 
-            app.FILESEditField.Value = filename;
+            app.FILESEditField.Value = file;
             
-            fullfile = strcat(filepath,filename);
+            fullfile = strcat(filepath,file);
             thzInfo = h5info(fullfile);
             measNum = size(thzInfo.Groups,1);
             ListItems = cell(measNum,1);
             [ListItems{:}] = deal(thzInfo.Groups.Name);
-            attrItems = ["description","date","time","mode","coordinates","mdDescription",...
-                "md1","md2","md3","md4","md5","md6","thzVer","dsDescription"];
-            maxDatasetNum = 1000; % maximum number of datasets
+            attrItems = ["description","time","mode","coordinates","mdDescription",...
+                "md1","md2","md3","md4","md5","md6","md7","thzVer","dsDescription"];
+            maxDatasetNum = 20; % maximum number of datasets
             ds1Row = 19; % dataset 1 row in the table
 
             for idx = 1:measNum
@@ -856,7 +863,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             % compare the column numbers
             if measNum ~= size(Tcellxls,2)
                 fig = app.CaTxUIFigure;
-                msg = "Mismatched column size";
+                msg = "Column Size Mismatched";
                 uialert(fig,msg,'Warning');
                 app.LOADMETAXLS_EditField.Value = '';
                 return;
@@ -1723,9 +1730,9 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create exceptItemDropDown
             app.exceptItemDropDown = uidropdown(app.CaTxUIFigure);
-            app.exceptItemDropDown.Items = {'7', '9', '11', '12', '13', '14', '15', '16'};
+            app.exceptItemDropDown.Items = {'6', '10', '11', '12', '13', '14', '15', '16'};
             app.exceptItemDropDown.Position = [818 18 48 22];
-            app.exceptItemDropDown.Value = '7';
+            app.exceptItemDropDown.Value = '6';
 
             % Create Image
             app.Image = uiimage(app.CaTxUIFigure);

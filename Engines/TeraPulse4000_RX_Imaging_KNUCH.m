@@ -50,10 +50,8 @@ function Tcell = TeraPulse4000_RX_Imaging_KNUCH(PRJ_count,fullpathname,DEBUGMsgL
                     waveformRate = str2num(extractBefore(extractAfter(settingInfo,'waveform_rate":'),'}'));
                     coaverage = str2num(extractBefore(extractAfter(settingInfo,'coaverages":'),','));
                     description = char(extractBefore(extractAfter(settingInfo,'description":"'),'",'));
-                    scanStartDateTime = char(extractBefore(extractAfter(settingInfo,'ScanStartDateTime":"'),'.'));
+                    time = char(extractBefore(extractAfter(settingInfo,'ScanStartDateTime":"'),'.'));
                     dsDescription = "Sample"; % Reference description
-                    date = char(extractBefore(scanStartDateTime,'T'));
-                    time = char(extractAfter(scanStartDateTime,'T'));
                     mode = "THz-Imaging/Reflection";
 
                     try
@@ -95,6 +93,8 @@ function Tcell = TeraPulse4000_RX_Imaging_KNUCH(PRJ_count,fullpathname,DEBUGMsgL
                     md2 = []; % optional refractive index
                     md3 = [];
                     md4 = [];
+                    md5 = [];
+
                     ds1 = [samTime;samSig];
                     ds2 = [];
                     ds3 = [];
@@ -106,15 +106,15 @@ function Tcell = TeraPulse4000_RX_Imaging_KNUCH(PRJ_count,fullpathname,DEBUGMsgL
                     Tcell{4,MeasCount-idx+idxStr} = 0; % Instrument profile
                     Tcell{5,MeasCount-idx+idxStr} = 0; % User profile
 
-                    Tcell{6,MeasCount-idx+idxStr} = date; % measurement start date
-                    Tcell{7,MeasCount-idx+idxStr} = time; % measurement start time
-                    Tcell{8,MeasCount-idx+idxStr} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
-                    Tcell{9,MeasCount-idx+idxStr} = []; % coordinates
-                    Tcell{10,MeasCount-idx+idxStr} = mdDescription; % metadata description
-                    Tcell{11,MeasCount-idx+idxStr} = md1; % metadata 1 value
-                    Tcell{12,MeasCount-idx+idxStr} = md2; % metadata 2 value
-                    Tcell{13,MeasCount-idx+idxStr} = md3; % metadata 3 value
-                    Tcell{14,MeasCount-idx+idxStr} = md4; % metadata 4 value
+                    Tcell{6,MeasCount-idx+idxStr} = time; % measurement start time
+                    Tcell{7,MeasCount-idx+idxStr} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
+                    Tcell{8,MeasCount-idx+idxStr} = []; % coordinates
+                    Tcell{9,MeasCount-idx+idxStr} = mdDescription; % metadata description
+                    Tcell{10,MeasCount-idx+idxStr} = md1; % metadata 1 value
+                    Tcell{11,MeasCount-idx+idxStr} = md2; % metadata 2 value
+                    Tcell{12,MeasCount-idx+idxStr} = md3; % metadata 3 value
+                    Tcell{13,MeasCount-idx+idxStr} = md4; % metadata 4 value
+                    Tcell{14,MeasCount-idx+idxStr} = md5; % metadata 4 value
 
                     Tcell{15,MeasCount-idx+idxStr} = []; % not used
                     Tcell{16,MeasCount-idx+idxStr} = []; % not used
