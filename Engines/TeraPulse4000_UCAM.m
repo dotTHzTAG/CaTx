@@ -32,9 +32,8 @@ function Tcell = TeraPulse4000_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigur
                 % extract sample data from HDF5 project file
                 try
                     HDFDataInfo = h5info(fullpath, HDFDataSet);
-                catch ME
-                    fig = uiFigure;
-                    uialert(fig,'Incorrect HDF5 Data Set','Warning');
+                catch
+                    uialert(uiFigure,'Incorrect HDF5 Data Set','Warning');
                     DEBUGMsgLabel.Text = 'Loading cancelled';
                     return;
                 end

@@ -35,9 +35,8 @@ function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcel
                         refSig = [];
                     end
                     [~,sampleName,~] = fileparts(fullpath);                    
-                catch ME
-                    fig = uiFigure;
-                    uialert(fig,'Incorrect Data Set','Warning');
+                catch
+                    uialert(uiFigure,'Incorrect Data Set','Warning');
                     DEBUGMsgLabel.Text = 'Loading Cancelled';
                     return;
                 end

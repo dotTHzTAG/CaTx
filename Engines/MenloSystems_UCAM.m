@@ -30,9 +30,8 @@ function Tcell = MenloSystems_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure
                     refSig = [];
 
                     [~,sampleName,~] = fileparts(fullpath);
-                catch ME
-                    fig = uiFigure;
-                    uialert(fig,'Incorrect Data Set','Warning');
+                catch
+                    uialert(uiFigure,'Incorrect Data Set','Warning');
                     DEBUGMsgLabel.Text = 'Loading Cancelled';
                     return;
                 end
@@ -49,13 +48,14 @@ function Tcell = MenloSystems_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure
                 description = "";
                 mdDescription = "para1,para2";
                 dsDescription = "ds1:Sample, ds2:Ref"; % dataset description
-                date = measDate;
                 mode = "";
-                time = [];
+                time = measDate;
                 md1 = [];
                 md2 = [];
                 md3 = [];
                 md4 = [];
+                md5 = [];
+
                 ds1 = [samTime;samSig];
                 ds2 = [refTime;refSig];
                 ds3 = [];
@@ -69,16 +69,16 @@ function Tcell = MenloSystems_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure
                 Tcell{3,PRJcnt} = description;
                 Tcell{4,PRJcnt} = 0; % Instrument profile
                 Tcell{5,PRJcnt} = 0; % User profile
-
-                Tcell{6,PRJcnt} = date; % measurement start date
-                Tcell{7,PRJcnt} = time; % measurement start time
-                Tcell{8,PRJcnt} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
-                Tcell{9,PRJcnt} = []; % coordinates
-                Tcell{10,PRJcnt} = mdDescription; % metadata description
-                Tcell{11,PRJcnt} = md1; % thickness (mm)
-                Tcell{12,PRJcnt} = md2; % temperature (K)
-                Tcell{13,PRJcnt} = md3; % weight (mg)
-                Tcell{14,PRJcnt} = md4; % concentration  (%)
+                Tcell{6,PRJcnt} = time; % measurement start time
+                Tcell{7,PRJcnt} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
+                Tcell{8,PRJcnt} = []; % coordinates
+                
+                Tcell{9,PRJcnt} = mdDescription; % metadata description
+                Tcell{10,PRJcnt} = md1; % thickness (mm)
+                Tcell{11,PRJcnt} = md2; % temperature (K)
+                Tcell{12,PRJcnt} = md3; % weight (mg)
+                Tcell{13,PRJcnt} = md4; % concentration  (%)
+                Tcell{14,PRJcnt} = md5; % concentration  (%)
 
                 Tcell{15,PRJcnt} = []; % not used
                 Tcell{16,PRJcnt} = []; % not used
