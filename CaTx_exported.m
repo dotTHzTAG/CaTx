@@ -71,7 +71,6 @@ classdef CaTx_exported < matlab.apps.AppBase
         ConverterEngineDropDown        matlab.ui.control.DropDown
         ConverterEngineDropDownLabel   matlab.ui.control.Label
         ExportthzFileButton            matlab.ui.control.Button
-        DEBUGMsgLabel                  matlab.ui.control.Label
         CaTxLabel                      matlab.ui.control.Label
         DeployDataButton               matlab.ui.control.Button
         FILESEditField                 matlab.ui.control.EditField
@@ -378,7 +377,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ImportMeasurementButton
         function ImportMeasurementButtonPushed(app, event)
-            [file, pathname] = uigetfile('*.*','All Files(*,*)','MultiSelect','on');figure(app.CaTxUIFigure);
+            [file, pathname] = uigetfile('*.*','All Files(*,*)','MultiSelect','on');
             % PRJ_count: number of project files imported
             PRJ_count = app.PRJ_count;
             
@@ -404,7 +403,6 @@ classdef CaTx_exported < matlab.apps.AppBase
                 end
 
                 PRJ_count = PRJ_count + 1;
-
                 fileinfo = strcat(pathname,file{idx});
                 app.filename{PRJ_count} = file{idx};
                 app.fullpathname{PRJ_count} = fileinfo;
@@ -413,8 +411,8 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.FILESEditField.Value = allFileList;
             end
 
-
             app.PRJ_count = PRJ_count;
+            figure(app.CaTxUIFigure);
         end
 
         % Button pushed function: DeployDataButton
@@ -432,7 +430,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             func = str2func(TDSinstrument);
             Tcell = func(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell);
 
+            if isempty(Tcell)
+                return;
+            end
+
             %assignin("base","ins_profilefile", app.ins_profile);
+            % assignin("base","Tcell",Tcell);
 
 
             Tcell(4,:) = num2cell(app.ins_profile);
@@ -541,7 +544,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                     app.Tcell(9,:) = {newData};
                     mdList = split(newData,',');
                     Tcell_header = app.Tcell_header;
-                    for idx = 1:6
+                    for idx = 1:7
                         mdDRow = 9; % metadata description row
                         if idx<=size(mdList,1)
                             Tcell_header{idx+mdDRow} = strcat(num2str(idx+mdDRow),": ",mdList(idx,1));
@@ -1273,7 +1276,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create CaTxUIFigure and hide until all components are created
             app.CaTxUIFigure = uifigure('Visible', 'off');
-            app.CaTxUIFigure.Position = [100 100 1124 893];
+            app.CaTxUIFigure.Position = [100 100 1118 868];
             app.CaTxUIFigure.Name = 'CaTx';
             app.CaTxUIFigure.Icon = fullfile(pathToMLAPP, 'CaT_logo.png');
 
@@ -1281,19 +1284,19 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ImportMeasurementButton = uibutton(app.CaTxUIFigure, 'push');
             app.ImportMeasurementButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMeasurementButtonPushed, true);
             app.ImportMeasurementButton.FontWeight = 'bold';
-            app.ImportMeasurementButton.Position = [190 851 142 23];
+            app.ImportMeasurementButton.Position = [190 825 143 25];
             app.ImportMeasurementButton.Text = 'Import Measurement';
 
             % Create FILESEditField
             app.FILESEditField = uieditfield(app.CaTxUIFigure, 'text');
-            app.FILESEditField.Position = [340 851 741 22];
-            app.FILESEditField.Value = ' * Use below [Import .thz File] for .thz file loading.';
+            app.FILESEditField.Position = [340 825 647 25];
 
             % Create DeployDataButton
             app.DeployDataButton = uibutton(app.CaTxUIFigure, 'push');
             app.DeployDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeployDataButtonPushed, true);
+            app.DeployDataButton.BackgroundColor = [0.902 0.902 0.902];
             app.DeployDataButton.FontWeight = 'bold';
-            app.DeployDataButton.Position = [733 818 105 25];
+            app.DeployDataButton.Position = [887 790 206 25];
             app.DeployDataButton.Text = 'Deploy Data';
 
             % Create CaTxLabel
@@ -1301,20 +1304,15 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.CaTxLabel.FontSize = 38;
             app.CaTxLabel.FontWeight = 'bold';
             app.CaTxLabel.FontAngle = 'italic';
-            app.CaTxLabel.Position = [87 812 98 50];
+            app.CaTxLabel.Position = [87 787 98 50];
             app.CaTxLabel.Text = 'CaTx';
-
-            % Create DEBUGMsgLabel
-            app.DEBUGMsgLabel = uilabel(app.CaTxUIFigure);
-            app.DEBUGMsgLabel.FontWeight = 'bold';
-            app.DEBUGMsgLabel.Position = [846 819 238 22];
-            app.DEBUGMsgLabel.Text = '';
 
             % Create ExportthzFileButton
             app.ExportthzFileButton = uibutton(app.CaTxUIFigure, 'push');
             app.ExportthzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ExportthzFileButtonPushed, true);
+            app.ExportthzFileButton.BackgroundColor = [0.902 0.902 0.902];
             app.ExportthzFileButton.FontWeight = 'bold';
-            app.ExportthzFileButton.Position = [887 18 194 50];
+            app.ExportthzFileButton.Position = [854 15 221 30];
             app.ExportthzFileButton.Text = 'Export .thz File';
 
             % Create ConverterEngineDropDownLabel
@@ -1322,7 +1320,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ConverterEngineDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.ConverterEngineDropDownLabel.HorizontalAlignment = 'right';
             app.ConverterEngineDropDownLabel.FontWeight = 'bold';
-            app.ConverterEngineDropDownLabel.Position = [185 819 108 22];
+            app.ConverterEngineDropDownLabel.Position = [336 791 108 22];
             app.ConverterEngineDropDownLabel.Text = 'Converter Engine';
 
             % Create ConverterEngineDropDown
@@ -1330,26 +1328,26 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ConverterEngineDropDown.Items = {'No engines available. Please check m files in .\Engines folder.'};
             app.ConverterEngineDropDown.FontWeight = 'bold';
             app.ConverterEngineDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.ConverterEngineDropDown.Position = [306 819 414 22];
+            app.ConverterEngineDropDown.Position = [455 789 422 25];
             app.ConverterEngineDropDown.Value = 'No engines available. Please check m files in .\Engines folder.';
 
             % Create ClearMemoryButton
             app.ClearMemoryButton = uibutton(app.CaTxUIFigure, 'push');
             app.ClearMemoryButton.ButtonPushedFcn = createCallbackFcn(app, @ClearMemoryButtonPushed, true);
             app.ClearMemoryButton.FontWeight = 'bold';
-            app.ClearMemoryButton.Position = [42 18 130 50];
+            app.ClearMemoryButton.Position = [992 825 101 25];
             app.ClearMemoryButton.Text = 'Clear Memory';
 
             % Create ImportthzFileButton
             app.ImportthzFileButton = uibutton(app.CaTxUIFigure, 'push');
             app.ImportthzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportthzFileButtonPushed, true);
             app.ImportthzFileButton.FontWeight = 'bold';
-            app.ImportthzFileButton.Position = [186 18 130 50];
+            app.ImportthzFileButton.Position = [190 795 143 24];
             app.ImportthzFileButton.Text = 'Import .thz File';
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.CaTxUIFigure);
-            app.TabGroup.Position = [24 81 1075 723];
+            app.TabGroup.Position = [24 54 1075 723];
 
             % Create MeasurementsandMetadataTab
             app.MeasurementsandMetadataTab = uitab(app.TabGroup);
@@ -1703,40 +1701,42 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CaTxUIFigure);
             app.PrefixnumberstothedatasetnameLabel.HorizontalAlignment = 'center';
-            app.PrefixnumberstothedatasetnameLabel.Position = [689 43 82 22];
+            app.PrefixnumberstothedatasetnameLabel.FontWeight = 'bold';
+            app.PrefixnumberstothedatasetnameLabel.Position = [192 19 87 22];
             app.PrefixnumberstothedatasetnameLabel.Text = 'Number Prefix';
 
             % Create NumberPrefixSwitch
             app.NumberPrefixSwitch = uiswitch(app.CaTxUIFigure, 'slider');
-            app.NumberPrefixSwitch.Position = [798 45 40 18];
+            app.NumberPrefixSwitch.Position = [308 21 40 18];
 
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
-            app.AttributuesallocationLabel.Position = [429 18 110 22];
+            app.AttributuesallocationLabel.FontWeight = 'bold';
+            app.AttributuesallocationLabel.Position = [389 19 122 22];
             app.AttributuesallocationLabel.Text = 'Attributue Inclusion:';
 
             % Create AttributueInclusionSwitch
             app.AttributueInclusionSwitch = uiswitch(app.CaTxUIFigure, 'slider');
             app.AttributueInclusionSwitch.Items = {'All Measurements', 'Only First,'};
-            app.AttributueInclusionSwitch.Position = [645 20 41 18];
+            app.AttributueInclusionSwitch.Position = [618 21 41 18];
             app.AttributueInclusionSwitch.Value = 'All Measurements';
 
             % Create exceptItemDropDownLabel
             app.exceptItemDropDownLabel = uilabel(app.CaTxUIFigure);
             app.exceptItemDropDownLabel.HorizontalAlignment = 'right';
-            app.exceptItemDropDownLabel.Position = [745 18 67 22];
+            app.exceptItemDropDownLabel.Position = [718 19 67 22];
             app.exceptItemDropDownLabel.Text = 'except Item';
 
             % Create exceptItemDropDown
             app.exceptItemDropDown = uidropdown(app.CaTxUIFigure);
             app.exceptItemDropDown.Items = {'6', '10', '11', '12', '13', '14', '15', '16'};
-            app.exceptItemDropDown.Position = [818 18 48 22];
+            app.exceptItemDropDown.Position = [791 19 48 22];
             app.exceptItemDropDown.Value = '6';
 
             % Create Image
             app.Image = uiimage(app.CaTxUIFigure);
-            app.Image.Position = [25 816 72 72];
+            app.Image.Position = [25 791 72 72];
             app.Image.ImageSource = fullfile(pathToMLAPP, 'dotTHz_logo.png');
 
             % Show the figure after all components are created
