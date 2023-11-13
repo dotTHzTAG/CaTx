@@ -3,6 +3,7 @@ classdef CaTx_exported < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         CaTxUIFigure                   matlab.ui.Figure
+        DEBUGMsgLabel                  matlab.ui.control.Label
         Image                          matlab.ui.control.Image
         exceptItemDropDown             matlab.ui.control.DropDown
         exceptItemDropDownLabel        matlab.ui.control.Label
@@ -461,7 +462,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         % Button pushed function: ClearMemoryButton
         function ClearMemoryButtonPushed(app, event)
             question = "Do you want to clear memory?";
-            answer = questdlg(question,'Warning');
+            answer = questdlg(question,'Warning','Yes','No','No');
                 
             if isequal(answer,"Yes")
                 app.Tcell = [];
@@ -478,6 +479,8 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.ins_profile = [];
                 app.user_profile = [];
                 app.UITable_Header.Data = app.Tcell_headerDefault;
+            else
+                return;
             end
         end
 
@@ -1312,7 +1315,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ExportthzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ExportthzFileButtonPushed, true);
             app.ExportthzFileButton.BackgroundColor = [0.902 0.902 0.902];
             app.ExportthzFileButton.FontWeight = 'bold';
-            app.ExportthzFileButton.Position = [854 15 221 30];
+            app.ExportthzFileButton.Position = [939 15 152 30];
             app.ExportthzFileButton.Text = 'Export .thz File';
 
             % Create ConverterEngineDropDownLabel
@@ -1702,42 +1705,49 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CaTxUIFigure);
             app.PrefixnumberstothedatasetnameLabel.HorizontalAlignment = 'center';
             app.PrefixnumberstothedatasetnameLabel.FontWeight = 'bold';
-            app.PrefixnumberstothedatasetnameLabel.Position = [192 19 87 22];
+            app.PrefixnumberstothedatasetnameLabel.Position = [293 19 87 22];
             app.PrefixnumberstothedatasetnameLabel.Text = 'Number Prefix';
 
             % Create NumberPrefixSwitch
             app.NumberPrefixSwitch = uiswitch(app.CaTxUIFigure, 'slider');
-            app.NumberPrefixSwitch.Position = [308 21 40 18];
+            app.NumberPrefixSwitch.Position = [409 21 40 18];
 
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
             app.AttributuesallocationLabel.FontWeight = 'bold';
-            app.AttributuesallocationLabel.Position = [389 19 122 22];
+            app.AttributuesallocationLabel.Position = [481 19 122 22];
             app.AttributuesallocationLabel.Text = 'Attributue Inclusion:';
 
             % Create AttributueInclusionSwitch
             app.AttributueInclusionSwitch = uiswitch(app.CaTxUIFigure, 'slider');
             app.AttributueInclusionSwitch.Items = {'All Measurements', 'Only First,'};
-            app.AttributueInclusionSwitch.Position = [618 21 41 18];
+            app.AttributueInclusionSwitch.Position = [710 21 41 18];
             app.AttributueInclusionSwitch.Value = 'All Measurements';
 
             % Create exceptItemDropDownLabel
             app.exceptItemDropDownLabel = uilabel(app.CaTxUIFigure);
             app.exceptItemDropDownLabel.HorizontalAlignment = 'right';
-            app.exceptItemDropDownLabel.Position = [718 19 67 22];
+            app.exceptItemDropDownLabel.Position = [811 19 67 22];
             app.exceptItemDropDownLabel.Text = 'except Item';
 
             % Create exceptItemDropDown
             app.exceptItemDropDown = uidropdown(app.CaTxUIFigure);
             app.exceptItemDropDown.Items = {'6', '10', '11', '12', '13', '14', '15', '16'};
-            app.exceptItemDropDown.Position = [791 19 48 22];
+            app.exceptItemDropDown.Position = [884 19 48 22];
             app.exceptItemDropDown.Value = '6';
 
             % Create Image
             app.Image = uiimage(app.CaTxUIFigure);
             app.Image.Position = [25 791 72 72];
             app.Image.ImageSource = fullfile(pathToMLAPP, 'dotTHz_logo.png');
+
+            % Create DEBUGMsgLabel
+            app.DEBUGMsgLabel = uilabel(app.CaTxUIFigure);
+            app.DEBUGMsgLabel.BackgroundColor = [0.902 0.902 0.902];
+            app.DEBUGMsgLabel.FontWeight = 'bold';
+            app.DEBUGMsgLabel.Position = [37 19 247 22];
+            app.DEBUGMsgLabel.Text = '';
 
             % Show the figure after all components are created
             app.CaTxUIFigure.Visible = 'on';
