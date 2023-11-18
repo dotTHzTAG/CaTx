@@ -28,6 +28,10 @@ classdef CaTx_exported < matlab.apps.AppBase
         ofColumnEditField              matlab.ui.control.NumericEditField
         ofColumnEditFieldLabel         matlab.ui.control.Label
         ColumnControlPanel             matlab.ui.container.Panel
+        SortRowDropDown                matlab.ui.control.DropDown
+        SortRowDropDownLabel           matlab.ui.control.Label
+        SortDirectionSwitch            matlab.ui.control.Switch
+        SortButton                     matlab.ui.control.Button
         PlotDatasetsButton             matlab.ui.control.Button
         MoveButton_2                   matlab.ui.control.Button
         MoveButton                     matlab.ui.control.Button
@@ -438,7 +442,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             %assignin("base","ins_profilefile", app.ins_profile);
             % assignin("base","Tcell",Tcell);
 
-
             Tcell(4,:) = num2cell(app.ins_profile);
             % In case you have an error message related to this line (ex:
             % "Conversion to double from cell is not possible"), it
@@ -455,7 +458,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.Ins_MeasurementFieldToEditField.Value = app.totalMeasNum;
             app.User_MeasurementFieldToEditField.Value = app.totalMeasNum;
             app.FILEDLISTTOEditField.Value = app.totalMeasNum;
-            evalin('base', 'clear Tcell');
+            % evalin('base', 'clear Tcell');
             app.TabGroup.SelectedTab = app.TabGroup.Children(1);
         end
 
@@ -1266,6 +1269,23 @@ classdef CaTx_exported < matlab.apps.AppBase
         function CopyButtonPushed(app, event)
             datasetControl(app,"Copy");
         end
+
+        % Button pushed function: SortButton
+        function SortButtonPushed(app, event)
+            Tcell = app.Tcell;
+            colSize = size(Tcell,2);
+            sortRow = app.SortRowDropDown.Value;
+            sortRow = str2num(sortRow);
+            direction = app.SortDirectionSwitch.Value;
+            Tcell = sortrows(Tcell',sortRow,direction)';
+            
+            for idx = 1:colSize
+                Tcell{1,idx} = idx;
+            end
+
+            app.Tcell = Tcell;
+            updateMeasurementTable(app);
+        end
     end
 
     % Component initialization
@@ -1377,25 +1397,25 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create MetadataPanel
             app.MetadataPanel = uipanel(app.MeasurementsandMetadataTab);
             app.MetadataPanel.Title = 'Metadata';
-            app.MetadataPanel.Position = [34 13 258 127];
+            app.MetadataPanel.Position = [34 13 226 127];
 
             % Create GenerateMetadataXLSFileButton
             app.GenerateMetadataXLSFileButton = uibutton(app.MetadataPanel, 'push');
             app.GenerateMetadataXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @GenerateMetadataXLSFileButtonPushed, true);
-            app.GenerateMetadataXLSFileButton.Position = [14 73 231 25];
+            app.GenerateMetadataXLSFileButton.Position = [14 73 200 25];
             app.GenerateMetadataXLSFileButton.Text = 'Generate Metadata XLS File';
 
             % Create ImportMetadataFromXLSFileButton
             app.ImportMetadataFromXLSFileButton = uibutton(app.MetadataPanel, 'push');
             app.ImportMetadataFromXLSFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMetadataFromXLSFileButtonPushed, true);
-            app.ImportMetadataFromXLSFileButton.Position = [14 41 231 25];
+            app.ImportMetadataFromXLSFileButton.Position = [14 41 200 25];
             app.ImportMetadataFromXLSFileButton.Text = 'Import Metadata From XLS File';
 
             % Create LOADMETAXLS_EditField
             app.LOADMETAXLS_EditField = uieditfield(app.MetadataPanel, 'text');
             app.LOADMETAXLS_EditField.Editable = 'off';
             app.LOADMETAXLS_EditField.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.LOADMETAXLS_EditField.Position = [48 11 194 22];
+            app.LOADMETAXLS_EditField.Position = [48 11 166 22];
 
             % Create FileLabel
             app.FileLabel = uilabel(app.MetadataPanel);
@@ -1405,117 +1425,141 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create ColumnControlPanel
             app.ColumnControlPanel = uipanel(app.MeasurementsandMetadataTab);
             app.ColumnControlPanel.Title = 'Column Control';
-            app.ColumnControlPanel.Position = [308 13 231 127];
+            app.ColumnControlPanel.Position = [271 13 336 127];
 
             % Create RemoveButton
             app.RemoveButton = uibutton(app.ColumnControlPanel, 'push');
             app.RemoveButton.ButtonPushedFcn = createCallbackFcn(app, @RemoveButtonPushed, true);
-            app.RemoveButton.Position = [15 10 204 25];
+            app.RemoveButton.Position = [11 10 150 25];
             app.RemoveButton.Text = 'Remove';
 
             % Create MoveButton
             app.MoveButton = uibutton(app.ColumnControlPanel, 'push');
             app.MoveButton.ButtonPushedFcn = createCallbackFcn(app, @MoveButtonPushed, true);
-            app.MoveButton.Position = [15 73 96 25];
+            app.MoveButton.Position = [10 73 74 25];
             app.MoveButton.Text = 'Move <<';
 
             % Create MoveButton_2
             app.MoveButton_2 = uibutton(app.ColumnControlPanel, 'push');
             app.MoveButton_2.ButtonPushedFcn = createCallbackFcn(app, @MoveButton_2Pushed, true);
-            app.MoveButton_2.Position = [123 73 96 25];
+            app.MoveButton_2.Position = [87 73 74 25];
             app.MoveButton_2.Text = '>>Move';
 
             % Create PlotDatasetsButton
             app.PlotDatasetsButton = uibutton(app.ColumnControlPanel, 'push');
             app.PlotDatasetsButton.ButtonPushedFcn = createCallbackFcn(app, @PlotDatasetsButtonPushed, true);
-            app.PlotDatasetsButton.Position = [15 42 204 25];
+            app.PlotDatasetsButton.Position = [11 42 150 25];
             app.PlotDatasetsButton.Text = 'Plot Datasets';
+
+            % Create SortButton
+            app.SortButton = uibutton(app.ColumnControlPanel, 'push');
+            app.SortButton.ButtonPushedFcn = createCallbackFcn(app, @SortButtonPushed, true);
+            app.SortButton.Position = [175 10 153 25];
+            app.SortButton.Text = 'Sort';
+
+            % Create SortDirectionSwitch
+            app.SortDirectionSwitch = uiswitch(app.ColumnControlPanel, 'slider');
+            app.SortDirectionSwitch.Items = {'Ascend', 'Descend'};
+            app.SortDirectionSwitch.Position = [227 44 45 20];
+            app.SortDirectionSwitch.Value = 'Ascend';
+
+            % Create SortRowDropDownLabel
+            app.SortRowDropDownLabel = uilabel(app.ColumnControlPanel);
+            app.SortRowDropDownLabel.HorizontalAlignment = 'right';
+            app.SortRowDropDownLabel.Position = [176 71 54 22];
+            app.SortRowDropDownLabel.Text = 'Sort Row';
+
+            % Create SortRowDropDown
+            app.SortRowDropDown = uidropdown(app.ColumnControlPanel);
+            app.SortRowDropDown.Items = {'2', '3', '4', '5', '6', '7', '8', '10', '11', '12', '13', '14', '15', '16'};
+            app.SortRowDropDown.Position = [241 71 84 22];
+            app.SortRowDropDown.Value = '2';
 
             % Create DatasetControlPanel
             app.DatasetControlPanel = uipanel(app.MeasurementsandMetadataTab);
             app.DatasetControlPanel.Title = 'Dataset Control';
-            app.DatasetControlPanel.Position = [554 13 486 127];
+            app.DatasetControlPanel.Position = [617 13 427 127];
 
             % Create ofColumnEditFieldLabel
             app.ofColumnEditFieldLabel = uilabel(app.DatasetControlPanel);
             app.ofColumnEditFieldLabel.HorizontalAlignment = 'right';
-            app.ofColumnEditFieldLabel.Position = [195 75 60 22];
+            app.ofColumnEditFieldLabel.Position = [197 75 60 22];
             app.ofColumnEditFieldLabel.Text = 'of Column';
 
             % Create ofColumnEditField
             app.ofColumnEditField = uieditfield(app.DatasetControlPanel, 'numeric');
             app.ofColumnEditField.Limits = [1 Inf];
             app.ofColumnEditField.ValueDisplayFormat = '%.0f';
-            app.ofColumnEditField.Position = [260 75 55 22];
+            app.ofColumnEditField.Position = [272 75 55 22];
             app.ofColumnEditField.Value = 1;
 
             % Create ofColumnsEditFieldLabel
             app.ofColumnsEditFieldLabel = uilabel(app.DatasetControlPanel);
             app.ofColumnsEditFieldLabel.HorizontalAlignment = 'right';
-            app.ofColumnsEditFieldLabel.Position = [193 40 73 22];
+            app.ofColumnsEditFieldLabel.Position = [195 40 73 22];
             app.ofColumnsEditFieldLabel.Text = 'of Columns (';
 
             % Create ofColumnsEditField
             app.ofColumnsEditField = uieditfield(app.DatasetControlPanel, 'numeric');
             app.ofColumnsEditField.Limits = [1 Inf];
             app.ofColumnsEditField.ValueDisplayFormat = '%.0f';
-            app.ofColumnsEditField.Position = [272 41 55 22];
+            app.ofColumnsEditField.Position = [274 41 55 22];
             app.ofColumnsEditField.Value = 1;
 
             % Create toLabel
             app.toLabel = uilabel(app.DatasetControlPanel);
             app.toLabel.HorizontalAlignment = 'right';
-            app.toLabel.Position = [329 40 12 22];
+            app.toLabel.Position = [331 40 12 22];
             app.toLabel.Text = '-';
 
             % Create FILEDLISTTOEditField
             app.FILEDLISTTOEditField = uieditfield(app.DatasetControlPanel, 'numeric');
             app.FILEDLISTTOEditField.Limits = [1 Inf];
             app.FILEDLISTTOEditField.ValueDisplayFormat = '%.0f';
-            app.FILEDLISTTOEditField.Position = [349 40 55 22];
+            app.FILEDLISTTOEditField.Position = [351 40 55 22];
             app.FILEDLISTTOEditField.Value = 1;
 
             % Create SourceWaveformDropDownLabel
             app.SourceWaveformDropDownLabel = uilabel(app.DatasetControlPanel);
             app.SourceWaveformDropDownLabel.HorizontalAlignment = 'right';
-            app.SourceWaveformDropDownLabel.Position = [3 75 101 22];
+            app.SourceWaveformDropDownLabel.Position = [5 75 101 22];
             app.SourceWaveformDropDownLabel.Text = 'Source Waveform';
 
             % Create SourceDatasetDropDown
             app.SourceDatasetDropDown = uidropdown(app.DatasetControlPanel);
             app.SourceDatasetDropDown.Items = {'ds1', 'ds2', 'ds3', 'ds4'};
             app.SourceDatasetDropDown.ItemsData = {'19', '20', '21', '22'};
-            app.SourceDatasetDropDown.Position = [111 75 81 22];
+            app.SourceDatasetDropDown.Position = [113 75 81 22];
             app.SourceDatasetDropDown.Value = '19';
 
             % Create CopyButton
             app.CopyButton = uibutton(app.DatasetControlPanel, 'push');
             app.CopyButton.ButtonPushedFcn = createCallbackFcn(app, @CopyButtonPushed, true);
-            app.CopyButton.Position = [204 10 261 24];
+            app.CopyButton.Position = [260 10 156 24];
             app.CopyButton.Text = 'Copy';
 
             % Create TargetWaveformDropDownLabel
             app.TargetWaveformDropDownLabel = uilabel(app.DatasetControlPanel);
             app.TargetWaveformDropDownLabel.HorizontalAlignment = 'right';
-            app.TargetWaveformDropDownLabel.Position = [4 41 96 22];
+            app.TargetWaveformDropDownLabel.Position = [6 41 96 22];
             app.TargetWaveformDropDownLabel.Text = 'Target Waveform';
 
             % Create TargetDatasetDropDown
             app.TargetDatasetDropDown = uidropdown(app.DatasetControlPanel);
             app.TargetDatasetDropDown.Items = {'ds1', 'ds2', 'ds3', 'ds4'};
             app.TargetDatasetDropDown.ItemsData = {'19', '20', '21', '22'};
-            app.TargetDatasetDropDown.Position = [112 41 81 22];
+            app.TargetDatasetDropDown.Position = [114 41 81 22];
             app.TargetDatasetDropDown.Value = '20';
 
             % Create DeleteSourceWaveformButton
             app.DeleteSourceWaveformButton = uibutton(app.DatasetControlPanel, 'push');
             app.DeleteSourceWaveformButton.ButtonPushedFcn = createCallbackFcn(app, @DeleteSourceWaveformButtonPushed, true);
-            app.DeleteSourceWaveformButton.Position = [44 10 153 24];
+            app.DeleteSourceWaveformButton.Position = [97 10 153 24];
             app.DeleteSourceWaveformButton.Text = 'Delete Source Waveform';
 
             % Create Label
             app.Label = uilabel(app.DatasetControlPanel);
-            app.Label.Position = [408 41 25 22];
+            app.Label.Position = [410 41 25 22];
             app.Label.Text = ')';
 
             % Create InstrumentsandUsersTab
