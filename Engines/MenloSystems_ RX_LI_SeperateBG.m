@@ -26,7 +26,6 @@ function Tcell = MenloSystems_RX_LI_SeperateBG(PRJ_count,fullpathname,DEBUGMsgLa
                 end
 
             end
-            assignin("base","fullpathname",fullpathname)
 
             if BGcnt
                 fullpathname(BGcnt) = [];

@@ -1755,6 +1755,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create NumberPrefixSwitch
             app.NumberPrefixSwitch = uiswitch(app.CaTxUIFigure, 'slider');
             app.NumberPrefixSwitch.Position = [409 21 40 18];
+            app.NumberPrefixSwitch.Value = 'On';
 
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
