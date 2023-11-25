@@ -282,15 +282,19 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
-            mPath = fileparts(which(mfilename)); % matlab app designer source code folder
+            if isdeployed
+                mPath = fileparts(which(ctfroot)); % matlab app designer source code folder for compiled version
+            else
+                mPath = fileparts(which(mfilename)); % matlab app designer source code folder
+            end
 
             % make a list of THz converter engines from .\Engines folder
-            engineDir = strcat(mPath,filesep,'Engines');
-            profileDir = strcat(mPath,filesep,'Profiles');
+            engineDir = fullfile(mPath,'Engines');
+            profileDir = fullfile(mPath,'Profiles');
             mkdir(engineDir);
             mkdir(profileDir);
             addpath(genpath(mPath));
-            engineList = dir(strcat(engineDir,filesep,'*.m'));
+            engineList = dir(fullfile(engineDir,'*.m'));
             engineNum = size(engineList,1);
             engineItems = {};
 
@@ -382,7 +386,15 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ImportMeasurementButton
         function ImportMeasurementButtonPushed(app, event)
-            [file, pathname] = uigetfile('*.*','All Files(*,*)','MultiSelect','on');
+
+
+            if isempty(app.fullpathname)
+                [file, pathName] = uigetfile('*.*','All Files(*,*)','Sectect data file(s)','MultiSelect','on');
+            else
+                lastPath = app.fullpathname(end);
+                [file, pathName] = uigetfile(lastPath,'Sectect data file(s)','MultiSelect','on');
+            end
+
             % PRJ_count: number of project files imported
             PRJ_count = app.PRJ_count;
             
@@ -408,7 +420,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 end
 
                 PRJ_count = PRJ_count + 1;
-                fileinfo = strcat(pathname,file{idx});
+                fileinfo = strcat(pathName,file{idx});
                 app.filename{PRJ_count} = file{idx};
                 app.fullpathname{PRJ_count} = fileinfo;
                            
@@ -583,8 +595,15 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ExportthzFileButton
         function ExportthzFileButtonPushed(app, event)
-            filter = {'*.thz';'*.*'};
-            [filename, filepath] = uiputfile(filter);
+            if isempty(app.fullpathname)
+                filter = {'*.thz';'*.*'};
+                [filename, filepath] = uiputfile(filter);
+            else
+                lastPath = app.fullpathname(end);
+                lastPath = strcat(extractBefore(lastPath,'.'),'.thz');
+                filter = lastPath;
+                [filename, filepath] = uiputfile(filter);
+            end
             
             if isequal(filename,0)||isequal(filepath,0)
                 return;          
@@ -853,7 +872,15 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ImportMetadataFromXLSFileButton
         function ImportMetadataFromXLSFileButtonPushed(app, event)
-            [filename, filepath] = uigetfile('*.xls');
+            if isempty(app.fullpathname)
+                filter = {'*.xls';'*.*'};
+                [filename, filepath] = uiputfile(filter);
+            else
+                lastPath = app.fullpathname(end);
+                lastPath = strcat(extractBefore(lastPath,'.'),'.xls'); 
+                filter = lastPath;
+                [filename, filepath] = uiputfile(filter);
+            end
 
             if isequal(filename,0)||isequal(filepath,0)
                 return;
@@ -887,9 +914,15 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: GenerateMetadataXLSFileButton
         function GenerateMetadataXLSFileButtonPushed(app, event)
-
-            filter = {'*.xls';'*.*'};
-            [filename, filepath] = uiputfile(filter);
+            if isempty(app.fullpathname)
+                filter = {'*.xls';'*.*'};
+                [filename, filepath] = uiputfile(filter);
+            else
+                lastPath = app.fullpathname(end);
+                lastPath = strcat(extractBefore(lastPath,'.'),'.xls'); 
+                filter = lastPath;
+                [filename, filepath] = uiputfile(filter);
+            end
             
             if isequal(filename,0)||isequal(filepath,0)
                 return;          
@@ -1272,12 +1305,16 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: SortButton
         function SortButtonPushed(app, event)
-            Tcell = app.Tcell;
-            colSize = size(Tcell,2);
-            sortRow = app.SortRowDropDown.Value;
-            sortRow = str2num(sortRow);
-            direction = app.SortDirectionSwitch.Value;
-            Tcell = sortrows(Tcell',sortRow,direction)';
+            try
+                Tcell = app.Tcell;
+                colSize = size(Tcell,2);
+                sortRow = app.SortRowDropDown.Value;
+                sortRow = str2num(sortRow);
+                direction = app.SortDirectionSwitch.Value;
+                Tcell = sortrows(Tcell',sortRow,direction)';
+            catch
+                return;
+            end
             
             for idx = 1:colSize
                 Tcell{1,idx} = idx;
@@ -1454,6 +1491,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create SortButton
             app.SortButton = uibutton(app.ColumnControlPanel, 'push');
             app.SortButton.ButtonPushedFcn = createCallbackFcn(app, @SortButtonPushed, true);
+            app.SortButton.IconAlignment = 'center';
             app.SortButton.Position = [175 10 153 25];
             app.SortButton.Text = 'Sort';
 
@@ -1535,7 +1573,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create CopyButton
             app.CopyButton = uibutton(app.DatasetControlPanel, 'push');
             app.CopyButton.ButtonPushedFcn = createCallbackFcn(app, @CopyButtonPushed, true);
-            app.CopyButton.Position = [260 10 156 24];
+            app.CopyButton.IconAlignment = 'right';
+            app.CopyButton.Position = [235 10 181 24];
             app.CopyButton.Text = 'Copy';
 
             % Create TargetWaveformDropDownLabel
@@ -1554,7 +1593,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create DeleteSourceWaveformButton
             app.DeleteSourceWaveformButton = uibutton(app.DatasetControlPanel, 'push');
             app.DeleteSourceWaveformButton.ButtonPushedFcn = createCallbackFcn(app, @DeleteSourceWaveformButtonPushed, true);
-            app.DeleteSourceWaveformButton.Position = [97 10 153 24];
+            app.DeleteSourceWaveformButton.IconAlignment = 'right';
+            app.DeleteSourceWaveformButton.Position = [74 10 153 24];
             app.DeleteSourceWaveformButton.Text = 'Delete Source Waveform';
 
             % Create Label
