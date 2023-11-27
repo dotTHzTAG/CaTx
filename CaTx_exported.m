@@ -220,7 +220,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             if measNum < 300
                 app.UITable_Measurement.Data = cell2table(Tcell);
             else
-                TcellCompact = Tcell(:,1:10);
+                TcellCompact = Tcell(:,1:30);
                 TcellCompact = [TcellCompact Tcell(:,measNum)];
                 app.UITable_Measurement.Data = cell2table(TcellCompact);
             end
@@ -1146,10 +1146,13 @@ classdef CaTx_exported < matlab.apps.AppBase
             
             if size(Tcell,2) < 2
                 return;
+            else
+                disTable = app.UITable_Measurement.Data;
+                tarCol = disTable.(Indices(2)){1};
             end
 
             % remove the selected column
-            Tcell(:,Indices(2)) = [];
+            Tcell(:,tarCol) = [];
             Tcell(1,:) = num2cell((1:size(Tcell,2)));
 
             % update the table
