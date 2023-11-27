@@ -804,6 +804,9 @@ classdef CaTx_exported < matlab.apps.AppBase
                 % instrument profile matching
                 try
                     insProfile = h5readatt(fullfile,dn,"instrument");
+                    if isempty(insProfile)
+                        insProfile = 0;
+                    end
                 catch ME
                     insProfile = 0;
                 end
@@ -833,6 +836,9 @@ classdef CaTx_exported < matlab.apps.AppBase
                 % user profile matching
                 try
                     userProfile = h5readatt(fullfile,dn,"user");
+                    if isempty(userProfile)
+                        userProfile = 0;
+                    end
                 catch ME
                     userProfile = 0;
                 end
