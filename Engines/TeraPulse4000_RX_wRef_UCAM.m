@@ -61,12 +61,14 @@ function Tcell = TeraPulse4000_RX_wRef_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel
                     mode = "THz-Imaging/Reflection";
 
                     try
-                            % sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value);
-                            sampleName = strcat("sample",idx);
+                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(3).Attributes(9).Value); 
                     catch ME
                         try
-                            sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value);
-                            % sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(19).Value);
+                            % Retrieve 'sampleName'
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value); 
+                            % Retrieve 'sampleDescription'
+                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(19).Value);
                         catch ME
                             sampleName = strcat('measurement',idx);
                         end
