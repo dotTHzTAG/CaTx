@@ -4,9 +4,10 @@
 % Coded by Terahertz Applications Group, University of Cambridge
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function Tcell = TeraPulse4000_RX_BaselineIncluded_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
+function Tcell = TeraPulse4000_RX_woRef_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell)
 
             idxStr = 1;
+            removeBaseline = 1;
             
             for PRJcnt = 1:PRJ_count
                 fullpath = fullpathname{PRJcnt};
@@ -34,16 +35,20 @@ function Tcell = TeraPulse4000_RX_BaselineIncluded_UCAM(PRJ_count,fullpathname,D
                     return;
                 end
                 
-                assignin('base',"HDFinfo",HDFDataInfo);
-                
+                assignin('base',"HDFInfo",HDFDataInfo);
                 MeasCount = size(HDFDataInfo.Groups,1);
         
                 for idx=1:MeasCount
                     groupName = HDFDataInfo.Groups(idx).Name;
-                    HDFSet_baselineX =strcat(groupName,'/baseline/sample/xdata');
-                    HDFSet_baselineY =strcat(groupName,'/baseline/sample/ydata');
                     HDFSet_sampleX =strcat(groupName,'/sample/xdata');
                     HDFSet_sampleY =strcat(groupName,'/sample/ydata');
+                    
+                    try
+                        HDFSet_baselineX =strcat(groupName,'/baseline/sample/xdata');
+                        HDFSet_baselineY =strcat(groupName,'/baseline/sample/ydata');
+                    catch
+                        removeBaseline = 0;
+                    end
                     
                     settingInfo = h5readatt(fullpath,strcat(groupName,"/sample"),'UserScanSettings');
                     waveformRate = str2num(extractBefore(extractAfter(settingInfo,'waveform_rate":'),'}'));
@@ -54,17 +59,17 @@ function Tcell = TeraPulse4000_RX_BaselineIncluded_UCAM(PRJ_count,fullpathname,D
                     mode = "THz-Imaging/Reflection";
 
                     try
-                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value);
-                            sampleName = strcat("sample",idx);
+                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(3).Attributes(9).Value); 
+
                     catch ME
                         try
-                            sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value)
+                            % Retrieve 'sampleName'
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value); 
+                            % Retrieve 'sampleDescription'
                             %sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(19).Value);
                         catch ME
-                            %fig = app.CaTxUIFigure;
-                            %uialert(fig,'Please check the measurement mode.','Warning');
-                            %DEBUGMsgLabel.Text = 'Loading Aborted';
-                            return
+                            sampleName = strcat('measurement',idx);
                         end
                     end                        
 
@@ -79,11 +84,15 @@ function Tcell = TeraPulse4000_RX_BaselineIncluded_UCAM(PRJ_count,fullpathname,D
                         thickness = 0;
                     end
 
-                    baseTime = h5read(fullpath,HDFSet_baselineX);
-                    baseSig =  h5read(fullpath,HDFSet_baselineY);
                     samTime = h5read(fullpath,HDFSet_sampleX);
                     samSig = h5read(fullpath,HDFSet_sampleY);
-                    samSig = samSig - baseSig;
+
+                    if removeBaseline
+                        baseTime = h5read(fullpath,HDFSet_baselineX);
+                        baseSig =  h5read(fullpath,HDFSet_baselineY);
+                        samSig = samSig - baseSig;
+                    end
+                    
                     scanLength = length(samTime);
                     xSpacing = mean(diff(samTime));
                     timeDelay = 0;
@@ -94,7 +103,7 @@ function Tcell = TeraPulse4000_RX_BaselineIncluded_UCAM(PRJ_count,fullpathname,D
                     md4 = [];
                     md5 = [];
 
-                    ds1 = [samTime;samSig]; 
+                    ds1 = [samTime;samSig];
                     ds2 = [];
                     ds3 = [];
                     ds4 = [];
@@ -133,6 +142,6 @@ function Tcell = TeraPulse4000_RX_BaselineIncluded_UCAM(PRJ_count,fullpathname,D
                 end
                 DEBUGMsgLabel.Text = "Complete Conversion";                
                 idxStr = idxStr + MeasCount;
-                assignin("base","Tcell",Tcell);
+                %assignin("base","Tcell",Tcell);
             end
 end
