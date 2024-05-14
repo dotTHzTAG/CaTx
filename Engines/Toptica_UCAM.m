@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % the dotTHz project, 2023
-% MenloSystems_UCAM.m file for CaTx Engine
+% Toptica_UCAM.m file for CaTx Engine
 % Coded by Terahertz Applications Group, University of Cambridge
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -23,7 +23,7 @@ function Tcell = Toptica_UCAM(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcel
                 drawnow
                 
                 try
-                    datMat = csvread(fullpath,1,0);
+                    datMat = readmatrix(fullpath);
                     samTime = datMat(:,1)';
                     samTime = samTime - samTime(1);
                     samSig = datMat(:,2)';
