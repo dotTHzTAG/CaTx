@@ -23,7 +23,7 @@ function Tcell = Toptica_USYRACUSE(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure
                 drawnow
                 
                 try
-                    datMat = csvread(fullpath,1,0);
+                    datMat = readmatrix(fullpath);
                     samTime = datMat(:,1)';
                     samTime = samTime - samTime(1);
                     samSig = datMat(:,2)';
