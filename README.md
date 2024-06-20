@@ -21,7 +21,7 @@ Please download [CaTxInstaller_web.exe](CaTxInstaller_web.exe) and run it on you
  -	Check **Run as administrator.**
  -	Click **OK** and **OK**
 
- *Please run CaTx4Menlo as administrator!!!*
+ *Please run CaTx as administrator!!!*
 
  <img src="/Images/dotTHzProject_logo.png" height ="150">
 
