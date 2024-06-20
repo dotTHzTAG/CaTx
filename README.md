@@ -1,21 +1,40 @@
 # CaTx (CambridgeTHzConverter)
 CaTx for the dotTHz project
 
-<img src="/Images/dotTHzProject_logo.png" height ="150">
+   <img src="/Images/CaTx_splash.png" height ="300">
 
-**Installation guide**
+**Installation guide (standalone version)**
 
-Please download the installation package file, entitled 'Install_releaseDate.zip,' and unzip at your local hard drive. CaTx.mlapp is a MATLAB App-Designer (version r2022a) file and runs on MATLAB environment. If MATLAB is not installed in your PC, please visit https://uk.mathworks.com/products/matlab.html and install the latest version before you run CaTx. 
+Please download [CaTxInstaller_web.exe](CaTxInstaller_web.exe) and run it on your local computer as decribed below. 
 
-The MATLAB App-Designer file (*.mlapp) is a binary file, and a text editor cannot open the file or track its revisions. For the sake of identifying the changes between revisions, 'CambridgeTHzconveter_exported.m' file is also uploaded as a pair. This file is generated using [save] - [export to m file] menu in MATLAB App-Designer.  In case you modify mlapp files and commit back to the repository, please update and upload the associated .m file as well so that users can easily track the changes in the code.
+*MATLAB Application Installation:*
+ -	Run the CaTxInstaller_web.exe file (an internect connection is necessary for installation.)
+ -	The MATLAB Installer will launch. Click **Next**.
+ -	At the ‘Select destination folder’ step, leave ‘Add shortcut to desktop’ **UNCHECKED**.
+ -	Click **Next**, then click **Begin Install**
 
-**Please follow the instructions below.**
-1. MATLAB needs to be installed in your computer to use CaTx.
-2. Download 'Install_releaseDate.zip' file. [Download](/Install_r230918.zip)
-3. Unzip the package file into the folder where you'd like to keep them.
-4. You are now ready to proceed. Double-click 'CambridgeTHzconveter.mlapp' or open it with MATLAB Appdesigner.
-5. Once the tool is launched, select an appropriate converter engine using the 'THz CONVERTER ENGINE' dropdown menu.
+ *Add Shortcut to Desktop:*
+ -	Right-click and drag the CaTx.exe file at C:\Program Files\CaTx\application\ to Windows Desktop
+ -	Select **Create shortcut to here.**
+ -	Right-click the shortcut and select **properties.**
+ -	At the Shortcut tab, click **Advanced…**
+ -	Check **Run as administrator.**
+ -	Click **OK** and **OK**
 
-Please note that the converter engines are listed based on the MATLAB *.m script files in the engine subfolder. While a set of engines are provided, you may need to modify them or create your own engine for your own project.
+ <img src="/Images/dotTHzProject_logo.png" height ="150">
+
+**For the source code modification**
+
+CaTx.mlapp is a MATLAB App-Designer (version r2023a) file and runs on MATLAB environment. If MATLAB is not installed in your PC, please visit https://uk.mathworks.com/products/matlab.html and install the latest version before you run CaTSper. 
+
+In the repository, there is a pair of .mlapp and .m files. Basically, .m file is a text version of .mlapp for code-reviewing and version-tracking and not necessary for running the tool. In case you modify *.mlapp file and commit it back to the repository, please update and upload the associated .m file as well so that users can easily track the changes in the code.
+
+Please follow the instructions below.
+1. **MATLAB** needs to be installed in your computer to modify CaTx.
+2. Download *.mlapp and \Images files.
+ - **CaTx.mlapp** : CaTx4Menlo MATLAB App-designer file
+ - **.\images\CaT_logo.png** : logo image
+ - **.\images\dotTHz_logo.png** : logo image
+3. Double click **CaTx.mlapp** to launch the software.
 
 For detailed descriptions for CaTx and step-by-step tutorial, please visit [dotTHz documentation](https://github.com/dotTHzTAG/Documentation).
