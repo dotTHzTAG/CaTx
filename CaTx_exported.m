@@ -1834,7 +1834,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create Image
             app.Image = uiimage(app.CaTxUIFigure);
             app.Image.Position = [25 791 72 72];
-            app.Image.ImageSource = fullfile(pathToMLAPP, 'dotTHz_logo.png');
+            app.Image.ImageSource = fullfile(pathToMLAPP, 'Images', 'dotTHz_logo.png');
 
             % Create DEBUGMsgLabel
             app.DEBUGMsgLabel = uilabel(app.CaTxUIFigure);
