@@ -7,7 +7,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         Image                          matlab.ui.control.Image
         exceptItemDropDown             matlab.ui.control.DropDown
         exceptItemDropDownLabel        matlab.ui.control.Label
-        AttributueInclusionSwitch      matlab.ui.control.Switch
+        AttribututeInclusionSwitch     matlab.ui.control.Switch
         AttributuesallocationLabel     matlab.ui.control.Label
         NumberPrefixSwitch             matlab.ui.control.Switch
         PrefixnumberstothedatasetnameLabel  matlab.ui.control.Label
@@ -71,6 +71,42 @@ classdef CaTx_exported < matlab.apps.AppBase
         UITable_User                   matlab.ui.control.Table
         UITable_InsHeader              matlab.ui.control.Table
         UITable_Ins                    matlab.ui.control.Table
+        DataFormatTab                  matlab.ui.container.Tab
+        Tree                           matlab.ui.container.CheckBoxTree
+        Node                           matlab.ui.container.TreeNode
+        Node2                          matlab.ui.container.TreeNode
+        Node3                          matlab.ui.container.TreeNode
+        Node4                          matlab.ui.container.TreeNode
+        UITable                        matlab.ui.control.Table
+        NumberofColumnsRowsSpinner     matlab.ui.control.Spinner
+        NumberofColumnsRowsSpinnerLabel  matlab.ui.control.Label
+        SubtractBaselineCheckBox       matlab.ui.control.CheckBox
+        ReferenceSignalSwitch          matlab.ui.control.Switch
+        ReferenceSignalSwitchLabel     matlab.ui.control.Label
+        THzSignalBaselineSpinner       matlab.ui.control.Spinner
+        THzSignalBaselineSpinnerLabel  matlab.ui.control.Label
+        THzSignalReferenceSpinner      matlab.ui.control.Spinner
+        THzSignalReferenceLabel        matlab.ui.control.Label
+        THzSignalSampleSpinner         matlab.ui.control.Spinner
+        THzSignalSampleLabel           matlab.ui.control.Label
+        TimepsSpinner                  matlab.ui.control.Spinner
+        TimepsSpinnerLabel             matlab.ui.control.Label
+        DatasetAlignSwitch             matlab.ui.control.Switch
+        DatasetAlignSwitchLabel        matlab.ui.control.Label
+        ScanPerFileSwitch              matlab.ui.control.Switch
+        ScanPerFileSwitchLabel         matlab.ui.control.Label
+        DataFormatFileExtensionDropDown  matlab.ui.control.DropDown
+        DataFormatFileExtensionDropDownLabel  matlab.ui.control.Label
+        OpenaSampleFileButton          matlab.ui.control.Button
+        FileExtensionEditField         matlab.ui.control.EditField
+        FileExtensionEditFieldLabel    matlab.ui.control.Label
+        SetDefaultButton               matlab.ui.control.Button
+        RemoveButton_2                 matlab.ui.control.Button
+        NewButton                      matlab.ui.control.Button
+        ListBox                        matlab.ui.control.ListBox
+        ListBoxLabel                   matlab.ui.control.Label
+        ConverterNameEditField         matlab.ui.control.EditField
+        ConverterNameEditFieldLabel    matlab.ui.control.Label
         ImportthzFileButton            matlab.ui.control.Button
         ClearMemoryButton              matlab.ui.control.Button
         ConverterEngineDropDown        matlab.ui.control.DropDown
@@ -622,7 +658,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             digitNumFormat = strcat('%0',num2str(digitNum),'d');
 
             % Are the attributes assigned to all datasets?
-            if isequal(app.AttributueInclusionSwitch.Value,"All Measurements")
+            if isequal(app.AttribututeInclusionSwitch.Value,"All Measurements")
                 attAll = true;
             else
                 attAll = false;
@@ -1794,6 +1830,204 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.AnonymousInstrumentProfile0Button.Position = [804 466 238 23];
             app.AnonymousInstrumentProfile0Button.Text = 'Anonymous Instrument Profile, 0';
 
+            % Create DataFormatTab
+            app.DataFormatTab = uitab(app.TabGroup);
+            app.DataFormatTab.Title = 'Data Format';
+
+            % Create ConverterNameEditFieldLabel
+            app.ConverterNameEditFieldLabel = uilabel(app.DataFormatTab);
+            app.ConverterNameEditFieldLabel.HorizontalAlignment = 'right';
+            app.ConverterNameEditFieldLabel.Position = [12 660 93 22];
+            app.ConverterNameEditFieldLabel.Text = 'Converter Name';
+
+            % Create ConverterNameEditField
+            app.ConverterNameEditField = uieditfield(app.DataFormatTab, 'text');
+            app.ConverterNameEditField.Position = [120 660 336 22];
+
+            % Create ListBoxLabel
+            app.ListBoxLabel = uilabel(app.DataFormatTab);
+            app.ListBoxLabel.HorizontalAlignment = 'right';
+            app.ListBoxLabel.Position = [25 109 48 22];
+            app.ListBoxLabel.Text = 'List Box';
+
+            % Create ListBox
+            app.ListBox = uilistbox(app.DataFormatTab);
+            app.ListBox.Position = [88 46 274 87];
+
+            % Create NewButton
+            app.NewButton = uibutton(app.DataFormatTab, 'push');
+            app.NewButton.Position = [88 150 100 23];
+            app.NewButton.Text = 'New';
+
+            % Create RemoveButton_2
+            app.RemoveButton_2 = uibutton(app.DataFormatTab, 'push');
+            app.RemoveButton_2.Position = [226 17 115 23];
+            app.RemoveButton_2.Text = 'Remove';
+
+            % Create SetDefaultButton
+            app.SetDefaultButton = uibutton(app.DataFormatTab, 'push');
+            app.SetDefaultButton.Position = [99 17 109 23];
+            app.SetDefaultButton.Text = 'Set Default';
+
+            % Create FileExtensionEditFieldLabel
+            app.FileExtensionEditFieldLabel = uilabel(app.DataFormatTab);
+            app.FileExtensionEditFieldLabel.HorizontalAlignment = 'right';
+            app.FileExtensionEditFieldLabel.Position = [282 627 80 22];
+            app.FileExtensionEditFieldLabel.Text = 'File Extension';
+
+            % Create FileExtensionEditField
+            app.FileExtensionEditField = uieditfield(app.DataFormatTab, 'text');
+            app.FileExtensionEditField.Position = [377 627 79 22];
+
+            % Create OpenaSampleFileButton
+            app.OpenaSampleFileButton = uibutton(app.DataFormatTab, 'push');
+            app.OpenaSampleFileButton.Position = [25 233 160 23];
+            app.OpenaSampleFileButton.Text = 'Open a Sample File';
+
+            % Create DataFormatFileExtensionDropDownLabel
+            app.DataFormatFileExtensionDropDownLabel = uilabel(app.DataFormatTab);
+            app.DataFormatFileExtensionDropDownLabel.HorizontalAlignment = 'right';
+            app.DataFormatFileExtensionDropDownLabel.Position = [14 627 158 22];
+            app.DataFormatFileExtensionDropDownLabel.Text = 'Data Format (File Extension)';
+
+            % Create DataFormatFileExtensionDropDown
+            app.DataFormatFileExtensionDropDown = uidropdown(app.DataFormatTab);
+            app.DataFormatFileExtensionDropDown.Items = {'.dat', '.csv', '.tprj'};
+            app.DataFormatFileExtensionDropDown.Position = [187 627 83 22];
+            app.DataFormatFileExtensionDropDown.Value = '.dat';
+
+            % Create ScanPerFileSwitchLabel
+            app.ScanPerFileSwitchLabel = uilabel(app.DataFormatTab);
+            app.ScanPerFileSwitchLabel.HorizontalAlignment = 'center';
+            app.ScanPerFileSwitchLabel.Position = [47 561 77 22];
+            app.ScanPerFileSwitchLabel.Text = 'Scan Per File';
+
+            % Create ScanPerFileSwitch
+            app.ScanPerFileSwitch = uiswitch(app.DataFormatTab, 'slider');
+            app.ScanPerFileSwitch.Items = {'Single', 'Multiple'};
+            app.ScanPerFileSwitch.Position = [64 585 45 20];
+            app.ScanPerFileSwitch.Value = 'Single';
+
+            % Create DatasetAlignSwitchLabel
+            app.DatasetAlignSwitchLabel = uilabel(app.DataFormatTab);
+            app.DatasetAlignSwitchLabel.HorizontalAlignment = 'center';
+            app.DatasetAlignSwitchLabel.Position = [200 560 76 22];
+            app.DatasetAlignSwitchLabel.Text = 'Dataset Align';
+
+            % Create DatasetAlignSwitch
+            app.DatasetAlignSwitch = uiswitch(app.DataFormatTab, 'slider');
+            app.DatasetAlignSwitch.Items = {'Cloumn', 'Row'};
+            app.DatasetAlignSwitch.Position = [222 584 45 20];
+            app.DatasetAlignSwitch.Value = 'Cloumn';
+
+            % Create TimepsSpinnerLabel
+            app.TimepsSpinnerLabel = uilabel(app.DataFormatTab);
+            app.TimepsSpinnerLabel.HorizontalAlignment = 'right';
+            app.TimepsSpinnerLabel.Position = [38 326 55 22];
+            app.TimepsSpinnerLabel.Text = 'Time (ps)';
+
+            % Create TimepsSpinner
+            app.TimepsSpinner = uispinner(app.DataFormatTab);
+            app.TimepsSpinner.Limits = [1 6];
+            app.TimepsSpinner.ValueDisplayFormat = '%.0f';
+            app.TimepsSpinner.Position = [101 326 60 22];
+            app.TimepsSpinner.Value = 1;
+
+            % Create THzSignalSampleLabel
+            app.THzSignalSampleLabel = uilabel(app.DataFormatTab);
+            app.THzSignalSampleLabel.HorizontalAlignment = 'right';
+            app.THzSignalSampleLabel.Position = [175 326 115 22];
+            app.THzSignalSampleLabel.Text = 'THz Signal - Sample';
+
+            % Create THzSignalSampleSpinner
+            app.THzSignalSampleSpinner = uispinner(app.DataFormatTab);
+            app.THzSignalSampleSpinner.Limits = [1 6];
+            app.THzSignalSampleSpinner.ValueDisplayFormat = '%.0f';
+            app.THzSignalSampleSpinner.Position = [299 326 60 22];
+            app.THzSignalSampleSpinner.Value = 2;
+
+            % Create THzSignalReferenceLabel
+            app.THzSignalReferenceLabel = uilabel(app.DataFormatTab);
+            app.THzSignalReferenceLabel.HorizontalAlignment = 'right';
+            app.THzSignalReferenceLabel.Position = [372 326 130 22];
+            app.THzSignalReferenceLabel.Text = 'THz Signal - Reference';
+
+            % Create THzSignalReferenceSpinner
+            app.THzSignalReferenceSpinner = uispinner(app.DataFormatTab);
+            app.THzSignalReferenceSpinner.Limits = [1 6];
+            app.THzSignalReferenceSpinner.ValueDisplayFormat = '%.0f';
+            app.THzSignalReferenceSpinner.Position = [511 326 60 22];
+            app.THzSignalReferenceSpinner.Value = 3;
+
+            % Create THzSignalBaselineSpinnerLabel
+            app.THzSignalBaselineSpinnerLabel = uilabel(app.DataFormatTab);
+            app.THzSignalBaselineSpinnerLabel.HorizontalAlignment = 'right';
+            app.THzSignalBaselineSpinnerLabel.Position = [584 326 120 22];
+            app.THzSignalBaselineSpinnerLabel.Text = 'THz Signal - Baseline';
+
+            % Create THzSignalBaselineSpinner
+            app.THzSignalBaselineSpinner = uispinner(app.DataFormatTab);
+            app.THzSignalBaselineSpinner.Limits = [1 6];
+            app.THzSignalBaselineSpinner.ValueDisplayFormat = '%.0f';
+            app.THzSignalBaselineSpinner.Position = [713 326 60 22];
+            app.THzSignalBaselineSpinner.Value = 4;
+
+            % Create ReferenceSignalSwitchLabel
+            app.ReferenceSignalSwitchLabel = uilabel(app.DataFormatTab);
+            app.ReferenceSignalSwitchLabel.HorizontalAlignment = 'center';
+            app.ReferenceSignalSwitchLabel.Position = [596 560 97 22];
+            app.ReferenceSignalSwitchLabel.Text = 'Reference Signal';
+
+            % Create ReferenceSignalSwitch
+            app.ReferenceSignalSwitch = uiswitch(app.DataFormatTab, 'slider');
+            app.ReferenceSignalSwitch.Items = {'Integrated', 'Seperate'};
+            app.ReferenceSignalSwitch.Position = [621 584 45 20];
+            app.ReferenceSignalSwitch.Value = 'Integrated';
+
+            % Create SubtractBaselineCheckBox
+            app.SubtractBaselineCheckBox = uicheckbox(app.DataFormatTab);
+            app.SubtractBaselineCheckBox.Text = 'Subtract Baseline';
+            app.SubtractBaselineCheckBox.Position = [38 390 116 22];
+
+            % Create NumberofColumnsRowsSpinnerLabel
+            app.NumberofColumnsRowsSpinnerLabel = uilabel(app.DataFormatTab);
+            app.NumberofColumnsRowsSpinnerLabel.HorizontalAlignment = 'right';
+            app.NumberofColumnsRowsSpinnerLabel.Position = [311 584 148 22];
+            app.NumberofColumnsRowsSpinnerLabel.Text = 'Number of  Columns/Rows';
+
+            % Create NumberofColumnsRowsSpinner
+            app.NumberofColumnsRowsSpinner = uispinner(app.DataFormatTab);
+            app.NumberofColumnsRowsSpinner.Limits = [1 10];
+            app.NumberofColumnsRowsSpinner.ValueDisplayFormat = '%.0f';
+            app.NumberofColumnsRowsSpinner.Position = [467 584 60 22];
+            app.NumberofColumnsRowsSpinner.Value = 2;
+
+            % Create UITable
+            app.UITable = uitable(app.DataFormatTab);
+            app.UITable.ColumnName = {'Dataset'; 'Column 2'; 'Column 3'; 'Column 4'};
+            app.UITable.RowName = {};
+            app.UITable.Position = [33 420 329 118];
+
+            % Create Tree
+            app.Tree = uitree(app.DataFormatTab, 'checkbox');
+            app.Tree.Position = [826 57 150 300];
+
+            % Create Node
+            app.Node = uitreenode(app.Tree);
+            app.Node.Text = 'Node';
+
+            % Create Node2
+            app.Node2 = uitreenode(app.Node);
+            app.Node2.Text = 'Node2';
+
+            % Create Node3
+            app.Node3 = uitreenode(app.Node);
+            app.Node3.Text = 'Node3';
+
+            % Create Node4
+            app.Node4 = uitreenode(app.Node);
+            app.Node4.Text = 'Node4';
+
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CaTxUIFigure);
             app.PrefixnumberstothedatasetnameLabel.HorizontalAlignment = 'center';
@@ -1810,14 +2044,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
             app.AttributuesallocationLabel.FontWeight = 'bold';
-            app.AttributuesallocationLabel.Position = [481 19 122 22];
-            app.AttributuesallocationLabel.Text = 'Attributue Inclusion:';
+            app.AttributuesallocationLabel.Position = [479 19 126 22];
+            app.AttributuesallocationLabel.Text = 'Attributute Inclusion:';
 
-            % Create AttributueInclusionSwitch
-            app.AttributueInclusionSwitch = uiswitch(app.CaTxUIFigure, 'slider');
-            app.AttributueInclusionSwitch.Items = {'All Measurements', 'Only First,'};
-            app.AttributueInclusionSwitch.Position = [710 21 41 18];
-            app.AttributueInclusionSwitch.Value = 'All Measurements';
+            % Create AttribututeInclusionSwitch
+            app.AttribututeInclusionSwitch = uiswitch(app.CaTxUIFigure, 'slider');
+            app.AttribututeInclusionSwitch.Items = {'All Measurements', 'Only First,'};
+            app.AttribututeInclusionSwitch.Position = [710 21 41 18];
+            app.AttribututeInclusionSwitch.Value = 'All Measurements';
 
             % Create exceptItemDropDownLabel
             app.exceptItemDropDownLabel = uilabel(app.CaTxUIFigure);
