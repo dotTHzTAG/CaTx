@@ -71,22 +71,38 @@ classdef CaTx_exported < matlab.apps.AppBase
         UITable_User                   matlab.ui.control.Table
         UITable_InsHeader              matlab.ui.control.Table
         UITable_Ins                    matlab.ui.control.Table
-        DataFormatTab                  matlab.ui.container.Tab
-        Tree                           matlab.ui.container.CheckBoxTree
-        Node                           matlab.ui.container.TreeNode
-        Node2                          matlab.ui.container.TreeNode
-        Node3                          matlab.ui.container.TreeNode
-        Node4                          matlab.ui.container.TreeNode
-        UITable                        matlab.ui.control.Table
-        NumberofColumnsRowsSpinner     matlab.ui.control.Spinner
-        NumberofColumnsRowsSpinnerLabel  matlab.ui.control.Label
+        DataRecipeTab                  matlab.ui.container.Tab
+        RecipeDesignPanel              matlab.ui.container.Panel
+        Label_2                        matlab.ui.control.Label
+        DeploySampleDataButton         matlab.ui.control.Button
+        DataFormatFileExtensionDropDown  matlab.ui.control.DropDown
+        DataFormatFileExtensionDropDownLabel  matlab.ui.control.Label
+        FileExtensionEditField         matlab.ui.control.EditField
+        FileExtensionEditFieldLabel    matlab.ui.control.Label
+        RecipeNameEditField            matlab.ui.control.EditField
+        RecipeNameEditFieldLabel       matlab.ui.control.Label
+        BaselineSignalPanel            matlab.ui.container.Panel
+        DatasetDropDown_Baseline       matlab.ui.control.DropDown
+        DatasetDropDown_3Label         matlab.ui.control.Label
         SubtractBaselineCheckBox       matlab.ui.control.CheckBox
-        ReferenceSignalSwitch          matlab.ui.control.Switch
-        ReferenceSignalSwitchLabel     matlab.ui.control.Label
+        BaselineSignalSwitch           matlab.ui.control.Switch
+        BaselineSignalSwitchLabel      matlab.ui.control.Label
         THzSignalBaselineSpinner       matlab.ui.control.Spinner
         THzSignalBaselineSpinnerLabel  matlab.ui.control.Label
+        ReferenceSignalPanel           matlab.ui.container.Panel
+        DatasetDropDown_Reference      matlab.ui.control.DropDown
+        DatasetDropDown_2Label         matlab.ui.control.Label
+        ReferenceSignalSwitch          matlab.ui.control.Switch
+        ReferenceSignalSwitchLabel     matlab.ui.control.Label
         THzSignalReferenceSpinner      matlab.ui.control.Spinner
         THzSignalReferenceLabel        matlab.ui.control.Label
+        TerahertzSignalPanel           matlab.ui.container.Panel
+        DatasetDropDown_Sample         matlab.ui.control.DropDown
+        DatasetDropDownLabel           matlab.ui.control.Label
+        LoadBaselineCheckBox           matlab.ui.control.CheckBox
+        LoadReferenceCheckBox          matlab.ui.control.CheckBox
+        DatasetNumberSpinner           matlab.ui.control.Spinner
+        NumberofColumnsRowsLabel       matlab.ui.control.Label
         THzSignalSampleSpinner         matlab.ui.control.Spinner
         THzSignalSampleLabel           matlab.ui.control.Label
         TimepsSpinner                  matlab.ui.control.Spinner
@@ -95,22 +111,16 @@ classdef CaTx_exported < matlab.apps.AppBase
         DatasetAlignSwitchLabel        matlab.ui.control.Label
         ScanPerFileSwitch              matlab.ui.control.Switch
         ScanPerFileSwitchLabel         matlab.ui.control.Label
-        DataFormatFileExtensionDropDown  matlab.ui.control.DropDown
-        DataFormatFileExtensionDropDownLabel  matlab.ui.control.Label
         OpenaSampleFileButton          matlab.ui.control.Button
-        FileExtensionEditField         matlab.ui.control.EditField
-        FileExtensionEditFieldLabel    matlab.ui.control.Label
+        AddRecipeButton                matlab.ui.control.Button
         SetDefaultButton               matlab.ui.control.Button
         RemoveButton_2                 matlab.ui.control.Button
-        NewButton                      matlab.ui.control.Button
-        ListBox                        matlab.ui.control.ListBox
-        ListBoxLabel                   matlab.ui.control.Label
-        ConverterNameEditField         matlab.ui.control.EditField
-        ConverterNameEditFieldLabel    matlab.ui.control.Label
+        RecipeListListBox              matlab.ui.control.ListBox
+        RecipeListListBoxLabel         matlab.ui.control.Label
         ImportthzFileButton            matlab.ui.control.Button
         ClearMemoryButton              matlab.ui.control.Button
-        ConverterEngineDropDown        matlab.ui.control.DropDown
-        ConverterEngineDropDownLabel   matlab.ui.control.Label
+        DataRecipeDropDown             matlab.ui.control.DropDown
+        DataRecipeDropDownLabel        matlab.ui.control.Label
         ExportthzFileButton            matlab.ui.control.Button
         CaTxLabel                      matlab.ui.control.Label
         DeployDataButton               matlab.ui.control.Button
@@ -338,7 +348,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 for idx = 1:engineNum
                     engineItems{idx} = extractBefore(engineList(idx).name,'.');
                 end
-                app.ConverterEngineDropDown.Items = engineItems;
+                app.DataRecipeDropDown.Items = engineItems;
             end
             
             app.PRJ_count = 0;
@@ -470,7 +480,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: DeployDataButton
         function DeployDataButtonPushed(app, event)
-            TDSinstrument = app.ConverterEngineDropDown.Value;
+            TDSinstrument = app.DataRecipeDropDown.Value;
             PRJ_count = app.PRJ_count; % number of files to be imported
             fullpathname = app.fullpathname; % full path for the imported files
             Tcell = []; % cell structure table
@@ -1368,6 +1378,48 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.Tcell = Tcell;
             updateMeasurementTable(app);
         end
+
+        % Value changed function: LoadReferenceCheckBox
+        function LoadReferenceCheckBoxValueChanged(app, event)
+            value = app.LoadReferenceCheckBox.Value;
+
+            if value
+                app.ReferenceSignalSwitch.Enable ="on";
+                app.THzSignalReferenceSpinner.Enable = "on";
+                app.DatasetDropDown_Reference.Enable = "on";
+            else
+                app.ReferenceSignalSwitch.Enable ="off";
+                app.THzSignalReferenceSpinner.Enable = "off";
+                app.DatasetDropDown_Reference.Enable = "off";
+            end
+        end
+
+        % Value changed function: LoadBaselineCheckBox
+        function LoadBaselineCheckBoxValueChanged(app, event)
+            value = app.LoadBaselineCheckBox.Value;
+
+            if value
+                app.BaselineSignalSwitch.Enable ="on";
+                app.THzSignalBaselineSpinner.Enable = "on";
+                app.SubtractBaselineCheckBox.Enable = "on";
+                SubtractBaselineCheckBoxValueChanged(app);
+            else
+                app.BaselineSignalSwitch.Enable ="off";
+                app.THzSignalBaselineSpinner.Enable = "off";
+                app.SubtractBaselineCheckBox.Enable = "off";
+            end
+        end
+
+        % Value changed function: SubtractBaselineCheckBox
+        function SubtractBaselineCheckBoxValueChanged(app, event)
+            value = app.SubtractBaselineCheckBox.Value;
+            
+            if value
+                app.DatasetDropDown_Baseline.Enable = "off";
+            else
+                app.DatasetDropDown_Baseline.Enable = "on";
+            end
+        end
     end
 
     % Component initialization
@@ -1420,21 +1472,21 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ExportthzFileButton.Position = [939 15 152 30];
             app.ExportthzFileButton.Text = 'Export .thz File';
 
-            % Create ConverterEngineDropDownLabel
-            app.ConverterEngineDropDownLabel = uilabel(app.CaTxUIFigure);
-            app.ConverterEngineDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.ConverterEngineDropDownLabel.HorizontalAlignment = 'right';
-            app.ConverterEngineDropDownLabel.FontWeight = 'bold';
-            app.ConverterEngineDropDownLabel.Position = [336 791 108 22];
-            app.ConverterEngineDropDownLabel.Text = 'Converter Engine';
+            % Create DataRecipeDropDownLabel
+            app.DataRecipeDropDownLabel = uilabel(app.CaTxUIFigure);
+            app.DataRecipeDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.DataRecipeDropDownLabel.HorizontalAlignment = 'right';
+            app.DataRecipeDropDownLabel.FontWeight = 'bold';
+            app.DataRecipeDropDownLabel.Position = [336 791 108 22];
+            app.DataRecipeDropDownLabel.Text = 'Data Recipe';
 
-            % Create ConverterEngineDropDown
-            app.ConverterEngineDropDown = uidropdown(app.CaTxUIFigure);
-            app.ConverterEngineDropDown.Items = {'No engines available. Please check m files in .\Engines folder.'};
-            app.ConverterEngineDropDown.FontWeight = 'bold';
-            app.ConverterEngineDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.ConverterEngineDropDown.Position = [455 789 422 25];
-            app.ConverterEngineDropDown.Value = 'No engines available. Please check m files in .\Engines folder.';
+            % Create DataRecipeDropDown
+            app.DataRecipeDropDown = uidropdown(app.CaTxUIFigure);
+            app.DataRecipeDropDown.Items = {'No recipes available. Please check Recipes.json file.'};
+            app.DataRecipeDropDown.FontWeight = 'bold';
+            app.DataRecipeDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.DataRecipeDropDown.Position = [455 789 422 25];
+            app.DataRecipeDropDown.Value = 'No recipes available. Please check Recipes.json file.';
 
             % Create ClearMemoryButton
             app.ClearMemoryButton = uibutton(app.CaTxUIFigure, 'push');
@@ -1830,203 +1882,280 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.AnonymousInstrumentProfile0Button.Position = [804 466 238 23];
             app.AnonymousInstrumentProfile0Button.Text = 'Anonymous Instrument Profile, 0';
 
-            % Create DataFormatTab
-            app.DataFormatTab = uitab(app.TabGroup);
-            app.DataFormatTab.Title = 'Data Format';
+            % Create DataRecipeTab
+            app.DataRecipeTab = uitab(app.TabGroup);
+            app.DataRecipeTab.Title = 'Data Recipe';
 
-            % Create ConverterNameEditFieldLabel
-            app.ConverterNameEditFieldLabel = uilabel(app.DataFormatTab);
-            app.ConverterNameEditFieldLabel.HorizontalAlignment = 'right';
-            app.ConverterNameEditFieldLabel.Position = [12 660 93 22];
-            app.ConverterNameEditFieldLabel.Text = 'Converter Name';
+            % Create RecipeListListBoxLabel
+            app.RecipeListListBoxLabel = uilabel(app.DataRecipeTab);
+            app.RecipeListListBoxLabel.HorizontalAlignment = 'right';
+            app.RecipeListListBoxLabel.Position = [25 654 64 22];
+            app.RecipeListListBoxLabel.Text = 'Recipe List';
 
-            % Create ConverterNameEditField
-            app.ConverterNameEditField = uieditfield(app.DataFormatTab, 'text');
-            app.ConverterNameEditField.Position = [120 660 336 22];
-
-            % Create ListBoxLabel
-            app.ListBoxLabel = uilabel(app.DataFormatTab);
-            app.ListBoxLabel.HorizontalAlignment = 'right';
-            app.ListBoxLabel.Position = [25 109 48 22];
-            app.ListBoxLabel.Text = 'List Box';
-
-            % Create ListBox
-            app.ListBox = uilistbox(app.DataFormatTab);
-            app.ListBox.Position = [88 46 274 87];
-
-            % Create NewButton
-            app.NewButton = uibutton(app.DataFormatTab, 'push');
-            app.NewButton.Position = [88 150 100 23];
-            app.NewButton.Text = 'New';
+            % Create RecipeListListBox
+            app.RecipeListListBox = uilistbox(app.DataRecipeTab);
+            app.RecipeListListBox.Position = [104 574 455 104];
 
             % Create RemoveButton_2
-            app.RemoveButton_2 = uibutton(app.DataFormatTab, 'push');
-            app.RemoveButton_2.Position = [226 17 115 23];
+            app.RemoveButton_2 = uibutton(app.DataRecipeTab, 'push');
+            app.RemoveButton_2.Position = [247 542 115 23];
             app.RemoveButton_2.Text = 'Remove';
 
             % Create SetDefaultButton
-            app.SetDefaultButton = uibutton(app.DataFormatTab, 'push');
-            app.SetDefaultButton.Position = [99 17 109 23];
+            app.SetDefaultButton = uibutton(app.DataRecipeTab, 'push');
+            app.SetDefaultButton.Position = [115 542 109 23];
             app.SetDefaultButton.Text = 'Set Default';
 
-            % Create FileExtensionEditFieldLabel
-            app.FileExtensionEditFieldLabel = uilabel(app.DataFormatTab);
-            app.FileExtensionEditFieldLabel.HorizontalAlignment = 'right';
-            app.FileExtensionEditFieldLabel.Position = [282 627 80 22];
-            app.FileExtensionEditFieldLabel.Text = 'File Extension';
+            % Create RecipeDesignPanel
+            app.RecipeDesignPanel = uipanel(app.DataRecipeTab);
+            app.RecipeDesignPanel.Title = 'Recipe Design';
+            app.RecipeDesignPanel.Position = [23 41 955 482];
 
-            % Create FileExtensionEditField
-            app.FileExtensionEditField = uieditfield(app.DataFormatTab, 'text');
-            app.FileExtensionEditField.Position = [377 627 79 22];
+            % Create AddRecipeButton
+            app.AddRecipeButton = uibutton(app.RecipeDesignPanel, 'push');
+            app.AddRecipeButton.BackgroundColor = [1 1 1];
+            app.AddRecipeButton.FontWeight = 'bold';
+            app.AddRecipeButton.Position = [677 21 255 29];
+            app.AddRecipeButton.Text = 'Add Recipe';
 
             % Create OpenaSampleFileButton
-            app.OpenaSampleFileButton = uibutton(app.DataFormatTab, 'push');
-            app.OpenaSampleFileButton.Position = [25 233 160 23];
+            app.OpenaSampleFileButton = uibutton(app.RecipeDesignPanel, 'push');
+            app.OpenaSampleFileButton.FontWeight = 'bold';
+            app.OpenaSampleFileButton.Position = [472 397 160 23];
             app.OpenaSampleFileButton.Text = 'Open a Sample File';
 
-            % Create DataFormatFileExtensionDropDownLabel
-            app.DataFormatFileExtensionDropDownLabel = uilabel(app.DataFormatTab);
-            app.DataFormatFileExtensionDropDownLabel.HorizontalAlignment = 'right';
-            app.DataFormatFileExtensionDropDownLabel.Position = [14 627 158 22];
-            app.DataFormatFileExtensionDropDownLabel.Text = 'Data Format (File Extension)';
-
-            % Create DataFormatFileExtensionDropDown
-            app.DataFormatFileExtensionDropDown = uidropdown(app.DataFormatTab);
-            app.DataFormatFileExtensionDropDown.Items = {'.dat', '.csv', '.tprj'};
-            app.DataFormatFileExtensionDropDown.Position = [187 627 83 22];
-            app.DataFormatFileExtensionDropDown.Value = '.dat';
+            % Create TerahertzSignalPanel
+            app.TerahertzSignalPanel = uipanel(app.RecipeDesignPanel);
+            app.TerahertzSignalPanel.Title = 'Terahertz Signal';
+            app.TerahertzSignalPanel.Position = [12 290 926 91];
 
             % Create ScanPerFileSwitchLabel
-            app.ScanPerFileSwitchLabel = uilabel(app.DataFormatTab);
+            app.ScanPerFileSwitchLabel = uilabel(app.TerahertzSignalPanel);
             app.ScanPerFileSwitchLabel.HorizontalAlignment = 'center';
-            app.ScanPerFileSwitchLabel.Position = [47 561 77 22];
+            app.ScanPerFileSwitchLabel.Position = [38 13 77 22];
             app.ScanPerFileSwitchLabel.Text = 'Scan Per File';
 
             % Create ScanPerFileSwitch
-            app.ScanPerFileSwitch = uiswitch(app.DataFormatTab, 'slider');
+            app.ScanPerFileSwitch = uiswitch(app.TerahertzSignalPanel, 'slider');
             app.ScanPerFileSwitch.Items = {'Single', 'Multiple'};
-            app.ScanPerFileSwitch.Position = [64 585 45 20];
+            app.ScanPerFileSwitch.Position = [55 37 45 20];
             app.ScanPerFileSwitch.Value = 'Single';
 
             % Create DatasetAlignSwitchLabel
-            app.DatasetAlignSwitchLabel = uilabel(app.DataFormatTab);
+            app.DatasetAlignSwitchLabel = uilabel(app.TerahertzSignalPanel);
             app.DatasetAlignSwitchLabel.HorizontalAlignment = 'center';
-            app.DatasetAlignSwitchLabel.Position = [200 560 76 22];
+            app.DatasetAlignSwitchLabel.Position = [193 13 76 22];
             app.DatasetAlignSwitchLabel.Text = 'Dataset Align';
 
             % Create DatasetAlignSwitch
-            app.DatasetAlignSwitch = uiswitch(app.DataFormatTab, 'slider');
-            app.DatasetAlignSwitch.Items = {'Cloumn', 'Row'};
-            app.DatasetAlignSwitch.Position = [222 584 45 20];
-            app.DatasetAlignSwitch.Value = 'Cloumn';
+            app.DatasetAlignSwitch = uiswitch(app.TerahertzSignalPanel, 'slider');
+            app.DatasetAlignSwitch.Items = {'Column', 'Row'};
+            app.DatasetAlignSwitch.Position = [215 37 45 20];
+            app.DatasetAlignSwitch.Value = 'Column';
 
             % Create TimepsSpinnerLabel
-            app.TimepsSpinnerLabel = uilabel(app.DataFormatTab);
+            app.TimepsSpinnerLabel = uilabel(app.TerahertzSignalPanel);
             app.TimepsSpinnerLabel.HorizontalAlignment = 'right';
-            app.TimepsSpinnerLabel.Position = [38 326 55 22];
+            app.TimepsSpinnerLabel.Position = [534 37 55 22];
             app.TimepsSpinnerLabel.Text = 'Time (ps)';
 
             % Create TimepsSpinner
-            app.TimepsSpinner = uispinner(app.DataFormatTab);
+            app.TimepsSpinner = uispinner(app.TerahertzSignalPanel);
             app.TimepsSpinner.Limits = [1 6];
             app.TimepsSpinner.ValueDisplayFormat = '%.0f';
-            app.TimepsSpinner.Position = [101 326 60 22];
+            app.TimepsSpinner.Position = [597 37 60 22];
             app.TimepsSpinner.Value = 1;
 
             % Create THzSignalSampleLabel
-            app.THzSignalSampleLabel = uilabel(app.DataFormatTab);
+            app.THzSignalSampleLabel = uilabel(app.TerahertzSignalPanel);
             app.THzSignalSampleLabel.HorizontalAlignment = 'right';
-            app.THzSignalSampleLabel.Position = [175 326 115 22];
+            app.THzSignalSampleLabel.Position = [475 8 115 22];
             app.THzSignalSampleLabel.Text = 'THz Signal - Sample';
 
             % Create THzSignalSampleSpinner
-            app.THzSignalSampleSpinner = uispinner(app.DataFormatTab);
+            app.THzSignalSampleSpinner = uispinner(app.TerahertzSignalPanel);
             app.THzSignalSampleSpinner.Limits = [1 6];
             app.THzSignalSampleSpinner.ValueDisplayFormat = '%.0f';
-            app.THzSignalSampleSpinner.Position = [299 326 60 22];
+            app.THzSignalSampleSpinner.Position = [599 8 60 22];
             app.THzSignalSampleSpinner.Value = 2;
 
+            % Create NumberofColumnsRowsLabel
+            app.NumberofColumnsRowsLabel = uilabel(app.TerahertzSignalPanel);
+            app.NumberofColumnsRowsLabel.HorizontalAlignment = 'right';
+            app.NumberofColumnsRowsLabel.Position = [307 38 145 22];
+            app.NumberofColumnsRowsLabel.Text = 'Number of Columns/Rows';
+
+            % Create DatasetNumberSpinner
+            app.DatasetNumberSpinner = uispinner(app.TerahertzSignalPanel);
+            app.DatasetNumberSpinner.Limits = [1 10];
+            app.DatasetNumberSpinner.ValueDisplayFormat = '%.0f';
+            app.DatasetNumberSpinner.Position = [460 38 60 22];
+            app.DatasetNumberSpinner.Value = 2;
+
+            % Create LoadReferenceCheckBox
+            app.LoadReferenceCheckBox = uicheckbox(app.TerahertzSignalPanel);
+            app.LoadReferenceCheckBox.ValueChangedFcn = createCallbackFcn(app, @LoadReferenceCheckBoxValueChanged, true);
+            app.LoadReferenceCheckBox.Text = 'Load Reference';
+            app.LoadReferenceCheckBox.Position = [806 37 107 22];
+            app.LoadReferenceCheckBox.Value = true;
+
+            % Create LoadBaselineCheckBox
+            app.LoadBaselineCheckBox = uicheckbox(app.TerahertzSignalPanel);
+            app.LoadBaselineCheckBox.ValueChangedFcn = createCallbackFcn(app, @LoadBaselineCheckBoxValueChanged, true);
+            app.LoadBaselineCheckBox.Text = 'Load Baseline';
+            app.LoadBaselineCheckBox.Position = [807 14 98 22];
+
+            % Create DatasetDropDownLabel
+            app.DatasetDropDownLabel = uilabel(app.TerahertzSignalPanel);
+            app.DatasetDropDownLabel.HorizontalAlignment = 'right';
+            app.DatasetDropDownLabel.Position = [667 36 46 22];
+            app.DatasetDropDownLabel.Text = 'Dataset';
+
+            % Create DatasetDropDown_Sample
+            app.DatasetDropDown_Sample = uidropdown(app.TerahertzSignalPanel);
+            app.DatasetDropDown_Sample.Items = {'ds1', 'ds2', 'ds3', 'ds4'};
+            app.DatasetDropDown_Sample.Position = [728 36 60 22];
+            app.DatasetDropDown_Sample.Value = 'ds1';
+
+            % Create ReferenceSignalPanel
+            app.ReferenceSignalPanel = uipanel(app.RecipeDesignPanel);
+            app.ReferenceSignalPanel.Title = 'Reference Signal';
+            app.ReferenceSignalPanel.Position = [12 204 532 78];
+
             % Create THzSignalReferenceLabel
-            app.THzSignalReferenceLabel = uilabel(app.DataFormatTab);
+            app.THzSignalReferenceLabel = uilabel(app.ReferenceSignalPanel);
             app.THzSignalReferenceLabel.HorizontalAlignment = 'right';
-            app.THzSignalReferenceLabel.Position = [372 326 130 22];
+            app.THzSignalReferenceLabel.Position = [184 28 130 22];
             app.THzSignalReferenceLabel.Text = 'THz Signal - Reference';
 
             % Create THzSignalReferenceSpinner
-            app.THzSignalReferenceSpinner = uispinner(app.DataFormatTab);
+            app.THzSignalReferenceSpinner = uispinner(app.ReferenceSignalPanel);
             app.THzSignalReferenceSpinner.Limits = [1 6];
             app.THzSignalReferenceSpinner.ValueDisplayFormat = '%.0f';
-            app.THzSignalReferenceSpinner.Position = [511 326 60 22];
-            app.THzSignalReferenceSpinner.Value = 3;
-
-            % Create THzSignalBaselineSpinnerLabel
-            app.THzSignalBaselineSpinnerLabel = uilabel(app.DataFormatTab);
-            app.THzSignalBaselineSpinnerLabel.HorizontalAlignment = 'right';
-            app.THzSignalBaselineSpinnerLabel.Position = [584 326 120 22];
-            app.THzSignalBaselineSpinnerLabel.Text = 'THz Signal - Baseline';
-
-            % Create THzSignalBaselineSpinner
-            app.THzSignalBaselineSpinner = uispinner(app.DataFormatTab);
-            app.THzSignalBaselineSpinner.Limits = [1 6];
-            app.THzSignalBaselineSpinner.ValueDisplayFormat = '%.0f';
-            app.THzSignalBaselineSpinner.Position = [713 326 60 22];
-            app.THzSignalBaselineSpinner.Value = 4;
+            app.THzSignalReferenceSpinner.Position = [323 28 60 22];
+            app.THzSignalReferenceSpinner.Value = 2;
 
             % Create ReferenceSignalSwitchLabel
-            app.ReferenceSignalSwitchLabel = uilabel(app.DataFormatTab);
+            app.ReferenceSignalSwitchLabel = uilabel(app.ReferenceSignalPanel);
             app.ReferenceSignalSwitchLabel.HorizontalAlignment = 'center';
-            app.ReferenceSignalSwitchLabel.Position = [596 560 97 22];
+            app.ReferenceSignalSwitchLabel.Position = [50 6 97 22];
             app.ReferenceSignalSwitchLabel.Text = 'Reference Signal';
 
             % Create ReferenceSignalSwitch
-            app.ReferenceSignalSwitch = uiswitch(app.DataFormatTab, 'slider');
+            app.ReferenceSignalSwitch = uiswitch(app.ReferenceSignalPanel, 'slider');
             app.ReferenceSignalSwitch.Items = {'Integrated', 'Seperate'};
-            app.ReferenceSignalSwitch.Position = [621 584 45 20];
-            app.ReferenceSignalSwitch.Value = 'Integrated';
+            app.ReferenceSignalSwitch.Position = [75 30 45 20];
+            app.ReferenceSignalSwitch.Value = 'Seperate';
+
+            % Create DatasetDropDown_2Label
+            app.DatasetDropDown_2Label = uilabel(app.ReferenceSignalPanel);
+            app.DatasetDropDown_2Label.HorizontalAlignment = 'right';
+            app.DatasetDropDown_2Label.Position = [398 29 46 22];
+            app.DatasetDropDown_2Label.Text = 'Dataset';
+
+            % Create DatasetDropDown_Reference
+            app.DatasetDropDown_Reference = uidropdown(app.ReferenceSignalPanel);
+            app.DatasetDropDown_Reference.Items = {'ds1', 'ds2', 'ds3', 'ds4'};
+            app.DatasetDropDown_Reference.Position = [459 29 60 22];
+            app.DatasetDropDown_Reference.Value = 'ds2';
+
+            % Create BaselineSignalPanel
+            app.BaselineSignalPanel = uipanel(app.RecipeDesignPanel);
+            app.BaselineSignalPanel.Title = 'Baseline Signal';
+            app.BaselineSignalPanel.Position = [13 119 532 78];
+
+            % Create THzSignalBaselineSpinnerLabel
+            app.THzSignalBaselineSpinnerLabel = uilabel(app.BaselineSignalPanel);
+            app.THzSignalBaselineSpinnerLabel.HorizontalAlignment = 'right';
+            app.THzSignalBaselineSpinnerLabel.Position = [190 29 120 22];
+            app.THzSignalBaselineSpinnerLabel.Text = 'THz Signal - Baseline';
+
+            % Create THzSignalBaselineSpinner
+            app.THzSignalBaselineSpinner = uispinner(app.BaselineSignalPanel);
+            app.THzSignalBaselineSpinner.Limits = [1 6];
+            app.THzSignalBaselineSpinner.ValueDisplayFormat = '%.0f';
+            app.THzSignalBaselineSpinner.Enable = 'off';
+            app.THzSignalBaselineSpinner.Position = [319 29 60 22];
+            app.THzSignalBaselineSpinner.Value = 2;
+
+            % Create BaselineSignalSwitchLabel
+            app.BaselineSignalSwitchLabel = uilabel(app.BaselineSignalPanel);
+            app.BaselineSignalSwitchLabel.HorizontalAlignment = 'center';
+            app.BaselineSignalSwitchLabel.Position = [55 6 88 22];
+            app.BaselineSignalSwitchLabel.Text = 'Baseline Signal';
+
+            % Create BaselineSignalSwitch
+            app.BaselineSignalSwitch = uiswitch(app.BaselineSignalPanel, 'slider');
+            app.BaselineSignalSwitch.Items = {'Integrated', 'Seperate'};
+            app.BaselineSignalSwitch.Enable = 'off';
+            app.BaselineSignalSwitch.Position = [75 30 45 20];
+            app.BaselineSignalSwitch.Value = 'Seperate';
 
             % Create SubtractBaselineCheckBox
-            app.SubtractBaselineCheckBox = uicheckbox(app.DataFormatTab);
+            app.SubtractBaselineCheckBox = uicheckbox(app.BaselineSignalPanel);
+            app.SubtractBaselineCheckBox.ValueChangedFcn = createCallbackFcn(app, @SubtractBaselineCheckBoxValueChanged, true);
+            app.SubtractBaselineCheckBox.Enable = 'off';
             app.SubtractBaselineCheckBox.Text = 'Subtract Baseline';
-            app.SubtractBaselineCheckBox.Position = [38 390 116 22];
+            app.SubtractBaselineCheckBox.Position = [195 6 116 22];
+            app.SubtractBaselineCheckBox.Value = true;
 
-            % Create NumberofColumnsRowsSpinnerLabel
-            app.NumberofColumnsRowsSpinnerLabel = uilabel(app.DataFormatTab);
-            app.NumberofColumnsRowsSpinnerLabel.HorizontalAlignment = 'right';
-            app.NumberofColumnsRowsSpinnerLabel.Position = [311 584 148 22];
-            app.NumberofColumnsRowsSpinnerLabel.Text = 'Number of  Columns/Rows';
+            % Create DatasetDropDown_3Label
+            app.DatasetDropDown_3Label = uilabel(app.BaselineSignalPanel);
+            app.DatasetDropDown_3Label.HorizontalAlignment = 'right';
+            app.DatasetDropDown_3Label.Position = [397 28 46 22];
+            app.DatasetDropDown_3Label.Text = 'Dataset';
 
-            % Create NumberofColumnsRowsSpinner
-            app.NumberofColumnsRowsSpinner = uispinner(app.DataFormatTab);
-            app.NumberofColumnsRowsSpinner.Limits = [1 10];
-            app.NumberofColumnsRowsSpinner.ValueDisplayFormat = '%.0f';
-            app.NumberofColumnsRowsSpinner.Position = [467 584 60 22];
-            app.NumberofColumnsRowsSpinner.Value = 2;
+            % Create DatasetDropDown_Baseline
+            app.DatasetDropDown_Baseline = uidropdown(app.BaselineSignalPanel);
+            app.DatasetDropDown_Baseline.Items = {'ds1', 'ds2', 'ds3', 'ds4'};
+            app.DatasetDropDown_Baseline.Enable = 'off';
+            app.DatasetDropDown_Baseline.Position = [458 28 60 22];
+            app.DatasetDropDown_Baseline.Value = 'ds3';
 
-            % Create UITable
-            app.UITable = uitable(app.DataFormatTab);
-            app.UITable.ColumnName = {'Dataset'; 'Column 2'; 'Column 3'; 'Column 4'};
-            app.UITable.RowName = {};
-            app.UITable.Position = [33 420 329 118];
+            % Create RecipeNameEditFieldLabel
+            app.RecipeNameEditFieldLabel = uilabel(app.RecipeDesignPanel);
+            app.RecipeNameEditFieldLabel.HorizontalAlignment = 'right';
+            app.RecipeNameEditFieldLabel.Position = [13 430 78 22];
+            app.RecipeNameEditFieldLabel.Text = 'Recipe Name';
 
-            % Create Tree
-            app.Tree = uitree(app.DataFormatTab, 'checkbox');
-            app.Tree.Position = [826 57 150 300];
+            % Create RecipeNameEditField
+            app.RecipeNameEditField = uieditfield(app.RecipeDesignPanel, 'text');
+            app.RecipeNameEditField.Position = [106 430 336 22];
 
-            % Create Node
-            app.Node = uitreenode(app.Tree);
-            app.Node.Text = 'Node';
+            % Create FileExtensionEditFieldLabel
+            app.FileExtensionEditFieldLabel = uilabel(app.RecipeDesignPanel);
+            app.FileExtensionEditFieldLabel.HorizontalAlignment = 'right';
+            app.FileExtensionEditFieldLabel.Position = [280 397 80 22];
+            app.FileExtensionEditFieldLabel.Text = 'File Extension';
 
-            % Create Node2
-            app.Node2 = uitreenode(app.Node);
-            app.Node2.Text = 'Node2';
+            % Create FileExtensionEditField
+            app.FileExtensionEditField = uieditfield(app.RecipeDesignPanel, 'text');
+            app.FileExtensionEditField.Position = [375 397 79 22];
 
-            % Create Node3
-            app.Node3 = uitreenode(app.Node);
-            app.Node3.Text = 'Node3';
+            % Create DataFormatFileExtensionDropDownLabel
+            app.DataFormatFileExtensionDropDownLabel = uilabel(app.RecipeDesignPanel);
+            app.DataFormatFileExtensionDropDownLabel.HorizontalAlignment = 'right';
+            app.DataFormatFileExtensionDropDownLabel.Position = [12 397 158 22];
+            app.DataFormatFileExtensionDropDownLabel.Text = 'Data Format (File Extension)';
 
-            % Create Node4
-            app.Node4 = uitreenode(app.Node);
-            app.Node4.Text = 'Node4';
+            % Create DataFormatFileExtensionDropDown
+            app.DataFormatFileExtensionDropDown = uidropdown(app.RecipeDesignPanel);
+            app.DataFormatFileExtensionDropDown.Items = {'dat', 'csv', 'tprj'};
+            app.DataFormatFileExtensionDropDown.Position = [181 397 83 22];
+            app.DataFormatFileExtensionDropDown.Value = 'dat';
+
+            % Create DeploySampleDataButton
+            app.DeploySampleDataButton = uibutton(app.RecipeDesignPanel, 'push');
+            app.DeploySampleDataButton.FontWeight = 'bold';
+            app.DeploySampleDataButton.Position = [402 21 255 29];
+            app.DeploySampleDataButton.Text = 'Deploy Sample Data';
+
+            % Create Label_2
+            app.Label_2 = uilabel(app.RecipeDesignPanel);
+            app.Label_2.FontWeight = 'bold';
+            app.Label_2.FontColor = [0 0.4471 0.7412];
+            app.Label_2.Position = [17 94 789 22];
+            app.Label_2.Text = 'In case of a standalone reference/baseline (seperate case), a reference/baseline file will be specified after [DEPLOY] button is pressed.';
 
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CaTxUIFigure);
