@@ -72,36 +72,45 @@ classdef CaTx_exported < matlab.apps.AppBase
         UITable_InsHeader               matlab.ui.control.Table
         UITable_Ins                     matlab.ui.control.Table
         DataRecipeTab                   matlab.ui.container.Tab
-        RecipeDesignPanel               matlab.ui.container.Panel
+        RecipeDesignLabel               matlab.ui.control.Label
+        TabGroup2                       matlab.ui.container.TabGroup
+        TDSTab                          matlab.ui.container.Tab
+        AddRecipeButton                 matlab.ui.control.Button
         SampleFileEditField             matlab.ui.control.EditField
         SampleFileEditFieldLabel        matlab.ui.control.Label
-        DeploySampleDataButton          matlab.ui.control.Button
         DataFileExtensionDropDown       matlab.ui.control.DropDown
         DataFileExtensionDropDownLabel  matlab.ui.control.Label
-        userDefinedEditField            matlab.ui.control.EditField
         RecipeNameEditField             matlab.ui.control.EditField
         RecipeNameEditFieldLabel        matlab.ui.control.Label
+        DeploySampleDataButton          matlab.ui.control.Button
+        userDefinedEditField            matlab.ui.control.EditField
         TerahertzDatasetPanel           matlab.ui.container.Panel
-        DatasetDropDown_Baseline        matlab.ui.control.DropDown
+        LoadOpenFileLabel               matlab.ui.control.Label
+        dsEditField_Baseline            matlab.ui.control.NumericEditField
+        BaselineDSLabel                 matlab.ui.control.Label
+        dsEditField_Reference           matlab.ui.control.NumericEditField
+        ReferencedsLabel                matlab.ui.control.Label
+        dsEditField_Sample              matlab.ui.control.NumericEditField
+        SampledsLabel                   matlab.ui.control.Label
+        DSDescriptionEditField          matlab.ui.control.EditField
+        DescriptionEditFieldLabel       matlab.ui.control.Label
+        CreateDatasetDescriptionButton  matlab.ui.control.Button
         DatasetLabel                    matlab.ui.control.Label
+        ColumnLabel                     matlab.ui.control.Label
         BaselineTHzSpinner              matlab.ui.control.Spinner
         BaselineTHzSpinnerLabel         matlab.ui.control.Label
-        SubtractBaselineCheckBox        matlab.ui.control.CheckBox
-        OpenBaselineFileCheckBox        matlab.ui.control.CheckBox
+        SubtractCheckBox                matlab.ui.control.CheckBox
+        OpenFileCheckBox_Baseline       matlab.ui.control.CheckBox
         LoadBaselineCheckBox            matlab.ui.control.CheckBox
-        DatasetDropDown_Reference       matlab.ui.control.DropDown
-        DatasetDropDown_2Label          matlab.ui.control.Label
         ReferenceTHzSpinner             matlab.ui.control.Spinner
         THzSignalReferenceLabel         matlab.ui.control.Label
-        OpenReferenceFileCheckBox       matlab.ui.control.CheckBox
+        OpenFileCheckBox_Reference      matlab.ui.control.CheckBox
         LoadReferenceCheckBox           matlab.ui.control.CheckBox
-        DatasetDropDown_Sample          matlab.ui.control.DropDown
-        DatasetDropDownLabel            matlab.ui.control.Label
         SampleTHzSpinner                matlab.ui.control.Spinner
         THzSignalSampleLabel            matlab.ui.control.Label
         TimepsSpinner                   matlab.ui.control.Spinner
         TimepsSpinnerLabel              matlab.ui.control.Label
-        AddRecipeButton                 matlab.ui.control.Button
+        TPITab                          matlab.ui.container.Tab
         SetDefaultButton                matlab.ui.control.Button
         RemoveButton_2                  matlab.ui.control.Button
         RecipeListListBox               matlab.ui.control.ListBox
@@ -134,6 +143,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         totalMeasNum % total measurement number
         manualMode % Description
         thzVer = "1.00";
+        referenceSignal; % Description
+        baselineSignal; % Description
     end
     
     methods (Access = private)
@@ -319,38 +330,101 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             app.DEBUGMsgLabel.Text = 'Loading....';
-            Tcell = []; % cell structure table
+            Tcell = cell(22,1); % cell structure table
+            Tcell_header = app.Tcell_header;
             uiFigure = app.CaTxUIFigure;
             app.manualMode = 0;
+            DSBaseCol = 18;
+            measNum = 1;
             drawnow
 
+            % Import Settings
             tofIdx = app.TimepsSpinner.Value;
             sampleTHzIdx = app.SampleTHzSpinner.Value;
+            sampleDS = app.dsEditField_Sample.Value;
+
+            readReference = app.LoadReferenceCheckBox.Value;
+            openRefereceFile = app.OpenFileCheckBox_Reference.Value;
             referenceTHzIdx = app.ReferenceTHzSpinner.Value;
-                
+            referenceDS = app.dsEditField_Reference.Value;
+
+            readBaseline = app.LoadBaselineCheckBox.Value;
+            openBaselineFile = app.OpenFileCheckBox_Baseline.Value;
+            subtractBaseline = app.SubtractCheckBox.Value;
+            baselineTHzIdx = app.BaselineTHzSpinner.Value;
+            baselineDS = app.dsEditField_Baseline.Value;
+            
             try
-                datVec = readmatrix(fullpath);
-                tof = datVec(:,sampleTHzIdx)'; % Time of flight
-                samTHz = datVec(:,referenceTHzIdx)'; % Sample THz signal
-                [~,sampleName,~] = fileparts(fullpath);
+                samVec = readmatrix(fullpath);
+                [fileLocation,sampleName,fileExt] = fileparts(fullpath);
             catch
                 uialert(uiFigure,'Incorrect Data Set','Warning');
                 app.DEBUGMsgLabel.Text = 'Loading Cancelled';
                 return;
             end
 
+            % Read Sample Signal                            
+            tof = samVec(:,tofIdx)'; % Time of flight
+            samTHz = samVec(:,sampleTHzIdx)'; % Sample THz signal
+
+            % Sample signal cell allocation
+            Tcell{DSBaseCol+sampleDS,measNum} = [tof;samTHz];
+            Tcell_header{DSBaseCol+sampleDS} = strcat(num2str(DSBaseCol+sampleDS),': Sample');
+
+            % Read Reference Signal
+            if readReference
+                if openRefereceFile
+                    if isempty(app.referenceSignal)
+                        [refFile, refFilepath] = uigetfile(fileExt,'Select a reference file',fileLocation);
+                        refVec = readmatrix(strcat(refFilepath,refFile));
+                        app.referenceSignal = refVec;
+                    else
+                        refVec = app.referenceSignal;
+                    end
+                    refTof = refVec(:,tofIdx)';
+                    refTHz = refVec(:,referenceTHzIdx)';
+                else
+                    refTof = tof;
+                    refTHz = samVec(:,referenceTHzIdx)';
+                end
+                % Referecen signal cell allocation
+                Tcell{DSBaseCol+referenceDS,measNum} = [refTof;refTHz];
+                Tcell_header{DSBaseCol+referenceDS} = strcat(num2str(DSBaseCol+referenceDS),': Reference');
+            end
+
+            % Read Baseline Signal
+            if readBaseline
+                if openBaselineFile
+                    if isempty(app.baselineSignal)
+                        [baseFile, baseFilepath] = uigetfile(fileExt,'Select a baseline file',fileLocation);
+                        baseVec = readmatrix(strcat(baseFilepath,baseFile));
+                        app.baselineSignal = baseVec;
+                    else
+                        baseVec = app.baselineSignal;
+                    end
+                    baseTof = baseVec(:,tofIdx)';
+                    baseTHz = baseVec(:,baselineTHzIdx)';
+                else
+                    baseTof = tof;
+                    baseTHz = baseVec(:,baselineTHzIdx)';
+                end
+                if subtractBaseline
+                    samTHz = samTHz - baseTHz;
+                    refTHz = refTHz - baseTHz;
+                    Tcell{DSBaseCol+sampleDS,measNum} = [tof;samTHz];
+                    Tcell{DSBaseCol+referenceDS,measNum} = [refTof;refTHz];
+                else
+                    % Baseline signal cell allocation
+                    Tcell{DSBaseCol+baselineDS,measNum} = [baseTof;baseTHz];
+                    Tcell_header{DSBaseCol+baselineDS} = strcat(num2str(DSBaseCol+baselineDS),': Baseline');
+                end
+            end
+
+            % Data cell allocation
             description = "";
             mdDescription = "para1,para2";
             dsDescription = "ds1:Sample, ds2:Ref"; % dataset description
             mode = "";
-
-
-            ds1 = [tof;samTHz];
-            ds2 = [];
-            ds3 = [];
-            ds4 = [];
-
-            measNum = 1;
 
             Tcell{1,measNum} = measNum;
             Tcell{2,measNum} = sampleName;
@@ -359,22 +433,16 @@ classdef CaTx_exported < matlab.apps.AppBase
             Tcell{5,measNum} = 0; % User profile
             Tcell{8,measNum} = []; % coordinates
             
-
-
             Tcell{15,measNum} = []; % not used
             Tcell{16,measNum} = []; % not used
             Tcell{17,measNum} = []; % not used
 
             Tcell{18,measNum} = dsDescription; % dataset description
-            Tcell{19,measNum} = ds1;
-            Tcell{20,measNum} = ds2;
-            Tcell{21,measNum} = ds3; 
-            Tcell{22,measNum} = ds4;       
 
-            app.DEBUGMsgLabel.Text = "Complete Conversion";
+            app.DEBUGMsgLabel.Text = "Complete Loading";
             app.totalMeasNum = measNum;
             app.Tcell = Tcell;
-            app.UITable_Header.Data = app.Tcell_headerDefault;
+            app.UITable_Header.Data = Tcell_header;
             updateMeasurementTable(app);
             app.FILEDLISTTOEditField.Value = app.totalMeasNum;
             app.TabGroup.SelectedTab = app.TabGroup.Children(1);
@@ -404,6 +472,127 @@ classdef CaTx_exported < matlab.apps.AppBase
             Tcell{12,measNum} = md3; % weight (mg)
             Tcell{13,measNum} = md4; % concentration  (%)
             Tcell{14,measNum} = md5; % concentration  (%)
+        end
+        
+        function deploySampleData_tprj(app)
+            fullpath = app.samplefile;
+
+            if isempty(fullpath)
+                return;
+            end
+
+            % extracting data from TeraPulse prject file
+            HDFDataSet='/TerapulseDocument/Measurements/Spectra Data';
+            
+            try
+                HDFDataInfo = h5info(fullpath, HDFDataSet);
+                [fileLocation,sampleName,fileExt] = fileparts(fullpath);
+            catch
+                uialert(uiFigure,'Incorrect HDF5 dataset','Warning');
+                app.DEBUGMsgLabel.Text = 'Loading Cancelled';
+                return;
+            end
+
+            app.DEBUGMsgLabel.Text = 'Loading....';
+            Tcell = cell(22,1); % cell structure table
+            Tcell_header = app.Tcell_header;
+            uiFigure = app.CaTxUIFigure;
+            app.manualMode = 0;
+            DSBaseCol = 18;
+            totalMeasNum = size(HDFDataInfo.Groups,1);
+            measNum = 1;
+            drawnow
+
+            % Import Settings
+            tofIdx = app.TimepsSpinner.Value;
+            sampleTHzIdx = app.SampleTHzSpinner.Value;
+            sampleDS = app.dsEditField_Sample.Value;
+
+            readReference = app.LoadReferenceCheckBox.Value;
+            openRefereceFile = app.OpenFileCheckBox_Reference.Value;
+            referenceTHzIdx = app.ReferenceTHzSpinner.Value;
+            referenceDS = app.dsEditField_Reference.Value;
+
+            readBaseline = app.LoadBaselineCheckBox.Value;
+            openBaselineFile = app.OpenFileCheckBox_Baseline.Value;
+            subtractBaseline = app.SubtractCheckBox.Value;
+            baselineTHzIdx = app.BaselineTHzSpinner.Value;
+            baselineDS = app.dsEditField_Baseline.Value;
+            
+            % Read Sample Signal
+            groupName = HDFDataInfo.Groups(measNum).Name;
+            tof = h5read(fullpath,strcat(groupName,'/sample/xdata')); % Time of flight
+            samTHz = h5read(fullpath,strcat(groupName,'/sample/ydata')); % Sample THz signal
+
+            % Sample signal cell allocation
+            Tcell{DSBaseCol+sampleDS,measNum} = [tof;samTHz];
+            Tcell_header{DSBaseCol+sampleDS} = strcat(num2str(DSBaseCol+sampleDS),': Sample');
+
+            % Read Reference Signal
+            if readReference
+                try
+                    refTof = h5read(fullpath,strcat(groupName,'/reference/sample/xdata'));
+                    refTHz = h5read(fullpath,strcat(groupName,'/reference/sample/ydata'));
+                catch
+                    uialert(uiFigure,'Reference singal loading error','Warning');
+                    app.DEBUGMsgLabel.Text = 'Loading Cancelled';
+                    return;
+                end
+
+                % Referecen signal cell allocation
+                Tcell{DSBaseCol+referenceDS,measNum} = [refTof;refTHz];
+                Tcell_header{DSBaseCol+referenceDS} = strcat(num2str(DSBaseCol+referenceDS),': Reference');
+            end
+
+            % Read Baseline Signal
+            if readBaseline
+                try
+                    baseTof = h5read(fullpath,strcat(groupName,'/baseline/sample/xdata'));
+                    baseTHz = h5read(fullpath,strcat(groupName,'/baseline/sample/ydata'));
+                catch
+                    uialert(uiFigure,'Baseline singal loading error','Warning');
+                    app.DEBUGMsgLabel.Text = 'Loading Cancelled';
+                    return;
+                end
+
+                if subtractBaseline
+                    samTHz = samTHz - baseTHz;
+                    refTHz = refTHz - baseTHz;
+                    Tcell{DSBaseCol+sampleDS,measNum} = [tof;samTHz];
+                    Tcell{DSBaseCol+referenceDS,measNum} = [refTof;refTHz];
+                else
+                    % Baseline signal cell allocation
+                    Tcell{DSBaseCol+baselineDS,measNum} = [baseTof;baseTHz];
+                    Tcell_header{DSBaseCol+baselineDS} = strcat(num2str(DSBaseCol+baselineDS),': Baseline');
+                end
+            end
+
+            % Data cell allocation
+            description = "";
+            mdDescription = "para1,para2";
+            dsDescription = "ds1:Sample, ds2:Ref"; % dataset description
+            mode = "";
+
+            Tcell{1,measNum} = measNum;
+            Tcell{2,measNum} = sampleName;
+            Tcell{3,measNum} = description;
+            Tcell{4,measNum} = 0; % Instrument profile
+            Tcell{5,measNum} = 0; % User profile
+            Tcell{8,measNum} = []; % coordinates
+            
+            Tcell{15,measNum} = []; % not used
+            Tcell{16,measNum} = []; % not used
+            Tcell{17,measNum} = []; % not used
+
+            Tcell{18,measNum} = dsDescription; % dataset description
+
+            app.DEBUGMsgLabel.Text = "Complete Loading";
+            app.totalMeasNum = measNum;
+            app.Tcell = Tcell;
+            app.UITable_Header.Data = app.Tcell_headerDefault;
+            updateMeasurementTable(app);
+            app.FILEDLISTTOEditField.Value = app.totalMeasNum;
+            app.TabGroup.SelectedTab = app.TabGroup.Children(1);
         end
     end
     
@@ -513,6 +702,10 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.Tcell_headerDefault = Tcell_header;
             app.manualMode = 1;
             updateProfile(app);
+
+            LoadReferenceCheckBoxValueChanged(app);
+            LoadBaselineCheckBoxValueChanged(app);
+
         end
 
         % Button pushed function: ImportMeasurementButton
@@ -708,7 +901,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                     dsList = split(newData,',');
                     Tcell_header = app.Tcell_header;
                     for idx = 1:4
-                        dsDRow = 18; % dataset description row
+                        dsDRow = 18; % Dataset description row
                         if idx<=size(dsList,1)
                             Tcell_header{idx+dsDRow} = strcat(num2str(idx+dsDRow),": ",dsList(idx,1));
                         else
@@ -1469,9 +1662,13 @@ classdef CaTx_exported < matlab.apps.AppBase
             value = app.LoadReferenceCheckBox.Value;
 
             if value
-                app.DatasetDropDown_Reference.Enable = "on";
+                app.ReferenceTHzSpinner.Enable = "on";
+                app.dsEditField_Reference.Enable = "on";
+                app.OpenFileCheckBox_Reference.Enable = "on";
             else
-                app.DatasetDropDown_Reference.Enable = "off";
+                app.ReferenceTHzSpinner.Enable = "off";
+                app.dsEditField_Reference.Enable = "off";
+                app.OpenFileCheckBox_Reference.Enable = "off";
             end
         end
 
@@ -1480,50 +1677,68 @@ classdef CaTx_exported < matlab.apps.AppBase
             value = app.LoadBaselineCheckBox.Value;
 
             if value
-                SubtractBaselineCheckBoxValueChanged(app);
+                app.SubtractCheckBox.Enable = "on";
+                app.OpenFileCheckBox_Baseline.Enable = "on";
+                app.BaselineTHzSpinner.Enable = "on";
+                app.dsEditField_Baseline.Enable = "on";
+                SubtractCheckBoxValueChanged(app);
+            else
+                app.SubtractCheckBox.Enable = "off";
+                app.OpenFileCheckBox_Baseline.Enable = "off";
+                app.dsEditField_Baseline.Enable = "off";
+                app.BaselineTHzSpinner.Enable = "off";
             end
         end
 
-        % Value changed function: SubtractBaselineCheckBox
-        function SubtractBaselineCheckBoxValueChanged(app, event)
-            value = app.SubtractBaselineCheckBox.Value;
+        % Value changed function: SubtractCheckBox
+        function SubtractCheckBoxValueChanged(app, event)
+            value = app.SubtractCheckBox.Value;
             
             if value
-                app.DatasetDropDown_Baseline.Enable = "off";
+                app.dsEditField_Baseline.Visible = "off";
             else
-                app.DatasetDropDown_Baseline.Enable = "on";
+                app.dsEditField_Baseline.Visible = "on";
             end
         end
 
         % Button pushed function: DeploySampleDataButton
         function DeploySampleDataButtonPushed(app, event)
-            fileExtension = app.DataFileExtensionDropDown.Value;
+            fileExt = app.DataFileExtensionDropDown.Value;
 
-            if isequal(fileExtension,'user defined')                
-                fileExtension = app.userDefinedEditField.Value;
+            if isequal(fileExt,'user defined')                
+                fileExt = app.userDefinedEditField.Value;
                 
                 if isempty(app.userDefinedEditField.Value)
-                    fileExtension = '*';
+                    fileExt = '*';
                 end
             end
 
-            fileFilter = strcat('*.',fileExtension);
+            fileFilter = strcat('*.',fileExt);
             
-            [file, filepath] = uigetfile(fileFilter);
+            [file, filepath] = uigetfile(fileFilter,'Select a sample file');
             
             if isequal(file,0)
                 return;
             end
-
+            
+            app.referenceSignal = [];
+            app.baselineSignal = [];
             app.SampleFileEditField.Value = file;
             app.samplefile = strcat(filepath,file);
-            deploySampleData(app);
+            app.UITable_Header.Data = app.Tcell_headerDefault;
+
+            if isequal(fileExt,'tprj')
+                deploySampleData_tprj(app)
+            else
+                deploySampleData(app);
+            end
         end
 
         % Value changed function: DataFileExtensionDropDown
         function DataFileExtensionDropDownValueChanged(app, event)
             value = app.DataFileExtensionDropDown.Value;
             app.SampleFileEditField.Value = '';
+            app.DSDescriptionEditField.Value = '';
 
             if isequal(value,'user defined')
                 app.userDefinedEditField.Enable = "on";
@@ -1532,15 +1747,50 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.userDefinedEditField.Enable = "off";
                 app.userDefinedEditField.Value = '';
             end
+
+            if isequal(value,'tprj')
+                app.TimepsSpinner.Visible = "off";
+                app.SampleTHzSpinner.Visible = "off";
+                app.OpenFileCheckBox_Reference.Visible = "off";
+                app.ReferenceTHzSpinner.Visible = "off";
+                app.OpenFileCheckBox_Baseline.Visible = "off";
+                app.BaselineTHzSpinner.Visible = "off";
+                app.LoadReferenceCheckBox.Value = 1;
+                app.LoadBaselineCheckBox.Value = 0;
+                app.SubtractCheckBox.Enable = "off";
+            else
+                app.TimepsSpinner.Visible = "on";
+                app.SampleTHzSpinner.Visible = "on";
+                app.OpenFileCheckBox_Reference.Visible = "on";
+                app.ReferenceTHzSpinner.Visible = "on";
+                app.OpenFileCheckBox_Baseline.Visible = "on";
+                app.BaselineTHzSpinner.Visible = "on";
+            end
         end
 
-        % Value changed function: OpenReferenceFileCheckBox
-        function OpenReferenceFileCheckBoxValueChanged(app, event)
-            value = app.OpenReferenceFileCheckBox.Value;
+        % Value changed function: OpenFileCheckBox_Reference
+        function OpenFileCheckBox_ReferenceValueChanged(app, event)
+            value = app.OpenFileCheckBox_Reference.Value;
             if value
                app.ReferenceTHzSpinner.Value = 2;
             else
                app.ReferenceTHzSpinner.Value = 3;
+            end
+        end
+
+        % Button pushed function: CreateDatasetDescriptionButton
+        function CreateDatasetDescriptionButtonPushed(app, event)
+            
+        end
+
+        % Value changed function: OpenFileCheckBox_Baseline
+        function OpenFileCheckBox_BaselineValueChanged(app, event)
+            value = app.OpenFileCheckBox_Baseline.Value;
+            
+            if value
+               app.BaselineTHzSpinner.Value = 2;
+            else
+               app.BaselineTHzSpinner.Value = 4;
             end
         end
     end
@@ -2029,188 +2279,242 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.SetDefaultButton.Position = [110 542 109 23];
             app.SetDefaultButton.Text = 'Set Default';
 
-            % Create RecipeDesignPanel
-            app.RecipeDesignPanel = uipanel(app.DataRecipeTab);
-            app.RecipeDesignPanel.Title = 'Recipe Design';
-            app.RecipeDesignPanel.Position = [23 41 955 482];
+            % Create TabGroup2
+            app.TabGroup2 = uitabgroup(app.DataRecipeTab);
+            app.TabGroup2.Position = [14 45 1030 465];
 
-            % Create AddRecipeButton
-            app.AddRecipeButton = uibutton(app.RecipeDesignPanel, 'push');
-            app.AddRecipeButton.BackgroundColor = [1 1 1];
-            app.AddRecipeButton.FontWeight = 'bold';
-            app.AddRecipeButton.Position = [677 21 255 29];
-            app.AddRecipeButton.Text = 'Add Recipe';
+            % Create TDSTab
+            app.TDSTab = uitab(app.TabGroup2);
+            app.TDSTab.Title = 'TDS';
 
             % Create TerahertzDatasetPanel
-            app.TerahertzDatasetPanel = uipanel(app.RecipeDesignPanel);
+            app.TerahertzDatasetPanel = uipanel(app.TDSTab);
             app.TerahertzDatasetPanel.Title = 'Terahertz Dataset';
             app.TerahertzDatasetPanel.FontWeight = 'bold';
-            app.TerahertzDatasetPanel.Position = [19 192 445 193];
+            app.TerahertzDatasetPanel.Position = [15 166 994 190];
 
             % Create TimepsSpinnerLabel
             app.TimepsSpinnerLabel = uilabel(app.TerahertzDatasetPanel);
             app.TimepsSpinnerLabel.HorizontalAlignment = 'right';
-            app.TimepsSpinnerLabel.Position = [14 136 55 22];
+            app.TimepsSpinnerLabel.Position = [71 109 55 22];
             app.TimepsSpinnerLabel.Text = 'Time (ps)';
 
             % Create TimepsSpinner
             app.TimepsSpinner = uispinner(app.TerahertzDatasetPanel);
             app.TimepsSpinner.Limits = [1 6];
             app.TimepsSpinner.ValueDisplayFormat = '%.0f';
-            app.TimepsSpinner.Position = [77 136 60 22];
+            app.TimepsSpinner.Position = [134 109 60 22];
             app.TimepsSpinner.Value = 1;
 
             % Create THzSignalSampleLabel
             app.THzSignalSampleLabel = uilabel(app.TerahertzDatasetPanel);
             app.THzSignalSampleLabel.HorizontalAlignment = 'right';
-            app.THzSignalSampleLabel.Position = [161 136 71 22];
+            app.THzSignalSampleLabel.Position = [203 109 71 22];
             app.THzSignalSampleLabel.Text = 'Sample THz';
 
             % Create SampleTHzSpinner
             app.SampleTHzSpinner = uispinner(app.TerahertzDatasetPanel);
             app.SampleTHzSpinner.Limits = [1 6];
             app.SampleTHzSpinner.ValueDisplayFormat = '%.0f';
-            app.SampleTHzSpinner.Position = [241 136 60 22];
+            app.SampleTHzSpinner.Position = [283 109 60 22];
             app.SampleTHzSpinner.Value = 2;
-
-            % Create DatasetDropDownLabel
-            app.DatasetDropDownLabel = uilabel(app.TerahertzDatasetPanel);
-            app.DatasetDropDownLabel.HorizontalAlignment = 'right';
-            app.DatasetDropDownLabel.Position = [306 136 46 22];
-            app.DatasetDropDownLabel.Text = 'Dataset';
-
-            % Create DatasetDropDown_Sample
-            app.DatasetDropDown_Sample = uidropdown(app.TerahertzDatasetPanel);
-            app.DatasetDropDown_Sample.Items = {'ds1', 'ds2', 'ds3', 'ds4'};
-            app.DatasetDropDown_Sample.Position = [367 136 60 22];
-            app.DatasetDropDown_Sample.Value = 'ds1';
 
             % Create LoadReferenceCheckBox
             app.LoadReferenceCheckBox = uicheckbox(app.TerahertzDatasetPanel);
             app.LoadReferenceCheckBox.ValueChangedFcn = createCallbackFcn(app, @LoadReferenceCheckBoxValueChanged, true);
-            app.LoadReferenceCheckBox.Text = 'Load Reference';
-            app.LoadReferenceCheckBox.Position = [14 95 107 22];
-            app.LoadReferenceCheckBox.Value = true;
+            app.LoadReferenceCheckBox.Text = 'Reference';
+            app.LoadReferenceCheckBox.Position = [359 140 77 22];
 
-            % Create OpenReferenceFileCheckBox
-            app.OpenReferenceFileCheckBox = uicheckbox(app.TerahertzDatasetPanel);
-            app.OpenReferenceFileCheckBox.ValueChangedFcn = createCallbackFcn(app, @OpenReferenceFileCheckBoxValueChanged, true);
-            app.OpenReferenceFileCheckBox.Text = 'Open Reference File';
-            app.OpenReferenceFileCheckBox.Position = [14 74 133 22];
-            app.OpenReferenceFileCheckBox.Value = true;
+            % Create OpenFileCheckBox_Reference
+            app.OpenFileCheckBox_Reference = uicheckbox(app.TerahertzDatasetPanel);
+            app.OpenFileCheckBox_Reference.ValueChangedFcn = createCallbackFcn(app, @OpenFileCheckBox_ReferenceValueChanged, true);
+            app.OpenFileCheckBox_Reference.Text = 'Open File';
+            app.OpenFileCheckBox_Reference.Position = [438 140 74 22];
+            app.OpenFileCheckBox_Reference.Value = true;
 
             % Create THzSignalReferenceLabel
             app.THzSignalReferenceLabel = uilabel(app.TerahertzDatasetPanel);
             app.THzSignalReferenceLabel.HorizontalAlignment = 'right';
-            app.THzSignalReferenceLabel.Position = [147 74 85 22];
+            app.THzSignalReferenceLabel.Position = [362 109 85 22];
             app.THzSignalReferenceLabel.Text = 'Reference THz';
 
             % Create ReferenceTHzSpinner
             app.ReferenceTHzSpinner = uispinner(app.TerahertzDatasetPanel);
             app.ReferenceTHzSpinner.Limits = [1 6];
             app.ReferenceTHzSpinner.ValueDisplayFormat = '%.0f';
-            app.ReferenceTHzSpinner.Position = [241 74 60 22];
+            app.ReferenceTHzSpinner.Position = [456 109 60 22];
             app.ReferenceTHzSpinner.Value = 2;
-
-            % Create DatasetDropDown_2Label
-            app.DatasetDropDown_2Label = uilabel(app.TerahertzDatasetPanel);
-            app.DatasetDropDown_2Label.HorizontalAlignment = 'right';
-            app.DatasetDropDown_2Label.Position = [306 74 46 22];
-            app.DatasetDropDown_2Label.Text = 'Dataset';
-
-            % Create DatasetDropDown_Reference
-            app.DatasetDropDown_Reference = uidropdown(app.TerahertzDatasetPanel);
-            app.DatasetDropDown_Reference.Items = {'ds1', 'ds2', 'ds3', 'ds4'};
-            app.DatasetDropDown_Reference.Position = [367 74 60 22];
-            app.DatasetDropDown_Reference.Value = 'ds2';
 
             % Create LoadBaselineCheckBox
             app.LoadBaselineCheckBox = uicheckbox(app.TerahertzDatasetPanel);
             app.LoadBaselineCheckBox.ValueChangedFcn = createCallbackFcn(app, @LoadBaselineCheckBoxValueChanged, true);
-            app.LoadBaselineCheckBox.Text = 'Load Baseline';
-            app.LoadBaselineCheckBox.Position = [14 34 98 22];
+            app.LoadBaselineCheckBox.Text = 'Baseline';
+            app.LoadBaselineCheckBox.Position = [538 140 68 22];
 
-            % Create OpenBaselineFileCheckBox
-            app.OpenBaselineFileCheckBox = uicheckbox(app.TerahertzDatasetPanel);
-            app.OpenBaselineFileCheckBox.Text = 'Open Baseline File';
-            app.OpenBaselineFileCheckBox.Position = [14 13 123 22];
-            app.OpenBaselineFileCheckBox.Value = true;
+            % Create OpenFileCheckBox_Baseline
+            app.OpenFileCheckBox_Baseline = uicheckbox(app.TerahertzDatasetPanel);
+            app.OpenFileCheckBox_Baseline.ValueChangedFcn = createCallbackFcn(app, @OpenFileCheckBox_BaselineValueChanged, true);
+            app.OpenFileCheckBox_Baseline.Text = 'Open File';
+            app.OpenFileCheckBox_Baseline.Position = [607 140 74 22];
+            app.OpenFileCheckBox_Baseline.Value = true;
 
-            % Create SubtractBaselineCheckBox
-            app.SubtractBaselineCheckBox = uicheckbox(app.TerahertzDatasetPanel);
-            app.SubtractBaselineCheckBox.ValueChangedFcn = createCallbackFcn(app, @SubtractBaselineCheckBoxValueChanged, true);
-            app.SubtractBaselineCheckBox.Text = 'Subtract Baseline';
-            app.SubtractBaselineCheckBox.Position = [120 34 116 22];
+            % Create SubtractCheckBox
+            app.SubtractCheckBox = uicheckbox(app.TerahertzDatasetPanel);
+            app.SubtractCheckBox.ValueChangedFcn = createCallbackFcn(app, @SubtractCheckBoxValueChanged, true);
+            app.SubtractCheckBox.Text = 'Subtract';
+            app.SubtractCheckBox.Position = [638 82 67 22];
 
             % Create BaselineTHzSpinnerLabel
             app.BaselineTHzSpinnerLabel = uilabel(app.TerahertzDatasetPanel);
             app.BaselineTHzSpinnerLabel.HorizontalAlignment = 'right';
-            app.BaselineTHzSpinnerLabel.Position = [156 13 76 22];
+            app.BaselineTHzSpinnerLabel.Position = [537 109 76 22];
             app.BaselineTHzSpinnerLabel.Text = 'Baseline THz';
 
             % Create BaselineTHzSpinner
             app.BaselineTHzSpinner = uispinner(app.TerahertzDatasetPanel);
             app.BaselineTHzSpinner.Limits = [1 6];
             app.BaselineTHzSpinner.ValueDisplayFormat = '%.0f';
-            app.BaselineTHzSpinner.Position = [241 13 60 22];
+            app.BaselineTHzSpinner.Position = [622 109 60 22];
             app.BaselineTHzSpinner.Value = 2;
+
+            % Create ColumnLabel
+            app.ColumnLabel = uilabel(app.TerahertzDatasetPanel);
+            app.ColumnLabel.FontWeight = 'bold';
+            app.ColumnLabel.Position = [11 109 50 22];
+            app.ColumnLabel.Text = 'Column';
 
             % Create DatasetLabel
             app.DatasetLabel = uilabel(app.TerahertzDatasetPanel);
-            app.DatasetLabel.HorizontalAlignment = 'right';
-            app.DatasetLabel.Position = [306 13 46 22];
+            app.DatasetLabel.FontWeight = 'bold';
+            app.DatasetLabel.Position = [11 82 48 22];
             app.DatasetLabel.Text = 'Dataset';
 
-            % Create DatasetDropDown_Baseline
-            app.DatasetDropDown_Baseline = uidropdown(app.TerahertzDatasetPanel);
-            app.DatasetDropDown_Baseline.Items = {'ds1', 'ds2', 'ds3', 'ds4'};
-            app.DatasetDropDown_Baseline.Position = [367 13 60 22];
-            app.DatasetDropDown_Baseline.Value = 'ds3';
+            % Create CreateDatasetDescriptionButton
+            app.CreateDatasetDescriptionButton = uibutton(app.TerahertzDatasetPanel, 'push');
+            app.CreateDatasetDescriptionButton.ButtonPushedFcn = createCallbackFcn(app, @CreateDatasetDescriptionButtonPushed, true);
+            app.CreateDatasetDescriptionButton.Position = [12 21 159 23];
+            app.CreateDatasetDescriptionButton.Text = 'Create Dataset Description';
+
+            % Create DescriptionEditFieldLabel
+            app.DescriptionEditFieldLabel = uilabel(app.TerahertzDatasetPanel);
+            app.DescriptionEditFieldLabel.HorizontalAlignment = 'right';
+            app.DescriptionEditFieldLabel.Position = [188 21 65 22];
+            app.DescriptionEditFieldLabel.Text = 'Description';
+
+            % Create DSDescriptionEditField
+            app.DSDescriptionEditField = uieditfield(app.TerahertzDatasetPanel, 'text');
+            app.DSDescriptionEditField.Position = [261 21 420 22];
+
+            % Create SampledsLabel
+            app.SampledsLabel = uilabel(app.TerahertzDatasetPanel);
+            app.SampledsLabel.HorizontalAlignment = 'right';
+            app.SampledsLabel.Position = [203 82 66 22];
+            app.SampledsLabel.Text = 'Sample DS';
+
+            % Create dsEditField_Sample
+            app.dsEditField_Sample = uieditfield(app.TerahertzDatasetPanel, 'numeric');
+            app.dsEditField_Sample.Limits = [1 4];
+            app.dsEditField_Sample.ValueDisplayFormat = '%.0f';
+            app.dsEditField_Sample.Editable = 'off';
+            app.dsEditField_Sample.Position = [274 82 20 22];
+            app.dsEditField_Sample.Value = 1;
+
+            % Create ReferencedsLabel
+            app.ReferencedsLabel = uilabel(app.TerahertzDatasetPanel);
+            app.ReferencedsLabel.HorizontalAlignment = 'right';
+            app.ReferencedsLabel.Position = [362 82 80 22];
+            app.ReferencedsLabel.Text = 'Reference DS';
+
+            % Create dsEditField_Reference
+            app.dsEditField_Reference = uieditfield(app.TerahertzDatasetPanel, 'numeric');
+            app.dsEditField_Reference.Limits = [1 4];
+            app.dsEditField_Reference.ValueDisplayFormat = '%.0f';
+            app.dsEditField_Reference.Editable = 'off';
+            app.dsEditField_Reference.Position = [447 82 20 22];
+            app.dsEditField_Reference.Value = 2;
+
+            % Create BaselineDSLabel
+            app.BaselineDSLabel = uilabel(app.TerahertzDatasetPanel);
+            app.BaselineDSLabel.HorizontalAlignment = 'right';
+            app.BaselineDSLabel.Position = [537 82 71 22];
+            app.BaselineDSLabel.Text = 'Baseline DS';
+
+            % Create dsEditField_Baseline
+            app.dsEditField_Baseline = uieditfield(app.TerahertzDatasetPanel, 'numeric');
+            app.dsEditField_Baseline.Limits = [1 4];
+            app.dsEditField_Baseline.ValueDisplayFormat = '%.0f';
+            app.dsEditField_Baseline.Editable = 'off';
+            app.dsEditField_Baseline.Position = [613 82 20 22];
+            app.dsEditField_Baseline.Value = 3;
+
+            % Create LoadOpenFileLabel
+            app.LoadOpenFileLabel = uilabel(app.TerahertzDatasetPanel);
+            app.LoadOpenFileLabel.FontWeight = 'bold';
+            app.LoadOpenFileLabel.Position = [11 140 98 22];
+            app.LoadOpenFileLabel.Text = 'Load / Open File';
+
+            % Create userDefinedEditField
+            app.userDefinedEditField = uieditfield(app.TDSTab, 'text');
+            app.userDefinedEditField.Enable = 'off';
+            app.userDefinedEditField.Position = [289 368 61 22];
+
+            % Create DeploySampleDataButton
+            app.DeploySampleDataButton = uibutton(app.TDSTab, 'push');
+            app.DeploySampleDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeploySampleDataButtonPushed, true);
+            app.DeploySampleDataButton.FontWeight = 'bold';
+            app.DeploySampleDataButton.Position = [467 17 243 25];
+            app.DeploySampleDataButton.Text = 'Deploy Sample Data';
 
             % Create RecipeNameEditFieldLabel
-            app.RecipeNameEditFieldLabel = uilabel(app.RecipeDesignPanel);
+            app.RecipeNameEditFieldLabel = uilabel(app.TDSTab);
             app.RecipeNameEditFieldLabel.HorizontalAlignment = 'right';
-            app.RecipeNameEditFieldLabel.Position = [25 427 78 22];
+            app.RecipeNameEditFieldLabel.Position = [21 401 78 22];
             app.RecipeNameEditFieldLabel.Text = 'Recipe Name';
 
             % Create RecipeNameEditField
-            app.RecipeNameEditField = uieditfield(app.RecipeDesignPanel, 'text');
-            app.RecipeNameEditField.Position = [118 427 207 22];
-
-            % Create userDefinedEditField
-            app.userDefinedEditField = uieditfield(app.RecipeDesignPanel, 'text');
-            app.userDefinedEditField.Enable = 'off';
-            app.userDefinedEditField.Position = [266 394 61 22];
+            app.RecipeNameEditField = uieditfield(app.TDSTab, 'text');
+            app.RecipeNameEditField.Position = [114 401 240 22];
 
             % Create DataFileExtensionDropDownLabel
-            app.DataFileExtensionDropDownLabel = uilabel(app.RecipeDesignPanel);
+            app.DataFileExtensionDropDownLabel = uilabel(app.TDSTab);
             app.DataFileExtensionDropDownLabel.HorizontalAlignment = 'right';
-            app.DataFileExtensionDropDownLabel.Position = [24 394 109 22];
+            app.DataFileExtensionDropDownLabel.Position = [20 368 109 22];
             app.DataFileExtensionDropDownLabel.Text = 'Data File Extension';
 
             % Create DataFileExtensionDropDown
-            app.DataFileExtensionDropDown = uidropdown(app.RecipeDesignPanel);
+            app.DataFileExtensionDropDown = uidropdown(app.TDSTab);
             app.DataFileExtensionDropDown.Items = {'dat', 'csv', 'tprj', 'txt', 'user defined'};
             app.DataFileExtensionDropDown.ValueChangedFcn = createCallbackFcn(app, @DataFileExtensionDropDownValueChanged, true);
-            app.DataFileExtensionDropDown.Position = [147 394 105 22];
+            app.DataFileExtensionDropDown.Position = [143 368 126 22];
             app.DataFileExtensionDropDown.Value = 'dat';
 
-            % Create DeploySampleDataButton
-            app.DeploySampleDataButton = uibutton(app.RecipeDesignPanel, 'push');
-            app.DeploySampleDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeploySampleDataButtonPushed, true);
-            app.DeploySampleDataButton.FontWeight = 'bold';
-            app.DeploySampleDataButton.Position = [209 132 243 25];
-            app.DeploySampleDataButton.Text = 'Deploy Sample Data';
-
             % Create SampleFileEditFieldLabel
-            app.SampleFileEditFieldLabel = uilabel(app.RecipeDesignPanel);
+            app.SampleFileEditFieldLabel = uilabel(app.TDSTab);
             app.SampleFileEditFieldLabel.HorizontalAlignment = 'right';
-            app.SampleFileEditFieldLabel.Position = [28 164 68 22];
+            app.SampleFileEditFieldLabel.Position = [30 51 68 22];
             app.SampleFileEditFieldLabel.Text = 'Sample File';
 
             % Create SampleFileEditField
-            app.SampleFileEditField = uieditfield(app.RecipeDesignPanel, 'text');
-            app.SampleFileEditField.Position = [100 164 353 22];
+            app.SampleFileEditField = uieditfield(app.TDSTab, 'text');
+            app.SampleFileEditField.Position = [102 51 607 22];
+
+            % Create AddRecipeButton
+            app.AddRecipeButton = uibutton(app.TDSTab, 'push');
+            app.AddRecipeButton.BackgroundColor = [1 1 1];
+            app.AddRecipeButton.FontWeight = 'bold';
+            app.AddRecipeButton.Position = [743 17 243 25];
+            app.AddRecipeButton.Text = 'Add Recipe';
+
+            % Create TPITab
+            app.TPITab = uitab(app.TabGroup2);
+            app.TPITab.Title = 'TPI';
+
+            % Create RecipeDesignLabel
+            app.RecipeDesignLabel = uilabel(app.DataRecipeTab);
+            app.RecipeDesignLabel.FontSize = 14;
+            app.RecipeDesignLabel.FontWeight = 'bold';
+            app.RecipeDesignLabel.Position = [17 513 101 22];
+            app.RecipeDesignLabel.Text = 'Recipe Design';
 
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CaTxUIFigure);
