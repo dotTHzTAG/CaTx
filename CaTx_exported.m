@@ -100,7 +100,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         BaselineTHzSpinner              matlab.ui.control.Spinner
         BaselineTHzSpinnerLabel         matlab.ui.control.Label
         SubtractCheckBox                matlab.ui.control.CheckBox
-        OpenFileCheckBox_Baseline       matlab.ui.control.CheckBox
+        SeperateFileCheckBox_Baseline   matlab.ui.control.CheckBox
         LoadBaselineCheckBox            matlab.ui.control.CheckBox
         ReferenceTHzSpinner             matlab.ui.control.Spinner
         THzSignalReferenceLabel         matlab.ui.control.Label
@@ -145,6 +145,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         thzVer = "1.00";
         referenceSignal; % Description
         baselineSignal; % Description
+        recipeTable % Data recipe table
     end
     
     methods (Access = private)
@@ -349,7 +350,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             referenceDS = app.dsEditField_Reference.Value;
 
             readBaseline = app.LoadBaselineCheckBox.Value;
-            openBaselineFile = app.OpenFileCheckBox_Baseline.Value;
+            openBaselineFile = app.SeperateFileCheckBox_Baseline.Value;
             subtractBaseline = app.SubtractCheckBox.Value;
             baselineTHzIdx = app.BaselineTHzSpinner.Value;
             baselineDS = app.dsEditField_Baseline.Value;
@@ -514,7 +515,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             referenceDS = app.dsEditField_Reference.Value;
 
             readBaseline = app.LoadBaselineCheckBox.Value;
-            openBaselineFile = app.OpenFileCheckBox_Baseline.Value;
+            openBaselineFile = app.SeperateFileCheckBox_Baseline.Value;
             subtractBaseline = app.SubtractCheckBox.Value;
             baselineTHzIdx = app.BaselineTHzSpinner.Value;
             baselineDS = app.dsEditField_Baseline.Value;
@@ -594,6 +595,48 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.FILEDLISTTOEditField.Value = app.totalMeasNum;
             app.TabGroup.SelectedTab = app.TabGroup.Children(1);
         end
+        
+        function loadDataRecipes(app)
+            try
+                recipeFile = 'dataRecipes.json';
+                recipeData = jsondecode(fileread(recipeFile));
+           catch ME
+                fig = app.CaTSperUIFigure;
+                uialert(fig, sprintf('Failed to read data recipe JSON file: %s', ME.message), 'Error');
+                return;
+            end
+
+            recipeTable = struct2table(recipeData.recipes);
+            recipeNames = recipeTable{:,1};
+            app.recipeTable = recipeTable;
+
+            app.RecipeListListBox.Items = recipeNames;
+            app.DataRecipeDropDown.Items = recipeNames;
+            app.DataRecipeDropDown.Value = recipeData.defaultItem;
+
+            % app.DR_boundary = recipeData.FFT_Settings.DR_boundary; % dynamic range frequency boundary
+            % 
+            % % Default FFT_Settings
+            % app.FromFreqEditField.Value = recipeData.FFT_Settings.Frequency_Range(1);
+            % app.ToFreqEditField.Value = recipeData.FFT_Settings.Frequency_Range(2);
+            % app.ZeroFillingpowerofSpinner.Value = recipeData.FFT_Settings.FFT_Upsampling;
+            % app.StartFrequencyTHzEditField.Value = recipeData.FFT_Settings.Unwrapping_Start_Frequency;
+            % app.FromEpolFreqEditField.Value = recipeData.FFT_Settings.Extrapolation_Frequency_Range(1);
+            % app.ToEpolFreqEditField.Value = recipeData.FFT_Settings.Extrapolation_Frequency_Range(2);
+            % app.FromTimeEditField.Value = recipeData.FFT_Settings.Window_Function_Range(1);
+            % app.ToTimeEditField.Value = recipeData.FFT_Settings.Window_Function_Range(2);
+            % app.FunctionDropDown.Value = recipeData.FFT_Settings.Apodisation_Function;
+            % 
+            % % Default thickness metadata
+            % app.mdSampleThicknessDropDown.Value = recipeData.Metadata_Settings.Sample_Thickness;
+            % app.mdReferenceThicknessDropDown.Value = recipeData.Metadata_Settings.Reference_Thickness;
+            % 
+            % % Default sample and referenece dataset
+            % app.dsSampleDropDown.Value = recipeData.Dataset_Settings.Sample;
+            % app.dsReferenceDropDown.Value = recipeData.Dataset_Settings.Reference;
+            % app.dsPumpedDropDown.Value = recipeData.Dataset_Settings.Pump;
+            
+        end
     end
     
 
@@ -609,21 +652,21 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             % make a list of THz converter engines from .\Engines folder
-            engineDir = fullfile(mPath,'Engines');
+            % engineDir = fullfile(mPath,'Engines');
             profileDir = fullfile(mPath,'Profiles');
-            mkdir(engineDir);
+            % mkdir(engineDir);
             mkdir(profileDir);
             addpath(genpath(mPath));
-            engineList = dir(fullfile(engineDir,'*.m'));
-            engineNum = size(engineList,1);
-            engineItems = {};
-
-            if engineNum >=1
-                for idx = 1:engineNum
-                    engineItems{idx} = extractBefore(engineList(idx).name,'.');
-                end
-                app.DataRecipeDropDown.Items = engineItems;
-            end
+            % engineList = dir(fullfile(engineDir,'*.m'));
+            % engineNum = size(engineList,1);
+            % engineItems = {};
+            % 
+            % if engineNum >=1
+            %     for idx = 1:engineNum
+            %         engineItems{idx} = extractBefore(engineList(idx).name,'.');
+            %     end
+            %     app.DataRecipeDropDown.Items = engineItems;
+            % end
             
             app.PRJ_count = 0;
             app.filename = [];
@@ -702,6 +745,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.Tcell_headerDefault = Tcell_header;
             app.manualMode = 1;
             updateProfile(app);
+            loadDataRecipes(app);
 
             LoadReferenceCheckBoxValueChanged(app);
             LoadBaselineCheckBoxValueChanged(app);
@@ -1678,13 +1722,13 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             if value
                 app.SubtractCheckBox.Enable = "on";
-                app.OpenFileCheckBox_Baseline.Enable = "on";
+                app.SeperateFileCheckBox_Baseline.Enable = "on";
                 app.BaselineTHzSpinner.Enable = "on";
                 app.dsEditField_Baseline.Enable = "on";
                 SubtractCheckBoxValueChanged(app);
             else
                 app.SubtractCheckBox.Enable = "off";
-                app.OpenFileCheckBox_Baseline.Enable = "off";
+                app.SeperateFileCheckBox_Baseline.Enable = "off";
                 app.dsEditField_Baseline.Enable = "off";
                 app.BaselineTHzSpinner.Enable = "off";
             end
@@ -1754,7 +1798,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.SampleTHzSpinner.Visible = "off";
                 app.SeperateFileCheckBox_Reference.Visible = "off";
                 app.ReferenceTHzSpinner.Visible = "off";
-                app.OpenFileCheckBox_Baseline.Visible = "off";
+                app.SeperateFileCheckBox_Baseline.Visible = "off";
                 app.BaselineTHzSpinner.Visible = "off";
                 app.LoadReferenceCheckBox.Value = 1;
                 app.LoadBaselineCheckBox.Value = 0;
@@ -1764,7 +1808,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.SampleTHzSpinner.Visible = "on";
                 app.SeperateFileCheckBox_Reference.Visible = "on";
                 app.ReferenceTHzSpinner.Visible = "on";
-                app.OpenFileCheckBox_Baseline.Visible = "on";
+                app.SeperateFileCheckBox_Baseline.Visible = "on";
                 app.BaselineTHzSpinner.Visible = "on";
             end
         end
@@ -1791,9 +1835,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DSDescriptionEditField.Value = dsDescription;
         end
 
-        % Value changed function: OpenFileCheckBox_Baseline
-        function OpenFileCheckBox_BaselineValueChanged(app, event)
-            value = app.OpenFileCheckBox_Baseline.Value;
+        % Value changed function: SeperateFileCheckBox_Baseline
+        function SeperateFileCheckBox_BaselineValueChanged(app, event)
+            value = app.SeperateFileCheckBox_Baseline.Value;
             
             if value
                app.BaselineTHzSpinner.Value = 2;
@@ -1804,58 +1848,99 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: AddNewRecipeButton
         function AddNewRecipeButtonPushed(app, event)
-            receipeName = app.RecipeNameEditField.Value;
-            if isempty(receipeName)
-
+            recipeName = app.RecipeNameEditField.Value;
+            if isempty(recipeName)
+                return;
             end
+            recipeTable = app.recipeTable;
+            recipeNames = recipeTable{:,1};
             
-            %#exclude config_default.json
-            % Read JSON-formatted text
-            
+            % Display data file extension
+            if ismember(recipeName,recipeNames)
+               display("the same name exists");
+            else
+                display("New recipe added") ;
+            end
+        end
+
+        % Clicked callback: RecipeListListBox
+        function RecipeListListBoxClicked(app, event)
+            item = event.InteractionInformation.Item; % Item number
+            if isempty(item)
+                return;
+            end
+
+            recipeTable = app.recipeTable;
+            app.SampleFileEditField.Value = '';
+            app.RecipeNameEditField.Value = char(recipeTable{item,1});
+            fileExt = char(recipeTable{item,3});
+
+            % Display data file extension
+            if sum(contains(app.DataFileExtensionDropDown.Items,fileExt))
+                app.DataFileExtensionDropDown.Value = fileExt;
+                app.userDefinedEditField.Value = '';
+            else
+                app.DataFileExtensionDropDown.Value = 'user defined';
+                app.userDefinedEditField.Value = fileExt;
+            end
+
+            % Display terahertz datasets
+            samMat = cell2mat(recipeTable{item,4});
+            app.TimepsSpinner.Value = samMat(1);
+            app.SampleTHzSpinner.Value = samMat(2);
+
+            refMat = cell2mat(recipeTable{item,5})';
+            app.LoadReferenceCheckBox.Value = refMat(1);
+            app.SeperateFileCheckBox_Reference.Value = refMat(2);
+            app.ReferenceTHzSpinner.Value = refMat(3);
+            app.dsEditField_Reference.Value = refMat(4);
+            LoadReferenceCheckBoxValueChanged(app);
+
+            baseMat = cell2mat(recipeTable{item,6});
+            app.LoadBaselineCheckBox.Value = baseMat(1);
+            app.SeperateFileCheckBox_Baseline.Value = baseMat(2);
+            app.BaselineTHzSpinner.Value = baseMat(3);
+            app.dsEditField_Baseline.Value = baseMat(4);
+            app.SubtractCheckBox.Value = baseMat(5);
+            LoadBaselineCheckBoxValueChanged(app);
+
+            CreateDatasetDescriptionButtonPushed(app);
+        end
+
+        % Button pushed function: SetDefaultButton
+        function SetDefaultButtonPushed(app, event)
+            Item = app.RecipeListListBox.Value;
+            if isempty(Item)
+                return;
+            end
+
             try
                 recipeFile = 'dataRecipes.json';
                 recipeData = jsondecode(fileread(recipeFile));
            catch ME
                 fig = app.CaTSperUIFigure;
-                uialert(fig,'dataRecipes.json file is missing.','warning');
+                uialert(fig,'config_default.json file is missing.','warning');
                 return;
             end   
 
             % Set the current setting values
-            recipeData.FFT_Settings.DR_boundary = app.DR_boundary;
-            recipeData.FFT_Settings.Frequency_Range(1) = app.FromFreqEditField.Value;
-            recipeData.FFT_Settings.Frequency_Range(2) = app.ToFreqEditField.Value;
-            recipeData.FFT_Settings.FFT_Upsampling = app.ZeroFillingpowerofSpinner.Value;
-            recipeData.FFT_Settings.Unwrapping_Start_Frequency = app.StartFrequencyTHzEditField.Value;
-            recipeData.FFT_Settings.Extrapolation_Frequency_Range(1) = app.FromEpolFreqEditField.Value;
-            recipeData.FFT_Settings.Extrapolation_Frequency_Range(2) = app.ToEpolFreqEditField.Value;
-            recipeData.FFT_Settings.Window_Function_Range(1) = app.FromTimeEditField.Value;
-            recipeData.FFT_Settings.Window_Function_Range(2) = app.ToTimeEditField.Value;
-            recipeData.FFT_Settings.Apodisation_Function = app.FunctionDropDown.Value;
-
-            % Thickness metadata
-            recipeData.Metadata_Settings.Sample_Thickness = app.mdSampleThicknessDropDown.Value;
-            recipeData.Metadata_Settings.Reference_Thickness = app.mdReferenceThicknessDropDown.Value;
-
-            % Sample and referenece dataset
-            recipeData.Dataset_Settings.Sample = app.dsSampleDropDown.Value;
-            recipeData.Dataset_Settings.Reference = app.dsReferenceDropDown.Value;
-            recipeData.Dataset_Settings.Pump = app.dsPumpedDropDown.Value;
-            assignin("base","recipeData",recipeData);
+            recipeData.defaultItem = Item;
 
             % Write the updated configData back to the JSON file
             try
                 jsonText = jsonencode(recipeData, 'PrettyPrint', true);
                 fid = fopen(recipeFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', recipeFile);
+                    error('Cannot open file for writing: %s', configFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
-                uialert(app.CaTSperUIFigure, 'Recipe saved successfully.', 'Success');
+                uialert(app.CaTxUIFigure, 'Set default recipe successfully.', 'Success');
             catch ME
-                uialert(app.CaTSperUIFigure, sprintf('Failed to save recipe: %s', ME.message), 'Error');
+                uialert(app.CaTxUIFigure, sprintf('Failed to set default recipe: %s', ME.message), 'Error');
             end
+
+            loadDataRecipes(app);
 
         end
     end
@@ -1915,16 +2000,16 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DataRecipeDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.DataRecipeDropDownLabel.HorizontalAlignment = 'right';
             app.DataRecipeDropDownLabel.FontWeight = 'bold';
-            app.DataRecipeDropDownLabel.Position = [414 792 108 22];
+            app.DataRecipeDropDownLabel.Position = [321 792 108 22];
             app.DataRecipeDropDownLabel.Text = 'Data Recipe';
 
             % Create DataRecipeDropDown
             app.DataRecipeDropDown = uidropdown(app.CaTxUIFigure);
-            app.DataRecipeDropDown.Items = {'No recipes available. Please check Recipes.json file.'};
+            app.DataRecipeDropDown.Items = {'No recipes available. Please check dataRecipes.json file.'};
             app.DataRecipeDropDown.FontWeight = 'bold';
             app.DataRecipeDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.DataRecipeDropDown.Position = [533 790 340 25];
-            app.DataRecipeDropDown.Value = 'No recipes available. Please check Recipes.json file.';
+            app.DataRecipeDropDown.Position = [440 790 438 25];
+            app.DataRecipeDropDown.Value = 'No recipes available. Please check dataRecipes.json file.';
 
             % Create ClearMemoryButton
             app.ClearMemoryButton = uibutton(app.CaTxUIFigure, 'push');
@@ -2332,6 +2417,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create RecipeListListBox
             app.RecipeListListBox = uilistbox(app.DataRecipeTab);
+            app.RecipeListListBox.ClickedFcn = createCallbackFcn(app, @RecipeListListBoxClicked, true);
             app.RecipeListListBox.Position = [104 574 463 104];
 
             % Create RemoveButton_2
@@ -2341,6 +2427,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create SetDefaultButton
             app.SetDefaultButton = uibutton(app.DataRecipeTab, 'push');
+            app.SetDefaultButton.ButtonPushedFcn = createCallbackFcn(app, @SetDefaultButtonPushed, true);
             app.SetDefaultButton.Position = [584 650 127 23];
             app.SetDefaultButton.Text = 'Set Default';
 
@@ -2405,7 +2492,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create ReferenceTHzSpinner
             app.ReferenceTHzSpinner = uispinner(app.TerahertzDatasetPanel);
-            app.ReferenceTHzSpinner.Limits = [1 6];
+            app.ReferenceTHzSpinner.Limits = [0 6];
             app.ReferenceTHzSpinner.ValueDisplayFormat = '%.0f';
             app.ReferenceTHzSpinner.Position = [456 79 60 22];
             app.ReferenceTHzSpinner.Value = 2;
@@ -2416,12 +2503,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.LoadBaselineCheckBox.Text = 'Baseline /';
             app.LoadBaselineCheckBox.Position = [541 103 75 22];
 
-            % Create OpenFileCheckBox_Baseline
-            app.OpenFileCheckBox_Baseline = uicheckbox(app.TerahertzDatasetPanel);
-            app.OpenFileCheckBox_Baseline.ValueChangedFcn = createCallbackFcn(app, @OpenFileCheckBox_BaselineValueChanged, true);
-            app.OpenFileCheckBox_Baseline.Text = '';
-            app.OpenFileCheckBox_Baseline.Position = [620 103 25 22];
-            app.OpenFileCheckBox_Baseline.Value = true;
+            % Create SeperateFileCheckBox_Baseline
+            app.SeperateFileCheckBox_Baseline = uicheckbox(app.TerahertzDatasetPanel);
+            app.SeperateFileCheckBox_Baseline.ValueChangedFcn = createCallbackFcn(app, @SeperateFileCheckBox_BaselineValueChanged, true);
+            app.SeperateFileCheckBox_Baseline.Text = '';
+            app.SeperateFileCheckBox_Baseline.Position = [620 103 25 22];
+            app.SeperateFileCheckBox_Baseline.Value = true;
 
             % Create SubtractCheckBox
             app.SubtractCheckBox = uicheckbox(app.TerahertzDatasetPanel);
@@ -2437,7 +2524,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create BaselineTHzSpinner
             app.BaselineTHzSpinner = uispinner(app.TerahertzDatasetPanel);
-            app.BaselineTHzSpinner.Limits = [1 6];
+            app.BaselineTHzSpinner.Limits = [0 6];
             app.BaselineTHzSpinner.ValueDisplayFormat = '%.0f';
             app.BaselineTHzSpinner.Position = [622 79 60 22];
             app.BaselineTHzSpinner.Value = 2;
@@ -2492,7 +2579,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create dsEditField_Reference
             app.dsEditField_Reference = uieditfield(app.TerahertzDatasetPanel, 'numeric');
-            app.dsEditField_Reference.Limits = [1 4];
+            app.dsEditField_Reference.Limits = [0 4];
             app.dsEditField_Reference.ValueDisplayFormat = '%.0f';
             app.dsEditField_Reference.Editable = 'off';
             app.dsEditField_Reference.Position = [447 53 20 22];
@@ -2506,7 +2593,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create dsEditField_Baseline
             app.dsEditField_Baseline = uieditfield(app.TerahertzDatasetPanel, 'numeric');
-            app.dsEditField_Baseline.Limits = [1 4];
+            app.dsEditField_Baseline.Limits = [0 4];
             app.dsEditField_Baseline.ValueDisplayFormat = '%.0f';
             app.dsEditField_Baseline.Editable = 'off';
             app.dsEditField_Baseline.Position = [613 53 20 22];
