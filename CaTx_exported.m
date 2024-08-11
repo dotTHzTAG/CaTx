@@ -75,6 +75,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         RecipeDesignLabel               matlab.ui.control.Label
         TabGroup2                       matlab.ui.container.TabGroup
         TransmissionTab                 matlab.ui.container.Tab
+        UpdateRecipeButton              matlab.ui.control.Button
         AddNewRecipeButton              matlab.ui.control.Button
         SampleFileEditField             matlab.ui.control.EditField
         SampleFileEditFieldLabel        matlab.ui.control.Label
@@ -115,7 +116,6 @@ classdef CaTx_exported < matlab.apps.AppBase
         RemoveButton_2                  matlab.ui.control.Button
         RecipeListListBox               matlab.ui.control.ListBox
         RecipeListListBoxLabel          matlab.ui.control.Label
-        ImportthzFileButton             matlab.ui.control.Button
         ClearMemoryButton               matlab.ui.control.Button
         DataRecipeDropDown              matlab.ui.control.DropDown
         DataRecipeDropDownLabel         matlab.ui.control.Label
@@ -637,6 +637,168 @@ classdef CaTx_exported < matlab.apps.AppBase
             % app.dsPumpedDropDown.Value = recipeData.Dataset_Settings.Pump;
             
         end
+        
+        function deploySampleData_thz(app)
+            ClearMemoryButtonPushed(app);
+            app.manualMode = 0;
+            
+            if ~isempty(app.Tcell)
+                return;
+            end
+
+            updateProfile(app);
+
+            % make a profile list based on the profile xls files
+            if isequal(app.ins_profile,1)
+                TcellP1 = app.TcellP1;
+                numP1 = size(TcellP1,2);
+                tempP1Profile = cell(1,numP1);
+                for idx = 1:numP1
+                    strProfile = join(TcellP1(2:end,idx),"/");
+                    tempP1Profile(idx) = strProfile;
+                end
+            else
+                tempP1Profile = {};
+            end
+
+           if isequal(app.user_profile,1)
+                TcellP2 = app.TcellP2;
+                numP2 = size(TcellP2,2);
+                tempP2Profile = cell(1,numP2);
+                for idx = 1:numP2
+                    strProfile = join(TcellP2(2:end,idx),"/");
+                    tempP2Profile(idx) = strProfile;
+                end
+            else
+                tempP2Profile = {};
+            end
+
+            
+
+            [file, filepath] = uigetfile('*.thz');
+            
+            if isequal(file,0)
+                return;
+            end
+
+            app.FILESEditField.Value = file;
+            
+            fullfile = strcat(filepath,file);
+            thzInfo = h5info(fullfile);
+            measNum = size(thzInfo.Groups,1);
+            ListItems = cell(measNum,1);
+            [ListItems{:}] = deal(thzInfo.Groups.Name);
+            attrItems = ["description","time","mode","coordinates","mdDescription",...
+                "md1","md2","md3","md4","md5","md6","md7","thzVer","dsDescription"];
+            maxDatasetNum = 20; % maximum number of datasets
+            ds1Row = 19; % dataset 1 row in the table
+
+            for idx = 1:measNum
+                %dn = strcat('/',ListItems{idx});
+                dn = ListItems{idx};
+                cnt = 1;
+
+                Tcell{1,idx} = idx;
+                Tcell{2,idx} = dn(2:end);
+
+                for dsIdx = 1:maxDatasetNum
+                    try
+                        dsn = strcat(dn,'/ds',num2str(dsIdx));
+                        ds = h5read(fullfile,dsn);
+                        Tcell{ds1Row+dsIdx-1,idx} = ds;
+                    catch ME
+                        if dsIdx>4
+                            break;
+                        else
+                            dsn = strcat(dn,'/ds',num2str(dsIdx));
+                            ds = [];
+                            Tcell{ds1Row+dsIdx-1,idx} = ds;
+                        end
+                    end
+                end
+
+                for attrLoc = [3 (6:18)]
+                    try
+                        Tcell{attrLoc,idx} = h5readatt(fullfile,dn,attrItems(cnt));
+                    catch ME
+                    end
+                    cnt = cnt + 1;
+                end
+
+                % instrument profile matching
+                try
+                    insProfile = h5readatt(fullfile,dn,"instrument");
+                    if isempty(insProfile)
+                        insProfile = 0;
+                    end
+                catch ME
+                    insProfile = 0;
+                end
+
+                cntP1 = 1;
+
+                if isequal(insProfile,0)
+                        Tcell{4,idx} = 0;
+                    else
+                        for idxP1 = tempP1Profile
+                            if isequal({insProfile},idxP1)
+                                Tcell{4,idx} = cntP1;
+                                break;
+                            else
+                                cntP1 = cntP1 + 1;
+                            end
+                        end
+
+                        if cntP1 > length(tempP1Profile)
+                            tempP1Profile = [tempP1Profile, {insProfile}];
+                            Tcell{4,idx} = cntP1;
+                            app.TcellP1 = [app.TcellP1, [cntP1;split(insProfile,"/")]];
+                            writeP1Profile(app);
+                        end
+                end
+
+                % user profile matching
+                try
+                    userProfile = h5readatt(fullfile,dn,"user");
+                    if isempty(userProfile)
+                        userProfile = 0;
+                    end
+                catch ME
+                    userProfile = 0;
+                end
+
+                cntP2 = 1;
+
+                if isequal(userProfile,0)
+                        Tcell{5,idx} = 0;
+                    else
+                        for idxP2 = tempP2Profile
+                            if isequal({userProfile},idxP2);
+                                Tcell{5,idx} = cntP2;
+                                break;
+                            else
+                                cntP2 = cntP2 + 1;
+                            end
+                        end
+
+                        if cntP2 > length(tempP2Profile)
+                            tempP2Profile = [tempP2Profile, {userProfile}];
+                            Tcell{5,idx} = cntP2;
+                            app.TcellP2 = [app.TcellP2, [cntP2;split(userProfile,"/")]];
+                            writeP2Profile(app);
+                        end
+                end
+
+                progressP = idx/measNum*100;
+                progressP = num2str(progressP,'%.0f');
+                progressP = strcat("Importing THz file: ", progressP,"%");
+                app.DEBUGMsgLabel.Text = progressP;
+                drawnow
+            end
+            
+            app.Tcell = Tcell;
+            updateMeasurementTable(app);
+        end
     end
     
 
@@ -1081,7 +1243,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         end
 
-        % Button pushed function: ImportthzFileButton
+        % Callback function: not associated with a component
         function ImportthzFileButtonPushed(app, event)
             ClearMemoryButtonPushed(app);
             app.manualMode = 0;
@@ -1849,13 +2011,14 @@ classdef CaTx_exported < matlab.apps.AppBase
         % Button pushed function: AddNewRecipeButton
         function AddNewRecipeButtonPushed(app, event)
             recipeName = app.RecipeNameEditField.Value;
+
             if isempty(recipeName)
                 return;
             end
+
             recipeTable = app.recipeTable;
             recipeNames = recipeTable{:,1};
             
-            % Display data file extension
             if ismember(recipeName,recipeNames)
                display("the same name exists");
             else
@@ -1943,6 +2106,29 @@ classdef CaTx_exported < matlab.apps.AppBase
             loadDataRecipes(app);
 
         end
+
+        % Button pushed function: UpdateRecipeButton
+        function UpdateRecipeButtonPushed(app, event)
+            recipeName = app.RecipeNameEditField.Value;
+
+            if isempty(recipeName)
+                return;
+            end
+            
+            recipeTable = app.recipeTable;
+            recipeNames = recipeTable{:,1};
+            
+            if ismember(recipeName,recipeNames)
+               display("the same name exists");
+            else
+                display("New recipe added") ;
+            end
+        end
+
+        % Button pushed function: RemoveButton_2
+        function RemoveButton_2Pushed(app, event)
+            
+        end
     end
 
     % Component initialization
@@ -1964,19 +2150,19 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ImportMeasurementButton = uibutton(app.CaTxUIFigure, 'push');
             app.ImportMeasurementButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMeasurementButtonPushed, true);
             app.ImportMeasurementButton.FontWeight = 'bold';
-            app.ImportMeasurementButton.Position = [190 825 143 25];
+            app.ImportMeasurementButton.Position = [202 791 143 25];
             app.ImportMeasurementButton.Text = 'Import Measurement';
 
             % Create FILESEditField
             app.FILESEditField = uieditfield(app.CaTxUIFigure, 'text');
-            app.FILESEditField.Position = [340 825 647 25];
+            app.FILESEditField.Position = [352 791 579 25];
 
             % Create DeployDataButton
             app.DeployDataButton = uibutton(app.CaTxUIFigure, 'push');
             app.DeployDataButton.ButtonPushedFcn = createCallbackFcn(app, @DeployDataButtonPushed, true);
             app.DeployDataButton.BackgroundColor = [0.902 0.902 0.902];
             app.DeployDataButton.FontWeight = 'bold';
-            app.DeployDataButton.Position = [887 790 206 25];
+            app.DeployDataButton.Position = [939 790 154 25];
             app.DeployDataButton.Text = 'Deploy Data';
 
             % Create CaTxLabel
@@ -2000,7 +2186,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DataRecipeDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.DataRecipeDropDownLabel.HorizontalAlignment = 'right';
             app.DataRecipeDropDownLabel.FontWeight = 'bold';
-            app.DataRecipeDropDownLabel.Position = [321 792 108 22];
+            app.DataRecipeDropDownLabel.Position = [235 827 108 22];
             app.DataRecipeDropDownLabel.Text = 'Data Recipe';
 
             % Create DataRecipeDropDown
@@ -2008,22 +2194,15 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DataRecipeDropDown.Items = {'No recipes available. Please check dataRecipes.json file.'};
             app.DataRecipeDropDown.FontWeight = 'bold';
             app.DataRecipeDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.DataRecipeDropDown.Position = [440 790 438 25];
+            app.DataRecipeDropDown.Position = [354 825 577 25];
             app.DataRecipeDropDown.Value = 'No recipes available. Please check dataRecipes.json file.';
 
             % Create ClearMemoryButton
             app.ClearMemoryButton = uibutton(app.CaTxUIFigure, 'push');
             app.ClearMemoryButton.ButtonPushedFcn = createCallbackFcn(app, @ClearMemoryButtonPushed, true);
             app.ClearMemoryButton.FontWeight = 'bold';
-            app.ClearMemoryButton.Position = [992 825 101 25];
+            app.ClearMemoryButton.Position = [939 825 154 25];
             app.ClearMemoryButton.Text = 'Clear Memory';
-
-            % Create ImportthzFileButton
-            app.ImportthzFileButton = uibutton(app.CaTxUIFigure, 'push');
-            app.ImportthzFileButton.ButtonPushedFcn = createCallbackFcn(app, @ImportthzFileButtonPushed, true);
-            app.ImportthzFileButton.FontWeight = 'bold';
-            app.ImportthzFileButton.Position = [190 795 143 24];
-            app.ImportthzFileButton.Text = 'Import .thz File';
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.CaTxUIFigure);
@@ -2422,6 +2601,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create RemoveButton_2
             app.RemoveButton_2 = uibutton(app.DataRecipeTab, 'push');
+            app.RemoveButton_2.ButtonPushedFcn = createCallbackFcn(app, @RemoveButton_2Pushed, true);
             app.RemoveButton_2.Position = [584 615 126 23];
             app.RemoveButton_2.Text = 'Remove';
 
@@ -2657,6 +2837,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.AddNewRecipeButton.FontWeight = 'bold';
             app.AddNewRecipeButton.Position = [569 460 155 25];
             app.AddNewRecipeButton.Text = 'Add New Recipe';
+
+            % Create UpdateRecipeButton
+            app.UpdateRecipeButton = uibutton(app.TransmissionTab, 'push');
+            app.UpdateRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @UpdateRecipeButtonPushed, true);
+            app.UpdateRecipeButton.BackgroundColor = [1 1 1];
+            app.UpdateRecipeButton.FontWeight = 'bold';
+            app.UpdateRecipeButton.Position = [569 428 155 25];
+            app.UpdateRecipeButton.Text = 'Update Recipe';
 
             % Create ReflectionTab
             app.ReflectionTab = uitab(app.TabGroup2);

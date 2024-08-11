@@ -65,6 +65,28 @@
         0,
         0
       ]
+    },
+    {
+      "name": "*.thz file",
+      "group": "Transmission",
+      "fileExt": "thz",
+      "sample": [
+        1,
+        2
+      ],
+      "reference": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "baseline": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     }
   ],
   "dataDescription": {
@@ -72,5 +94,5 @@
     "reference": "[load (1/0), use a seperate file(1/0), Reference THz column(#), dataset(#)]",
     "baseline": "[load (1/0), use a seperate file(1/0), Baseline THz column(#), dataset(#), subtract(1/0)]"
   },
-  "defaultItem": "MenloSystems *.dat file (use a separate reference file)"
+  "defaultItem": "Toptica *.csv file (reference integrated)"
 }
