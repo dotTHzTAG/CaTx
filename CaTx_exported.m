@@ -72,11 +72,12 @@ classdef CaTx_exported < matlab.apps.AppBase
         UITable_InsHeader               matlab.ui.control.Table
         UITable_Ins                     matlab.ui.control.Table
         DataRecipeTab                   matlab.ui.container.Tab
+        DownButton                      matlab.ui.control.Button
+        UpButton                        matlab.ui.control.Button
         RecipeDesignLabel               matlab.ui.control.Label
         TabGroup2                       matlab.ui.container.TabGroup
         TransmissionTab                 matlab.ui.container.Tab
-        UpdateRecipeButton              matlab.ui.control.Button
-        AddNewRecipeButton              matlab.ui.control.Button
+        AddUpdateRecipeButton           matlab.ui.control.Button
         SampleFileEditField             matlab.ui.control.EditField
         SampleFileEditFieldLabel        matlab.ui.control.Label
         DataFileExtensionDropDown       matlab.ui.control.DropDown
@@ -113,7 +114,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         TimepsSpinnerLabel              matlab.ui.control.Label
         ReflectionTab                   matlab.ui.container.Tab
         SetDefaultButton                matlab.ui.control.Button
-        RemoveButton_2                  matlab.ui.control.Button
+        RemoveRecipeButton              matlab.ui.control.Button
         RecipeListListBox               matlab.ui.control.ListBox
         RecipeListListBoxLabel          matlab.ui.control.Label
         ClearMemoryButton               matlab.ui.control.Button
@@ -145,7 +146,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         thzVer = "1.00";
         referenceSignal; % Description
         baselineSignal; % Description
-        recipeTable % Data recipe table
+        recipeTable % imported recipe table
+        recipeData % imported the whole recipe data from json file
     end
     
     methods (Access = private)
@@ -601,41 +603,20 @@ classdef CaTx_exported < matlab.apps.AppBase
                 recipeFile = 'dataRecipes.json';
                 recipeData = jsondecode(fileread(recipeFile));
            catch ME
-                fig = app.CaTSperUIFigure;
+                fig = app.CaTxUIFigure;
                 uialert(fig, sprintf('Failed to read data recipe JSON file: %s', ME.message), 'Error');
+                loadDefaultDataRecipe(app);
                 return;
             end
 
-            recipeTable = struct2table(recipeData.recipes);
+            recipeTable = struct2table(recipeData.recipes,"AsArray",true);
             recipeNames = recipeTable{:,1};
             app.recipeTable = recipeTable;
+            app.recipeData = recipeData;
 
             app.RecipeListListBox.Items = recipeNames;
             app.DataRecipeDropDown.Items = recipeNames;
-            app.DataRecipeDropDown.Value = recipeData.defaultItem;
-
-            % app.DR_boundary = recipeData.FFT_Settings.DR_boundary; % dynamic range frequency boundary
-            % 
-            % % Default FFT_Settings
-            % app.FromFreqEditField.Value = recipeData.FFT_Settings.Frequency_Range(1);
-            % app.ToFreqEditField.Value = recipeData.FFT_Settings.Frequency_Range(2);
-            % app.ZeroFillingpowerofSpinner.Value = recipeData.FFT_Settings.FFT_Upsampling;
-            % app.StartFrequencyTHzEditField.Value = recipeData.FFT_Settings.Unwrapping_Start_Frequency;
-            % app.FromEpolFreqEditField.Value = recipeData.FFT_Settings.Extrapolation_Frequency_Range(1);
-            % app.ToEpolFreqEditField.Value = recipeData.FFT_Settings.Extrapolation_Frequency_Range(2);
-            % app.FromTimeEditField.Value = recipeData.FFT_Settings.Window_Function_Range(1);
-            % app.ToTimeEditField.Value = recipeData.FFT_Settings.Window_Function_Range(2);
-            % app.FunctionDropDown.Value = recipeData.FFT_Settings.Apodisation_Function;
-            % 
-            % % Default thickness metadata
-            % app.mdSampleThicknessDropDown.Value = recipeData.Metadata_Settings.Sample_Thickness;
-            % app.mdReferenceThicknessDropDown.Value = recipeData.Metadata_Settings.Reference_Thickness;
-            % 
-            % % Default sample and referenece dataset
-            % app.dsSampleDropDown.Value = recipeData.Dataset_Settings.Sample;
-            % app.dsReferenceDropDown.Value = recipeData.Dataset_Settings.Reference;
-            % app.dsPumpedDropDown.Value = recipeData.Dataset_Settings.Pump;
-            
+            app.DataRecipeDropDown.Value = recipeData.defaultItem;            
         end
         
         function deploySampleData_thz(app)
@@ -799,6 +780,41 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.Tcell = Tcell;
             updateMeasurementTable(app);
         end
+        
+        function loadDefaultDataRecipe(app)
+            fig = app.CaTxUIFigure;
+            samMat = [1;2];
+            refMat = [0;0;0;0];
+            baseMat = [0;0;0;0;0];
+
+            recipeTable = table({'*.thz file'}, {'Transmission'}, {'thz'}, {samMat}, {refMat}, {baseMat},'VariableNames',{'name','group','fileExt','sample','reference','baseline'});
+            recipeName = recipeTable{:,1}
+
+            app.RecipeListListBox.Items = recipeName;
+            app.DataRecipeDropDown.Items = recipeName;
+            recipeData.defaultItem = recipeName;
+            recipeData.dataDescription.sample = "[time of flight column(#), sample THz column(#)]";
+            recipeData.dataDescription.reference = "[load (1/0), use a seperate file(1/0), Reference THz column(#), dataset(#)]";
+            recipeData.dataDescription.baseline = "[load (1/0), use a seperate file(1/0), Baseline THz column(#), dataset(#), subtract(1/0)]";
+            recipeData.recipes = table2struct(recipeTable);
+            app.recipeTable = recipeTable;
+            app.recipeData = recipeData;
+            assignin("base","recipeData",recipeData);
+                        
+            % Write the updated configData back to the JSON file
+            try
+                recipeFile = 'dataRecipes.json';
+                jsonText = jsonencode(recipeData, 'PrettyPrint', true);
+                fid = fopen(recipeFile, 'w');
+                if fid == -1
+                    error('Cannot open file for writing: %s', recipeFile);
+                end
+                fwrite(fid, jsonText, 'char');
+                fclose(fid);
+            catch ME
+                uialert(fig, sprintf('Failed to create default recipe: %s', ME.message), 'Error');
+            end
+        end
     end
     
 
@@ -916,10 +932,22 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ImportMeasurementButton
         function ImportMeasurementButtonPushed(app, event)
+            fig = app.CaTxUIFigure;
+            recipeName = app.DataRecipeDropDown.Value;
 
+            if isempty(recipeName)
+                return;
+            end
+
+            recipeTable = app.recipeTable;
+            recipeData = app.recipeData;
+            recipeNames = recipeTable{:,1}
+            [isMember,itemLoc]= ismember(recipeName,recipeNames);
+            fileExt = recipeTable{itemLoc,3};
+            fileFilter = strcat('*.',fileExt);
 
             if isempty(app.fullpathname)
-                [file, pathName] = uigetfile('*.*','All Files(*,*)','Sectect data file(s)','MultiSelect','on');
+                [file, pathName] = uigetfile(fileFilter,'Sectect data file(s)','MultiSelect','on');
             else
                 lastPath = app.fullpathname(end);
                 [file, pathName] = uigetfile(lastPath,'Sectect data file(s)','MultiSelect','on');
@@ -964,18 +992,30 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: DeployDataButton
         function DeployDataButtonPushed(app, event)
-            TDSinstrument = app.DataRecipeDropDown.Value;
+            recipeName = app.DataRecipeDropDown.Value;
+
+            if isempty(recipeName)
+                return;
+            end
+
+            recipeTable = app.recipeTable;
+            recipeData = app.recipeData;
+            recipeNames = recipeTable{:,1}
+            [isMember,itemLoc]= ismember(recipeName,recipeNames);
+            fileExt = recipeTable{itemLoc,3};
+            fileFilter = strcat('*.',fileExt);
+
             PRJ_count = app.PRJ_count; % number of files to be imported
             fullpathname = app.fullpathname; % full path for the imported files
             Tcell = []; % cell structure table
             DEBUGMsgLabel = app.DEBUGMsgLabel; % Debug message label handler
-            uiFigure = app.CaTxUIFigure;
+            fig = app.CaTxUIFigure;
             app.manualMode = 0;
 
             updateProfile(app);
 
-            func = str2func(TDSinstrument);
-            Tcell = func(PRJ_count,fullpathname,DEBUGMsgLabel,uiFigure,Tcell);
+            func = str2func(recipeName);
+            Tcell = func(PRJ_count,fullpathname,DEBUGMsgLabel,fig,Tcell);
 
             if isempty(Tcell)
                 return;
@@ -1243,7 +1283,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         end
 
-        % Callback function: not associated with a component
+        % Callback function
         function ImportthzFileButtonPushed(app, event)
             ClearMemoryButtonPushed(app);
             app.manualMode = 0;
@@ -2008,8 +2048,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
         end
 
-        % Button pushed function: AddNewRecipeButton
-        function AddNewRecipeButtonPushed(app, event)
+        % Button pushed function: AddUpdateRecipeButton
+        function AddUpdateRecipeButtonPushed(app, event)
+            fig = app.CaTxUIFigure;
             recipeName = app.RecipeNameEditField.Value;
 
             if isempty(recipeName)
@@ -2017,13 +2058,73 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             recipeTable = app.recipeTable;
-            recipeNames = recipeTable{:,1};
-            
-            if ismember(recipeName,recipeNames)
-               display("the same name exists");
-            else
-                display("New recipe added") ;
+            recipeData = app.recipeData;
+            recipeNames = recipeTable{:,1}
+            [isMember,itemLoc]= ismember(recipeName,recipeNames);
+
+            if isempty(recipeName)
+                return;
             end
+
+            if isMember
+                entryRow = itemLoc;
+            else
+                entryRow = length(recipeNames)+1;
+            end
+
+            samMat = zeros(2,1);
+            refMat = zeros(4,1);
+            baseMat = zeros(5,1);
+
+            samMat(1) = app.TimepsSpinner.Value;
+            samMat(2) = app.SampleTHzSpinner.Value;
+
+            refMat(1) = app.LoadReferenceCheckBox.Value;
+            refMat(2) = app.SeperateFileCheckBox_Reference.Value;
+            refMat(3) = app.ReferenceTHzSpinner.Value;
+            refMat(4) = app.dsEditField_Reference.Value;
+
+            baseMat(1) = app.LoadBaselineCheckBox.Value;
+            baseMat(2) = app.SeperateFileCheckBox_Baseline.Value;
+            baseMat(3) = app.BaselineTHzSpinner.Value;
+            baseMat(4) = app.dsEditField_Baseline.Value;
+            baseMat(5) = app.SubtractCheckBox.Value;
+
+            % Allocate the settings into the recipe table
+
+            recipeTable(entryRow,1) = {recipeName};
+            recipeTable(entryRow,2) = {'Transmission'};
+            if isequal(app.DataFileExtensionDropDown.Value,'user defined');
+                fileExt = app.userDefinedEditField.Value;
+            else
+                fileExt = app.DataFileExtensionDropDown.Value;
+            end
+            recipeTable(entryRow,3) = {fileExt};
+            recipeTable(entryRow,4) = {samMat};
+            recipeTable(entryRow,5) = {refMat};
+            recipeTable(entryRow,6) = {baseMat};
+
+            app.RecipeListListBox.Items = recipeNames;
+            app.DataRecipeDropDown.Items = recipeNames;          
+
+            recipeData.recipes = table2struct(recipeTable);        
+                        
+            % Write the updated configData back to the JSON file
+            try
+                recipeFile = 'dataRecipes.json';
+                jsonText = jsonencode(recipeData, 'PrettyPrint', true);
+                fid = fopen(recipeFile, 'w');
+                if fid == -1
+                    error('Cannot open file for writing: %s', recipeFile);
+                end
+                fwrite(fid, jsonText, 'char');
+                fclose(fid);
+                uialert(fig, 'Add/Update the recipe successfully.', 'Success');
+            catch ME
+                uialert(fig, sprintf('Failed to add/update the recipe: %s', ME.message), 'Error');
+            end
+
+            loadDataRecipes(app);
         end
 
         % Clicked callback: RecipeListListBox
@@ -2094,7 +2195,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 jsonText = jsonencode(recipeData, 'PrettyPrint', true);
                 fid = fopen(recipeFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', configFile);
+                    error('Cannot open file for writing: %s', recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -2107,7 +2208,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         end
 
-        % Button pushed function: UpdateRecipeButton
+        % Callback function: not associated with a component
         function UpdateRecipeButtonPushed(app, event)
             recipeName = app.RecipeNameEditField.Value;
 
@@ -2125,8 +2226,72 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
         end
 
-        % Button pushed function: RemoveButton_2
-        function RemoveButton_2Pushed(app, event)
+        % Button pushed function: RemoveRecipeButton
+        function RemoveRecipeButtonPushed(app, event)
+            fig = app.CaTxUIFigure;
+            Item = app.RecipeListListBox.Value;
+
+            recipeTable = app.recipeTable;
+            recipeData = app.recipeData;
+            recipeNames = recipeTable{:,1}
+            [isMember,itemLoc]= ismember(Item,recipeNames);
+
+            if isempty(Item)
+                return;
+            end
+
+            if isequal(Item,'*.thz file')
+                uialert(fig,'You cannot remove *.thz recipe','warning');
+                return;
+            end
+
+            question = "Do you want to remove recipe?";
+            answer = questdlg(question,'Warning','Yes','No','No');
+            
+            if answer == "No"
+                return;
+            end
+
+            % remove the selected row from table
+            recipeTable(itemLoc,:) = [];
+            recipeNames = recipeTable{:,1};
+            app.recipeTable = recipeTable;
+
+            if isequal(Item,recipeData.defaultItem)
+                recipeData.defaultItem = recipeNames(1);
+            end
+
+            app.RecipeListListBox.Items = recipeNames;
+            app.DataRecipeDropDown.Items = recipeNames;
+            app.DataRecipeDropDown.Value = recipeData.defaultItem;           
+
+            recipeData.recipes = table2struct(recipeTable);        
+                        
+            % Write the updated configData back to the JSON file
+            try
+                recipeFile = 'dataRecipes.json';
+                jsonText = jsonencode(recipeData, 'PrettyPrint', true);
+                fid = fopen(recipeFile, 'w');
+                if fid == -1
+                    error('Cannot open file for writing: %s', recipeFile);
+                end
+                fwrite(fid, jsonText, 'char');
+                fclose(fid);
+                uialert(fig, 'Removed the recipe successfully.', 'Success');
+            catch ME
+                uialert(fig, sprintf('Failed to remove the recipe: %s', ME.message), 'Error');
+            end
+
+            loadDataRecipes(app);
+        end
+
+        % Button pushed function: UpButton
+        function UpButtonPushed(app, event)
+            
+        end
+
+        % Button pushed function: DownButton
+        function DownButtonPushed(app, event)
             
         end
     end
@@ -2596,14 +2761,16 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create RecipeListListBox
             app.RecipeListListBox = uilistbox(app.DataRecipeTab);
+            app.RecipeListListBox.Items = {};
             app.RecipeListListBox.ClickedFcn = createCallbackFcn(app, @RecipeListListBoxClicked, true);
             app.RecipeListListBox.Position = [104 574 463 104];
+            app.RecipeListListBox.Value = {};
 
-            % Create RemoveButton_2
-            app.RemoveButton_2 = uibutton(app.DataRecipeTab, 'push');
-            app.RemoveButton_2.ButtonPushedFcn = createCallbackFcn(app, @RemoveButton_2Pushed, true);
-            app.RemoveButton_2.Position = [584 615 126 23];
-            app.RemoveButton_2.Text = 'Remove';
+            % Create RemoveRecipeButton
+            app.RemoveRecipeButton = uibutton(app.DataRecipeTab, 'push');
+            app.RemoveRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @RemoveRecipeButtonPushed, true);
+            app.RemoveRecipeButton.Position = [585 615 126 23];
+            app.RemoveRecipeButton.Text = 'Remove';
 
             % Create SetDefaultButton
             app.SetDefaultButton = uibutton(app.DataRecipeTab, 'push');
@@ -2747,7 +2914,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.dsEditField_Sample = uieditfield(app.TerahertzDatasetPanel, 'numeric');
             app.dsEditField_Sample.Limits = [1 4];
             app.dsEditField_Sample.ValueDisplayFormat = '%.0f';
-            app.dsEditField_Sample.Editable = 'off';
             app.dsEditField_Sample.Position = [274 53 20 22];
             app.dsEditField_Sample.Value = 1;
 
@@ -2761,7 +2927,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.dsEditField_Reference = uieditfield(app.TerahertzDatasetPanel, 'numeric');
             app.dsEditField_Reference.Limits = [0 4];
             app.dsEditField_Reference.ValueDisplayFormat = '%.0f';
-            app.dsEditField_Reference.Editable = 'off';
             app.dsEditField_Reference.Position = [447 53 20 22];
             app.dsEditField_Reference.Value = 2;
 
@@ -2775,7 +2940,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.dsEditField_Baseline = uieditfield(app.TerahertzDatasetPanel, 'numeric');
             app.dsEditField_Baseline.Limits = [0 4];
             app.dsEditField_Baseline.ValueDisplayFormat = '%.0f';
-            app.dsEditField_Baseline.Editable = 'off';
             app.dsEditField_Baseline.Position = [613 53 20 22];
             app.dsEditField_Baseline.Value = 3;
 
@@ -2830,21 +2994,13 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.SampleFileEditField = uieditfield(app.TransmissionTab, 'text');
             app.SampleFileEditField.Position = [95 233 464 22];
 
-            % Create AddNewRecipeButton
-            app.AddNewRecipeButton = uibutton(app.TransmissionTab, 'push');
-            app.AddNewRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @AddNewRecipeButtonPushed, true);
-            app.AddNewRecipeButton.BackgroundColor = [1 1 1];
-            app.AddNewRecipeButton.FontWeight = 'bold';
-            app.AddNewRecipeButton.Position = [569 460 155 25];
-            app.AddNewRecipeButton.Text = 'Add New Recipe';
-
-            % Create UpdateRecipeButton
-            app.UpdateRecipeButton = uibutton(app.TransmissionTab, 'push');
-            app.UpdateRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @UpdateRecipeButtonPushed, true);
-            app.UpdateRecipeButton.BackgroundColor = [1 1 1];
-            app.UpdateRecipeButton.FontWeight = 'bold';
-            app.UpdateRecipeButton.Position = [569 428 155 25];
-            app.UpdateRecipeButton.Text = 'Update Recipe';
+            % Create AddUpdateRecipeButton
+            app.AddUpdateRecipeButton = uibutton(app.TransmissionTab, 'push');
+            app.AddUpdateRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @AddUpdateRecipeButtonPushed, true);
+            app.AddUpdateRecipeButton.BackgroundColor = [1 1 1];
+            app.AddUpdateRecipeButton.FontWeight = 'bold';
+            app.AddUpdateRecipeButton.Position = [569 460 155 25];
+            app.AddUpdateRecipeButton.Text = 'Add / Update Recipe';
 
             % Create ReflectionTab
             app.ReflectionTab = uitab(app.TabGroup2);
@@ -2856,6 +3012,18 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.RecipeDesignLabel.FontWeight = 'bold';
             app.RecipeDesignLabel.Position = [19 541 101 22];
             app.RecipeDesignLabel.Text = 'Recipe Design';
+
+            % Create UpButton
+            app.UpButton = uibutton(app.DataRecipeTab, 'push');
+            app.UpButton.ButtonPushedFcn = createCallbackFcn(app, @UpButtonPushed, true);
+            app.UpButton.Position = [585 582 60 23];
+            app.UpButton.Text = 'Up';
+
+            % Create DownButton
+            app.DownButton = uibutton(app.DataRecipeTab, 'push');
+            app.DownButton.ButtonPushedFcn = createCallbackFcn(app, @DownButtonPushed, true);
+            app.DownButton.Position = [651 582 60 23];
+            app.DownButton.Text = 'Down';
 
             % Create PrefixnumberstothedatasetnameLabel
             app.PrefixnumberstothedatasetnameLabel = uilabel(app.CaTxUIFigure);
