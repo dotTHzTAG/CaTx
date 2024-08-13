@@ -124,7 +124,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         CaTxLabel                       matlab.ui.control.Label
         DeployDataButton                matlab.ui.control.Button
         FILESEditField                  matlab.ui.control.EditField
-        ImportMeasurementButton         matlab.ui.control.Button
+        ImportDataFilesButton           matlab.ui.control.Button
     end
 
     
@@ -930,8 +930,8 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         end
 
-        % Button pushed function: ImportMeasurementButton
-        function ImportMeasurementButtonPushed(app, event)
+        % Button pushed function: ImportDataFilesButton
+        function ImportDataFilesButtonPushed(app, event)
             fig = app.CaTxUIFigure;
             recipeName = app.DataRecipeDropDown.Value;
 
@@ -2208,7 +2208,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         end
 
-        % Callback function: not associated with a component
+        % Callback function
         function UpdateRecipeButtonPushed(app, event)
             recipeName = app.RecipeNameEditField.Value;
 
@@ -2311,12 +2311,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.CaTxUIFigure.Name = 'CaTx';
             app.CaTxUIFigure.Icon = fullfile(pathToMLAPP, 'Images', 'icon.png');
 
-            % Create ImportMeasurementButton
-            app.ImportMeasurementButton = uibutton(app.CaTxUIFigure, 'push');
-            app.ImportMeasurementButton.ButtonPushedFcn = createCallbackFcn(app, @ImportMeasurementButtonPushed, true);
-            app.ImportMeasurementButton.FontWeight = 'bold';
-            app.ImportMeasurementButton.Position = [202 791 143 25];
-            app.ImportMeasurementButton.Text = 'Import Measurement';
+            % Create ImportDataFilesButton
+            app.ImportDataFilesButton = uibutton(app.CaTxUIFigure, 'push');
+            app.ImportDataFilesButton.ButtonPushedFcn = createCallbackFcn(app, @ImportDataFilesButtonPushed, true);
+            app.ImportDataFilesButton.FontWeight = 'bold';
+            app.ImportDataFilesButton.Position = [202 791 143 25];
+            app.ImportDataFilesButton.Text = 'Import Data File(s)';
 
             % Create FILESEditField
             app.FILESEditField = uieditfield(app.CaTxUIFigure, 'text');
