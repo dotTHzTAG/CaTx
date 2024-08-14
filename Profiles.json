@@ -1,0 +1,21 @@
+{
+  "Instruments": [
+    {
+      "Model": "TeraSmart",
+      "Manufacturer": "MenloSystems",
+      "Address": "Martinsried, Germany"
+    },
+    {
+      "Model": "TeraPulse4000",
+      "Manufacturer": "TeraView",
+      "Address": "Cambridge, UK"
+    }
+  ],
+  "Users": {
+    "ORCID": "0000-0000-1111-2222",
+    "Name": "J Doe",
+    "Email": "J.Doe@thz.ac.uk",
+    "Affiliation": "University of Terahertz, UK"
+  },
+  "defaultInstrument": "TeraSmart"
+}
