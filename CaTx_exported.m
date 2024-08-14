@@ -325,125 +325,135 @@ classdef CaTx_exported < matlab.apps.AppBase
             updateMeasurementTable(app);
         end
         
-        function deploySampleData(app)
-            fullpath = app.samplefile;
-
-            if isempty(fullpath)
-                return;
-            end
-
-            app.DEBUGMsgLabel.Text = 'Loading....';
-            Tcell = cell(22,1); % cell structure table
-            Tcell_header = app.Tcell_header;
-            uiFigure = app.CaTxUIFigure;
+        function deployData_readmatrix(app,PRJ_count,fullpathname,recipeNum)
+            fig = app.CaTxUIFigure;
             app.manualMode = 0;
             DSBaseCol = 18;
-            measNum = 1;
-            drawnow
+            [fileLocation,sampleName,fileExt] = fileparts(fullpathname(1));
 
-            % Import Settings
-            tofIdx = app.TimepsSpinner.Value;
-            sampleTHzIdx = app.SampleTHzSpinner.Value;
-            sampleDS = app.dsEditField_Sample.Value;
+            recipeTable = app.recipeTable;
+            samMat = cell2mat(recipeTable{recipeNum,4});
+            refMat = cell2mat(recipeTable{recipeNum,5});
+            baseMat = cell2mat(recipeTable{recipeNum,6});
 
-            readReference = app.LoadReferenceCheckBox.Value;
-            openRefereceFile = app.SeperateFileCheckBox_Reference.Value;
-            referenceTHzIdx = app.ReferenceTHzSpinner.Value;
-            referenceDS = app.dsEditField_Reference.Value;
+            tofIdx = samMat(1);
+            defaultTHzIdx = samMat(2);
+            readReference = refMat(1);
+            samDS = 1;
+            openRefereceFile = refMat(2);
+            refTHzIdx = refMat(3);
+            refDS = refMat(4);
+            readBaseline = baseMat(1);
+            openBaselineFile = baseMat(2);
+            baseTHzIdx = baseMat(3);
+            baseDS = baseMat(4);
+            subtractBaseline = baseMat(5);
+            refTof = [];
+            baseTof = [];
 
-            readBaseline = app.LoadBaselineCheckBox.Value;
-            openBaselineFile = app.SeperateFileCheckBox_Baseline.Value;
-            subtractBaseline = app.SubtractCheckBox.Value;
-            baselineTHzIdx = app.BaselineTHzSpinner.Value;
-            baselineDS = app.dsEditField_Baseline.Value;
-            
-            try
-                samVec = readmatrix(fullpath);
-                [fileLocation,sampleName,fileExt] = fileparts(fullpath);
-            catch
-                uialert(uiFigure,'Incorrect Data Set','Warning');
-                app.DEBUGMsgLabel.Text = 'Loading Cancelled';
-                return;
-            end
-
-            % Read Sample Signal                            
-            tof = samVec(:,tofIdx)'; % Time of flight
-            samTHz = samVec(:,sampleTHzIdx)'; % Sample THz signal
-
-            % Sample signal cell allocation
-            Tcell{DSBaseCol+sampleDS,measNum} = [tof;samTHz];
-            Tcell_header{DSBaseCol+sampleDS} = strcat(num2str(DSBaseCol+sampleDS),': Sample');
+            Tcell = cell(22,PRJ_count); % cell structure table
+            Tcell_header = app.Tcell_header;
+            Tcell_header{DSBaseCol+samDS} = strcat(num2str(DSBaseCol+samDS),': Sample');
 
             % Read Reference Signal
             if readReference
                 if openRefereceFile
-                    if isempty(app.referenceSignal)
-                        [refFile, refFilepath] = uigetfile(fileExt,'Select a reference file',fileLocation);
-                        refVec = readmatrix(strcat(refFilepath,refFile));
-                        app.referenceSignal = refVec;
-                    else
-                        refVec = app.referenceSignal;
-                    end
+                    [refFile, refFilepath] = uigetfile(fileExt,'Select a reference file',fileLocation);
+                    refVec = readmatrix(strcat(refFilepath,refFile));
                     refTof = refVec(:,tofIdx)';
-                    refTHz = refVec(:,referenceTHzIdx)';
-                else
-                    refTof = tof;
-                    refTHz = samVec(:,referenceTHzIdx)';
+                    refTHz = refVec(:,defaultTHzIdx)';
                 end
-                % Referecen signal cell allocation
-                Tcell{DSBaseCol+referenceDS,measNum} = [refTof;refTHz];
-                Tcell_header{DSBaseCol+referenceDS} = strcat(num2str(DSBaseCol+referenceDS),': Reference');
+                Tcell_header{DSBaseCol+refDS} = strcat(num2str(DSBaseCol+refDS),': Reference');
             end
 
             % Read Baseline Signal
             if readBaseline
                 if openBaselineFile
-                    if isempty(app.baselineSignal)
-                        [baseFile, baseFilepath] = uigetfile(fileExt,'Select a baseline file',fileLocation);
-                        baseVec = readmatrix(strcat(baseFilepath,baseFile));
-                        app.baselineSignal = baseVec;
-                    else
-                        baseVec = app.baselineSignal;
-                    end
+                    [baseFile, baseFilepath] = uigetfile(fileExt,'Select a baseline file',fileLocation);
+                    baseVec = readmatrix(strcat(baseFilepath,baseFile));
                     baseTof = baseVec(:,tofIdx)';
-                    baseTHz = baseVec(:,baselineTHzIdx)';
-                else
-                    baseTof = tof;
-                    baseTHz = baseVec(:,baselineTHzIdx)';
+                    baseTHz = baseVec(:,baseTHzIdx)';
                 end
-                if subtractBaseline
-                    samTHz = samTHz - baseTHz;
-                    refTHz = refTHz - baseTHz;
-                    Tcell{DSBaseCol+sampleDS,measNum} = [tof;samTHz];
-                    Tcell{DSBaseCol+referenceDS,measNum} = [refTof;refTHz];
-                else
-                    % Baseline signal cell allocation
-                    Tcell{DSBaseCol+baselineDS,measNum} = [baseTof;baseTHz];
-                    Tcell_header{DSBaseCol+baselineDS} = strcat(num2str(DSBaseCol+baselineDS),': Baseline');
-                end
+                Tcell_header{DSBaseCol+baseDS} = strcat(num2str(DSBaseCol+baseDS),': Baseline');                
             end
 
-            % Data cell allocation
-            description = "";
-            mdDescription = "para1,para2";
-            dsDescription = app.DSDescriptionEditField.Value; % Dataset description
-            mode = "";
+            dsDescription = 'ds1: Sample';
+            if readReference
+                dsDescription = strcat(dsDescription,', ds2: Reference');
+            end
+            if readBaseline && ~subtractBaseline
+                dsDescription = strcat(dsDescription,', ds3: Reference');
+            end            
 
-            Tcell{1,measNum} = measNum;
-            Tcell{2,measNum} = sampleName;
-            Tcell{3,measNum} = description;
-            Tcell{4,measNum} = 0; % Instrument profile
-            Tcell{5,measNum} = 0; % User profile
-            Tcell{8,measNum} = []; % coordinates
-            
-            Tcell{15,measNum} = []; % not used
-            Tcell{16,measNum} = []; % not used
-            Tcell{17,measNum} = []; % not used
+            % Read Sample Signal
+            for PRJIdx = 1:PRJ_count
+                fullpath = fullpathname{PRJIdx};
+                if isempty(fullpath)
+                    return;
+                end
+                app.DEBUGMsgLabel.Text = 'Loading....';
+                drawnow
 
-            Tcell{18,measNum} = dsDescription; % dataset description
+                try
+                    samVec = readmatrix(fullpath);
+                    % [fileLocation,sampleName,fileExt] = fileparts(fullpath);
+                catch
+                    uialert(fig,'Incorrect Data Set','Warning');
+                    app.DEBUGMsgLabel.Text = 'Loading Cancelled';
+                    return;
+                end
+
+                % Read Sample Signal                            
+                tof = samVec(:,tofIdx)'; % Time of flight
+                samTHz = samVec(:,defaultTHzIdx)'; % Sample THz signal
+
+                if readReference
+                    if ~openRefereceFile
+                        refTHz = samVec(:,refTHzIdx)';
+                        refTof = tof;
+                    end
+                    Tcell{DSBaseCol+refDS,PRJIdx} = [refTof;refTHz];
+                end
+
+                if readBaseline
+                    if ~openBaselineFile
+                        baseTHz = samTHz(:,baseTHzIdx)';
+                        baseTof = tof;
+                    end
+
+                    if subtractBaseline
+                        samTHz = samTHz - baseTHz;
+                        refTHz = refTHz - baseTHz;
+                        Tcell{DSBaseCol+samDS,PRJIdx} = [tof;samTHz];
+                        Tcell{DSBaseCol+refDS,PRJIdx} = [refTof;refTHz];
+                    else
+                        Tcell{DSBaseCol+baseDS,PRJIdx} = [baseTof;baseTHz];
+                    end
+                end
+
+                Tcell{DSBaseCol+samDS,PRJIdx} = [tof;samTHz];
+               
+                % Data cell allocation
+                description = "";
+                mdDescription = "";
+                mode = "";
+    
+                Tcell{1,PRJIdx} = PRJIdx;
+                Tcell{2,PRJIdx} = sampleName;
+                Tcell{3,PRJIdx} = description;
+                Tcell{4,PRJIdx} = 0; % Instrument profile
+                Tcell{5,PRJIdx} = 0; % User profile
+                Tcell{8,PRJIdx} = []; % coordinates
+                
+                Tcell{15,PRJIdx} = []; % not used
+                Tcell{16,PRJIdx} = []; % not used
+                Tcell{17,PRJIdx} = []; % not used
+    
+                Tcell{18,PRJIdx} = dsDescription; % dataset description
+            end
 
             app.DEBUGMsgLabel.Text = "Complete Loading";
-            app.totalMeasNum = measNum;
+            app.totalMeasNum = PRJIdx;
             app.Tcell = Tcell;
             app.UITable_Header.Data = Tcell_header;
             updateMeasurementTable(app);
@@ -477,120 +487,154 @@ classdef CaTx_exported < matlab.apps.AppBase
             Tcell{14,measNum} = md5; % concentration  (%)
         end
         
-        function deploySampleData_tprj(app)
-            fullpath = app.samplefile;
-
-            if isempty(fullpath)
-                return;
-            end
-
-            % extracting data from TeraPulse prject file
-            HDFDataSet='/TerapulseDocument/Measurements/Spectra Data';
-            
-            try
-                HDFDataInfo = h5info(fullpath, HDFDataSet);
-                [fileLocation,sampleName,fileExt] = fileparts(fullpath);
-            catch
-                uialert(uiFigure,'Incorrect HDF5 dataset','Warning');
-                app.DEBUGMsgLabel.Text = 'Loading Cancelled';
-                return;
-            end
-
-            app.DEBUGMsgLabel.Text = 'Loading....';
-            Tcell = cell(22,1); % cell structure table
-            Tcell_header = app.Tcell_header;
-            uiFigure = app.CaTxUIFigure;
+        function deployData_teraviewHDF(app,PRJ_count,fullpathname,recipeNum)
+            fig = app.CaTxUIFigure;
             app.manualMode = 0;
             DSBaseCol = 18;
-            totalMeasNum = size(HDFDataInfo.Groups,1);
-            measNum = 1;
-            drawnow
+            totalMeasNum = 1; % Total measurement number
 
-            % Import Settings
-            tofIdx = app.TimepsSpinner.Value;
-            sampleTHzIdx = app.SampleTHzSpinner.Value;
-            sampleDS = app.dsEditField_Sample.Value;
+            recipeTable = app.recipeTable;
+            samMat = cell2mat(recipeTable{recipeNum,4});
+            refMat = cell2mat(recipeTable{recipeNum,5});
+            baseMat = cell2mat(recipeTable{recipeNum,6});
 
-            readReference = app.LoadReferenceCheckBox.Value;
-            openRefereceFile = app.SeperateFileCheckBox_Reference.Value;
-            referenceTHzIdx = app.ReferenceTHzSpinner.Value;
-            referenceDS = app.dsEditField_Reference.Value;
+            tofIdx = samMat(1);
+            defaultTHzIdx = samMat(2);
+            readReference = refMat(1);
+            samDS = 1;
+            openRefereceFile = refMat(2);
+            refTHzIdx = refMat(3);
+            refDS = refMat(4);
+            readBaseline = baseMat(1);
+            openBaselineFile = baseMat(2);
+            baseTHzIdx = baseMat(3);
+            baseDS = baseMat(4);
+            subtractBaseline = baseMat(5);
+            refTof = [];
+            baseTof = [];
 
-            readBaseline = app.LoadBaselineCheckBox.Value;
-            openBaselineFile = app.SeperateFileCheckBox_Baseline.Value;
-            subtractBaseline = app.SubtractCheckBox.Value;
-            baselineTHzIdx = app.BaselineTHzSpinner.Value;
-            baselineDS = app.dsEditField_Baseline.Value;
-            
-            % Read Sample Signal
-            groupName = HDFDataInfo.Groups(measNum).Name;
-            tof = h5read(fullpath,strcat(groupName,'/sample/xdata')); % Time of flight
-            samTHz = h5read(fullpath,strcat(groupName,'/sample/ydata')); % Sample THz signal
-
-            % Sample signal cell allocation
-            Tcell{DSBaseCol+sampleDS,measNum} = [tof;samTHz];
-            Tcell_header{DSBaseCol+sampleDS} = strcat(num2str(DSBaseCol+sampleDS),': Sample');
-
-            % Read Reference Signal
+            dsDescription = 'ds1: Sample';
             if readReference
-                try
-                    refTof = h5read(fullpath,strcat(groupName,'/reference/sample/xdata'));
-                    refTHz = h5read(fullpath,strcat(groupName,'/reference/sample/ydata'));
-                catch
-                    uialert(uiFigure,'Reference singal loading error','Warning');
-                    app.DEBUGMsgLabel.Text = 'Loading Cancelled';
-                    return;
-                end
-
-                % Referecen signal cell allocation
-                Tcell{DSBaseCol+referenceDS,measNum} = [refTof;refTHz];
-                Tcell_header{DSBaseCol+referenceDS} = strcat(num2str(DSBaseCol+referenceDS),': Reference');
+                dsDescription = strcat(dsDescription,', ds2: Reference');
             end
+            if readBaseline && ~subtractBaseline
+                dsDescription = strcat(dsDescription,', ds3: Reference');
+            end 
 
-            % Read Baseline Signal
+            Tcell = cell(22,1); % cell structure table
+            Tcell_header = app.Tcell_header;
+            Tcell_header{DSBaseCol+samDS} = strcat(num2str(DSBaseCol+samDS),': Sample');            
+            if readReference
+                Tcell_header{DSBaseCol+refDS} = strcat(num2str(DSBaseCol+refDS),': Reference');
+            end
             if readBaseline
+                Tcell_header{DSBaseCol+baseDS} = strcat(num2str(DSBaseCol+baseDS),': Baseline');                
+            end
+
+            HDFDataSet='/TerapulseDocument/Measurements/Spectra Data';
+
+            for PRJIdx = 1:PRJ_count
+                fullpath = fullpathname{PRJIdx};
+                if isempty(fullpath)
+                    return;
+                end
+
                 try
-                    baseTof = h5read(fullpath,strcat(groupName,'/baseline/sample/xdata'));
-                    baseTHz = h5read(fullpath,strcat(groupName,'/baseline/sample/ydata'));
+                    HDFDataInfo = h5info(fullpath, HDFDataSet);
                 catch
-                    uialert(uiFigure,'Baseline singal loading error','Warning');
+                    uialert(fig,'Incorrect dataset','Warning');
                     app.DEBUGMsgLabel.Text = 'Loading Cancelled';
                     return;
                 end
 
-                if subtractBaseline
-                    samTHz = samTHz - baseTHz;
-                    refTHz = refTHz - baseTHz;
-                    Tcell{DSBaseCol+sampleDS,measNum} = [tof;samTHz];
-                    Tcell{DSBaseCol+referenceDS,measNum} = [refTof;refTHz];
-                else
-                    % Baseline signal cell allocation
-                    Tcell{DSBaseCol+baselineDS,measNum} = [baseTof;baseTHz];
-                    Tcell_header{DSBaseCol+baselineDS} = strcat(num2str(DSBaseCol+baselineDS),': Baseline');
+                PRJMeasCount = size(HDFDataInfo.Groups,1);
+                assignin("base","HDFDataInfo",HDFDataInfo);
+
+                for idx = 1:PRJMeasCount
+                    % Read Sample Signal
+                    groupName = HDFDataInfo.Groups(idx).Name;
+                    tof = h5read(fullpath,strcat(groupName,'/sample/xdata')); % Time of flight
+                    samTHz = h5read(fullpath,strcat(groupName,'/sample/ydata')); % Sample THz signal
+        
+                    % Sample signal cell allocation
+                    Tcell{DSBaseCol+samDS,PRJMeasCount-idx+totalMeasNum} = [tof;samTHz];
+                    % Read Reference Signal
+                    if readReference
+                        try
+                            refTof = h5read(fullpath,strcat(groupName,'/reference/sample/xdata'));
+                            refTHz = h5read(fullpath,strcat(groupName,'/reference/sample/ydata'));
+                        catch
+                            uialert(fig,'Reference singal loading error','Warning');
+                            app.DEBUGMsgLabel.Text = 'Loading Cancelled';
+                            return;
+                        end
+                        % Referecen signal cell allocation
+                        Tcell{DSBaseCol+refDS,PRJMeasCount-idx+totalMeasNum} = [refTof;refTHz];
+                    end
+                    % Read Baseline Signal
+                    if readBaseline
+                        try
+                            baseTof = h5read(fullpath,strcat(groupName,'/baseline/sample/xdata'));
+                            baseTHz = h5read(fullpath,strcat(groupName,'/baseline/sample/ydata'));
+                        catch
+                            uialert(fig,'Baseline singal loading error','Warning');
+                            app.DEBUGMsgLabel.Text = 'Loading Cancelled';
+                            return;
+                        end
+        
+                        if subtractBaseline
+                            samTHz = samTHz - baseTHz;
+                            refTHz = refTHz - baseTHz;
+                            Tcell{DSBaseCol+samDS,PRJMeasCount-idx+totalMeasNum} = [tof;samTHz];
+                            Tcell{DSBaseCol+refDS,PRJMeasCount-idx+totalMeasNum} = [refTof;refTHz];
+                        else
+                            % Baseline signal cell allocation
+                            Tcell{DSBaseCol+baseDS,PRJMeasCount-idx+totalMeasNum} = [baseTof;baseTHz];
+                        end
+                    end
+
+                    try
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
+                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(3).Attributes(9).Value); 
+
+                    catch
+                        try
+                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value);
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(19).Value);
+                        catch
+                            uialert(fig,'Please check the measurement mode.','Warning');
+                            app.DEBUGMsgLabel.Text = 'Loading Aborted';
+                            return
+                        end
+                    end 
+                    description = "";
+                    mdDescription = "";
+                    mode = "";
+        
+                    Tcell{1,PRJMeasCount-idx+totalMeasNum} = PRJMeasCount-idx+totalMeasNum;
+                    Tcell{2,PRJMeasCount-idx+totalMeasNum} = sampleName;
+                    Tcell{3,PRJMeasCount-idx+totalMeasNum} = description;
+                    Tcell{4,PRJMeasCount-idx+totalMeasNum} = 0; % Instrument profile
+                    Tcell{5,PRJMeasCount-idx+totalMeasNum} = 0; % User profile
+                    Tcell{8,PRJMeasCount-idx+totalMeasNum} = []; % coordinates
+                    
+                    Tcell{15,PRJMeasCount-idx+totalMeasNum} = []; % not used
+                    Tcell{16,PRJMeasCount-idx+totalMeasNum} = []; % not used
+                    Tcell{17,PRJMeasCount-idx+totalMeasNum} = []; % not used
+        
+                    Tcell{18,PRJMeasCount-idx+totalMeasNum} = dsDescription; % dataset description
+
+                    progressP = idx/PRJMeasCount*100;
+                    progressP = num2str(progressP,'%.0f');
+                    progressP = strcat("Loading: ", progressP,"%");
+                    app.DEBUGMsgLabel.Text = progressP;
+                    drawnow
                 end
+                totalMeasNum = totalMeasNum + PRJMeasCount;
             end
-
-            % Data cell allocation
-            description = "";
-            mdDescription = "para1,para2";
-            dsDescription = app.DSDescriptionEditField.Value; % Dataset description
-            mode = "";
-
-            Tcell{1,measNum} = measNum;
-            Tcell{2,measNum} = sampleName;
-            Tcell{3,measNum} = description;
-            Tcell{4,measNum} = 0; % Instrument profile
-            Tcell{5,measNum} = 0; % User profile
-            Tcell{8,measNum} = []; % coordinates
-            
-            Tcell{15,measNum} = []; % not used
-            Tcell{16,measNum} = []; % not used
-            Tcell{17,measNum} = []; % not used
-
-            Tcell{18,measNum} = dsDescription; % dataset description
 
             app.DEBUGMsgLabel.Text = "Complete Loading";
-            app.totalMeasNum = measNum;
+            app.totalMeasNum = size(Tcell,2);
             app.Tcell = Tcell;
             app.UITable_Header.Data = app.Tcell_headerDefault;
             updateMeasurementTable(app);
@@ -619,7 +663,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DataRecipeDropDown.Value = recipeData.defaultItem;            
         end
         
-        function deploySampleData_thz(app)
+        function deployData_thz(app, PRJ_count,fullpathname,recipeNum)
             ClearMemoryButtonPushed(app);
             app.manualMode = 0;
             
@@ -653,8 +697,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             else
                 tempP2Profile = {};
             end
-
-            
 
             [file, filepath] = uigetfile('*.thz');
             
@@ -941,7 +983,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             recipeTable = app.recipeTable;
             recipeData = app.recipeData;
-            recipeNames = recipeTable{:,1}
+            recipeNames = recipeTable{:,1};
             [isMember,itemLoc]= ismember(recipeName,recipeNames);
             fileExt = recipeTable{itemLoc,3};
             fileFilter = strcat('*.',fileExt);
@@ -992,37 +1034,39 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: DeployDataButton
         function DeployDataButtonPushed(app, event)
+            fig = app.CaTxUIFigure;
             recipeName = app.DataRecipeDropDown.Value;
-
             if isempty(recipeName)
                 return;
             end
 
             recipeTable = app.recipeTable;
             recipeData = app.recipeData;
-            recipeNames = recipeTable{:,1}
-            [isMember,itemLoc]= ismember(recipeName,recipeNames);
-            fileExt = recipeTable{itemLoc,3};
-            fileFilter = strcat('*.',fileExt);
+            recipeNames = recipeTable{:,1};
+            [isMember,recipeNum]= ismember(recipeName,recipeNames);
+            fileExt = char(recipeTable{recipeNum,3});
 
             PRJ_count = app.PRJ_count; % number of files to be imported
             fullpathname = app.fullpathname; % full path for the imported files
             Tcell = []; % cell structure table
             DEBUGMsgLabel = app.DEBUGMsgLabel; % Debug message label handler
-            fig = app.CaTxUIFigure;
             app.manualMode = 0;
 
             updateProfile(app);
 
-            func = str2func(recipeName);
-            Tcell = func(PRJ_count,fullpathname,DEBUGMsgLabel,fig,Tcell);
+            switch fileExt
+                case 'thz'
+                    deployData_thz(app, PRJ_count,fullpathname,recipeNum);
+                case 'tprj'
+                    deployData_teraviewHDF(app,PRJ_count,fullpathname,recipeNum);
+                otherwise
+                    deployData_readmatrix(app,PRJ_count,fullpathname,recipeNum);
+            end
 
             if isempty(Tcell)
                 return;
             end
 
-            %assignin("base","ins_profilefile", app.ins_profile);
-            % assignin("base","Tcell",Tcell);
 
             Tcell(4,:) = num2cell(app.ins_profile);
             % In case you have an error message related to this line (ex:
@@ -1031,12 +1075,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Please check the Engine script.
             Tcell(5,:) = num2cell(app.user_profile);
             Tcell(17,:) = {app.thzVer};
-            measNum = size(Tcell,2);
-            app.totalMeasNum = measNum;
-            app.Tcell = Tcell;
+            % measNum = size(Tcell,2);
+            % app.totalMeasNum = measNum;
+            % app.Tcell = Tcell;
 
-            app.UITable_Header.Data = app.Tcell_headerDefault;
-            updateMeasurementTable(app);
+            % app.UITable_Header.Data = app.Tcell_headerDefault;
+            % updateMeasurementTable(app);
             app.Ins_MeasurementFieldToEditField.Value = app.totalMeasNum;
             app.User_MeasurementFieldToEditField.Value = app.totalMeasNum;
             app.FILEDLISTTOEditField.Value = app.totalMeasNum;
@@ -1975,9 +2019,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             CreateDatasetDescriptionButtonPushed(app);
 
             if isequal(fileExt,'tprj')
-                deploySampleData_tprj(app)
+                deployData_teraviewHDF(app)
             else
-                deploySampleData(app);
+                deployData_readmatrix(app);
             end
         end
 
@@ -2059,7 +2103,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             recipeTable = app.recipeTable;
             recipeData = app.recipeData;
-            recipeNames = recipeTable{:,1}
+            recipeNames = recipeTable{:,1};
             [isMember,itemLoc]= ismember(recipeName,recipeNames);
 
             if isempty(recipeName)
@@ -2233,7 +2277,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             recipeTable = app.recipeTable;
             recipeData = app.recipeData;
-            recipeNames = recipeTable{:,1}
+            recipeNames = recipeTable{:,1};
             [isMember,itemLoc]= ismember(Item,recipeNames);
 
             if isempty(Item)

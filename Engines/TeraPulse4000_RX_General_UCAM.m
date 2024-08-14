@@ -139,6 +139,5 @@ function Tcell = TeraPulse4000_RX_UCAM_CKL(PRJ_count,fullpathname,DEBUGMsgLabel,
                 end
                 DEBUGMsgLabel.Text = "Complete Conversion";                
                 idxStr = idxStr + MeasCount;
-                %assignin("base","Tcell",Tcell);
             end
 end

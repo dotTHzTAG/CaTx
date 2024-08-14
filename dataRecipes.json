@@ -54,8 +54,8 @@
       ],
       "reference": [
         1,
-        0,
-        0,
+        1,
+        2,
         2
       ],
       "baseline": [
@@ -87,6 +87,28 @@
         0,
         0
       ]
+    },
+    {
+      "name": "TeraView TeraPulse4000 *.tprj file (use an integrated reference)",
+      "group": "Transmission",
+      "fileExt": "tprj",
+      "sample": [
+        1,
+        2
+      ],
+      "reference": [
+        1,
+        0,
+        0,
+        2
+      ],
+      "baseline": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     }
   ],
   "dataDescription": {
@@ -94,5 +116,5 @@
     "reference": "[load (1/0), use a seperate file(1/0), Reference THz column(#), dataset(#)]",
     "baseline": "[load (1/0), use a seperate file(1/0), Baseline THz column(#), dataset(#), subtract(1/0)]"
   },
-  "defaultItem": "Toptica *.csv file (reference integrated)"
+  "defaultItem": "TeraView TeraPulse4000 *.tprj file (use a separate reference file)"
 }
