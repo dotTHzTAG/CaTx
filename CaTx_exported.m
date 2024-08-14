@@ -398,7 +398,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                     samVec = readmatrix(fullpath);
                     % [fileLocation,sampleName,fileExt] = fileparts(fullpath);
                 catch
-                    uialert(fig,'Incorrect Data Set','Warning');
+                    uialert(fig,'Cannot find sample dataset','Warning');
                     app.DEBUGMsgLabel.Text = 'Loading Cancelled';
                     return;
                 end
@@ -409,16 +409,28 @@ classdef CaTx_exported < matlab.apps.AppBase
 
                 if readReference
                     if ~openRefereceFile
-                        refTHz = samVec(:,refTHzIdx)';
-                        refTof = tof;
+                        try
+                            refTHz = samVec(:,refTHzIdx)';
+                            refTof = tof;
+                        catch
+                            uialert(fig,'Cannot find reference dataset','Warning');
+                            app.DEBUGMsgLabel.Text = 'Loading Cancelled';
+                            return;
+                        end                        
                     end
                     Tcell{DSBaseCol+refDS,PRJIdx} = [refTof;refTHz];
                 end
 
                 if readBaseline
                     if ~openBaselineFile
-                        baseTHz = samTHz(:,baseTHzIdx)';
-                        baseTof = tof;
+                        try
+                            baseTHz = samTHz(:,baseTHzIdx)';
+                            baseTof = tof;
+                        catch
+                            uialert(fig,'Cannot find baseline dataset','Warning');
+                            app.DEBUGMsgLabel.Text = 'Loading Cancelled';
+                            return;
+                        end
                     end
 
                     if subtractBaseline
@@ -2191,6 +2203,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.DataFileExtensionDropDown.Value = 'user defined';
                 app.userDefinedEditField.Value = fileExt;
             end
+            DataFileExtensionDropDownValueChanged(app);
 
             % Display terahertz datasets
             samMat = cell2mat(recipeTable{item,4});
