@@ -116,5 +116,5 @@
     "reference": "[load (1/0), use a seperate file(1/0), Reference THz column(#), dataset(#)]",
     "baseline": "[load (1/0), use a seperate file(1/0), Baseline THz column(#), dataset(#), subtract(1/0)]"
   },
-  "defaultItem": "TeraView TeraPulse4000 *.tprj file (use an integrated reference)"
+  "defaultItem": "MenloSystems *.dat file (use a separate reference file)"
 }
