@@ -23,28 +23,6 @@
       ]
     },
     {
-      "name": "Toptica *.csv file (reference integrated)",
-      "group": "Transmission",
-      "fileExt": "csv",
-      "sample": [
-        1,
-        2
-      ],
-      "reference": [
-        1,
-        0,
-        3,
-        2
-      ],
-      "baseline": [
-        0,
-        0,
-        4,
-        3,
-        0
-      ]
-    },
-    {
       "name": "TeraView TeraPulse4000 *.tprj file (use a separate reference file)",
       "group": "Transmission",
       "fileExt": "tprj",
@@ -56,6 +34,50 @@
         1,
         0,
         2,
+        2
+      ],
+      "baseline": [
+        0,
+        0,
+        4,
+        3,
+        0
+      ]
+    },
+    {
+      "name": "TeraView TeraPulse4000 *.tprj file (use an integrated reference)",
+      "group": "Transmission",
+      "fileExt": "tprj",
+      "sample": [
+        1,
+        2
+      ],
+      "reference": [
+        1,
+        0,
+        2,
+        2
+      ],
+      "baseline": [
+        0,
+        0,
+        4,
+        3,
+        0
+      ]
+    },
+    {
+      "name": "Toptica *.csv file (reference integrated)",
+      "group": "Transmission",
+      "fileExt": "csv",
+      "sample": [
+        1,
+        2
+      ],
+      "reference": [
+        1,
+        0,
+        3,
         2
       ],
       "baseline": [
@@ -85,28 +107,6 @@
         0,
         0,
         0,
-        0
-      ]
-    },
-    {
-      "name": "TeraView TeraPulse4000 *.tprj file (use an integrated reference)",
-      "group": "Transmission",
-      "fileExt": "tprj",
-      "sample": [
-        1,
-        2
-      ],
-      "reference": [
-        1,
-        0,
-        2,
-        2
-      ],
-      "baseline": [
-        0,
-        0,
-        4,
-        3,
         0
       ]
     }

@@ -11,11 +11,20 @@
       "Address": "Cambridge, UK"
     }
   ],
-  "Users": {
-    "ORCID": "0000-0000-1111-2222",
-    "Name": "J Doe",
-    "Email": "J.Doe@thz.ac.uk",
-    "Affiliation": "University of Terahertz, UK"
-  },
-  "defaultInstrument": "TeraSmart"
+  "Users": [
+    {
+      "ORCID": "0000-0000-1111-2222",
+      "Name": "J Doe",
+      "Email": "J.Doe@thz.ac.uk",
+      "Affiliation": "University of Terahertz, UK"
+    },
+    {
+      "ORCID": "0000-0002-3476-2922",
+      "Name": "J. Lee",
+      "Email": "jl2112@cam.ac.uk",
+      "Affiliation": "University of Cambridge, UK"
+    }
+  ],
+  "defaultInstrument": "TeraSmart/MenloSystems/Martinsried, Germany",
+  "defaultUser": "0000-0002-3476-2922/J. Lee/jl2112@cam.ac.uk/University of Cambridge, UK"
 }
