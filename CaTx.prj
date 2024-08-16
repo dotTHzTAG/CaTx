@@ -8,7 +8,7 @@
       <file>${PROJECT_ROOT}\CaTx_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\CaTx_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.00</param.version>
+    <param.version>1.3</param.version>
     <param.authnamewatermark>Terahertz Applications Group</param.authnamewatermark>
     <param.email>jl2112@cam.ac.uk</param.email>
     <param.company>University of Cambridge</param.company>
@@ -84,6 +84,7 @@ GitHub Documentation
     </fileset.package>
     <fileset.depfun>
       <file>${PROJECT_ROOT}\Images\dotTHz_logo.png</file>
+      <file>${PROJECT_ROOT}\Images\icon.png</file>
     </fileset.depfun>
     <build-deliverables>
       <file location="${PROJECT_ROOT}\CaTx\for_testing" name="CaTx.exe" optional="false">C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_testing\CaTx.exe</file>

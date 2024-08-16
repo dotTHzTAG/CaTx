@@ -20,7 +20,8 @@
         4,
         3,
         0
-      ]
+      ],
+      "mdDescription": "md1:Thickness(mm)"
     },
     {
       "name": "TeraView TeraPulse4000 *.tprj file (use an integrated reference)",
@@ -42,7 +43,8 @@
         4,
         3,
         0
-      ]
+      ],
+      "mdDescription": ""
     },
     {
       "name": "Toptica *.csv file (reference integrated)",
@@ -64,7 +66,8 @@
         4,
         3,
         0
-      ]
+      ],
+      "mdDescription": ""
     },
     {
       "name": "*.thz file",
@@ -86,7 +89,8 @@
         0,
         0,
         0
-      ]
+      ],
+      "mdDescription": ""
     }
   ],
   "dataDescription": {

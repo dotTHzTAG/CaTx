@@ -82,12 +82,11 @@ classdef CaTx_exported < matlab.apps.AppBase
         TabGroup2                       matlab.ui.container.TabGroup
         TransmissionTab                 matlab.ui.container.Tab
         MetadataPanel_2                 matlab.ui.container.Panel
+        SetMetadataDescriptionButton    matlab.ui.control.Button
         SelectfornoentryLabel           matlab.ui.control.Label
-        PresetDropDown                  matlab.ui.control.DropDown
-        PresetDropDownLabel             matlab.ui.control.Label
         MetadatanumberSpinner           matlab.ui.control.Spinner
         MetadatanumberSpinnerLabel      matlab.ui.control.Label
-        AddUpdateButton                 matlab.ui.control.Button
+        AddUpdateMDRecipeButton         matlab.ui.control.Button
         MetadataDescriptionEditField    matlab.ui.control.EditField
         MetadataDescriptionEditFieldLabel  matlab.ui.control.Label
         ResetTabletButton               matlab.ui.control.Button
@@ -158,6 +157,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         recipeTable % imported recipe table
         recipeData % imported the whole recipe data from json file
         group % Unit structure corresponding to the metadata categories
+        recipeFile = 'DeploymentRecipes.json';
+        profileFile = 'Profiles.json';
     end
     
     methods (Access = private)
@@ -165,8 +166,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         function loadProfiles(app)
             fig = app.CaTxUIFigure;
             try
-                profileFile = 'Profiles.json';
-                profileData = jsondecode(fileread(profileFile));
+                profileData = jsondecode(fileread(app.profileFile));
             catch ME            
                 uialert(fig, sprintf('Failed to read profile JSON file: %s', ME.message), 'Error');
                 return;
@@ -174,7 +174,6 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             instrumentTable = struct2table(profileData.Instruments,"AsArray",true);
             userTable = struct2table(profileData.Users,"AsArray",true);
-            assignin("base","instrumentTable",instrumentTable);
             
             app.UITable_Instruments.Data = instrumentTable;
             app.instrumentTable = instrumentTable;
@@ -261,6 +260,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             samMat = cell2mat(recipeTable{recipeNum,4});
             refMat = cell2mat(recipeTable{recipeNum,5});
             baseMat = cell2mat(recipeTable{recipeNum,6});
+            mdDescription = string(recipeTable{recipeNum,7});
 
             tofIdx = samMat(1);
             defaultTHzIdx = samMat(2);
@@ -278,29 +278,21 @@ classdef CaTx_exported < matlab.apps.AppBase
             baseTof = [];
 
             Tcell = cell(22,PRJ_count); % cell structure table
-            Tcell_header = app.Tcell_header;
-            Tcell_header{DSBaseCol+samDS} = strcat(num2str(DSBaseCol+samDS),': Sample');
 
             % Read Reference Signal
-            if readReference
-                if openRefereceFile
-                    [refFile, refFilepath] = uigetfile(fileExt,'Select a reference file',fileLocation);
-                    refVec = readmatrix(strcat(refFilepath,refFile));
-                    refTof = refVec(:,tofIdx)';
-                    refTHz = refVec(:,defaultTHzIdx)';
-                end
-                Tcell_header{DSBaseCol+refDS} = strcat(num2str(DSBaseCol+refDS),': Reference');
+            if readReference && openRefereceFile
+                [refFile, refFilepath] = uigetfile(fileExt,'Select a reference file',fileLocation);
+                refVec = readmatrix(strcat(refFilepath,refFile));
+                refTof = refVec(:,tofIdx)';
+                refTHz = refVec(:,defaultTHzIdx)';
             end
 
             % Read Baseline Signal
-            if readBaseline
-                if openBaselineFile
-                    [baseFile, baseFilepath] = uigetfile(fileExt,'Select a baseline file',fileLocation);
-                    baseVec = readmatrix(strcat(baseFilepath,baseFile));
-                    baseTof = baseVec(:,tofIdx)';
-                    baseTHz = baseVec(:,baseTHzIdx)';
-                end
-                Tcell_header{DSBaseCol+baseDS} = strcat(num2str(DSBaseCol+baseDS),': Baseline');                
+            if readBaseline && openBaselineFile
+                [baseFile, baseFilepath] = uigetfile(fileExt,'Select a baseline file',fileLocation);
+                baseVec = readmatrix(strcat(baseFilepath,baseFile));
+                baseTof = baseVec(:,tofIdx)';
+                baseTHz = baseVec(:,baseTHzIdx)';
             end
 
             dsDescription = 'ds1: Sample';
@@ -309,7 +301,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
             if readBaseline && ~subtractBaseline
                 dsDescription = strcat(dsDescription,', ds3: Reference');
-            end            
+            end
 
             % Read Sample Signal
             for PRJIdx = 1:PRJ_count
@@ -374,15 +366,26 @@ classdef CaTx_exported < matlab.apps.AppBase
                
                 % Data cell allocation
                 description = "";
-                mdDescription = "";
                 mode = "";
-    
+                try
+                    measDate = readlines(fullpath);
+                    measDate = measDate(3);
+                    measDate = extractAfter(measDate,"Date: ");
+                catch ME
+                    measDate = "";
+                end
+
+                datetime = measDate;
+
                 Tcell{1,PRJIdx} = PRJIdx;
                 Tcell{2,PRJIdx} = sampleName;
                 Tcell{3,PRJIdx} = description;
                 Tcell{4,PRJIdx} = app.instrument_profile;
                 Tcell{5,PRJIdx} = app.user_profile;
+                Tcell{6,PRJIdx} = datetime; % Measurement start time
+                Tcell{7,PRJIdx} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
                 Tcell{8,PRJIdx} = []; % Coordinates
+                Tcell{9,PRJIdx} = mdDescription; % Metadata description
                 
                 Tcell{15,PRJIdx} = []; % not used
                 Tcell{16,PRJIdx} = []; % not used
@@ -394,37 +397,11 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DEBUGMsgLabel.Text = "Complete Loading";
             app.totalMeasNum = PRJIdx;
             app.Tcell = Tcell;
-            app.UITable_Header.Data = Tcell_header;
             updateMeasurementTable(app);
             app.FILEDLISTTOEditField.Value = app.totalMeasNum;
             app.TabGroup.SelectedTab = app.TabGroup.Children(1);
         end
         
-        function deployMeta_readmatrix(app,PRJ_count,fullpathname,recipeNum)
-            try
-                measDate = readlines(fullpath);
-                measDate = measDate(3);
-                measDate = extractAfter(measDate,"Date: ");
-            catch ME
-                measDate = "";
-            end
-
-            time = measDate;
-            md1 = [];
-            md2 = [];
-            md3 = [];
-            md4 = [];
-            md5 = [];
-
-            Tcell{6,measNum} = time; % Measurement start time
-            Tcell{7,measNum} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
-            Tcell{9,measNum} = mdDescription; % metadata description
-            Tcell{10,measNum} = md1; % thickness (mm)
-            Tcell{11,measNum} = md2; % temperature (K)
-            Tcell{12,measNum} = md3; % weight (mg)
-            Tcell{13,measNum} = md4; % concentration  (%)
-            Tcell{14,measNum} = md5; % concentration  (%)
-        end
         
         function deployData_teraviewHDF(app,PRJ_count,fullpathname,recipeNum)
             fig = app.CaTxUIFigure;
@@ -436,6 +413,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             samMat = cell2mat(recipeTable{recipeNum,4});
             refMat = cell2mat(recipeTable{recipeNum,5});
             baseMat = cell2mat(recipeTable{recipeNum,6});
+            mdDescription = string(recipeTable{recipeNum,7});
 
             tofIdx = samMat(1);
             defaultTHzIdx = samMat(2);
@@ -463,26 +441,18 @@ classdef CaTx_exported < matlab.apps.AppBase
             end 
 
             Tcell = cell(22,1); % cell structure table
-            Tcell_header = app.Tcell_header;
-            Tcell_header{DSBaseCol+samDS} = strcat(num2str(DSBaseCol+samDS),': Sample');
 
-            if readReference
-                if openRefereceFile
-                    [refFile, refFilepath] = uigetfile(fileExt,'Select a reference file',fileLocation);
-                    refVec = readmatrix(strcat(refFilepath,refFile));
-                    refTof = refVec(:,tofIdx)';
-                    refTHz = refVec(:,defaultTHzIdx)';
-                end
-                Tcell_header{DSBaseCol+refDS} = strcat(num2str(DSBaseCol+refDS),': Reference');
+            if readReference && openRefereceFile
+                [refFile, refFilepath] = uigetfile(fileExt,'Select a reference file',fileLocation);
+                refVec = readmatrix(strcat(refFilepath,refFile));
+                refTof = refVec(:,tofIdx)';
+                refTHz = refVec(:,defaultTHzIdx)';
             end
-            if readBaseline
-                if openBaselineFile
-                    [baseFile, baseFilepath] = uigetfile(fileExt,'Select a baseline file',fileLocation);
-                    baseVec = readmatrix(strcat(baseFilepath,baseFile));
-                    baseTof = baseVec(:,tofIdx)';
-                    baseTHz = baseVec(:,baseTHzIdx)';
-                end
-                Tcell_header{DSBaseCol+baseDS} = strcat(num2str(DSBaseCol+baseDS),': Baseline');                
+            if readBaseline && openBaselineFile
+                [baseFile, baseFilepath] = uigetfile(fileExt,'Select a baseline file',fileLocation);
+                baseVec = readmatrix(strcat(baseFilepath,baseFile));
+                baseTof = baseVec(:,tofIdx)';
+                baseTHz = baseVec(:,baseTHzIdx)';
             end
 
             for PRJIdx = 1:PRJ_count
@@ -504,6 +474,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 for idx = 1:PRJMeasCount
                     % Read Sample Signal
                     groupName = HDFDataInfo.Groups(idx).Name;
+                    settingInfo = h5readatt(fullpath,strcat(groupName,"/sample"),'UserScanSettings');
                     tof = h5read(fullpath,strcat(groupName,'/sample/xdata')); % Time of flight
                     samTHz = h5read(fullpath,strcat(groupName,'/sample/ydata')); % Sample THz signal
         
@@ -556,9 +527,20 @@ classdef CaTx_exported < matlab.apps.AppBase
                             app.DEBUGMsgLabel.Text = 'Loading Aborted';
                             return
                         end
-                    end 
-                    description = "";
-                    mdDescription = "";
+                    end
+
+                    try
+                        description = char(extractBefore(extractAfter(settingInfo,'description":"'),'",'));
+                    catch
+                        description = '';
+                    end
+
+                    try
+                        datetime = char(extractBefore(extractAfter(settingInfo,'ScanStartDateTime":"'),'.'));
+                    catch
+                        datetime = "";
+                    end
+
                     mode = "";
         
                     Tcell{1,PRJMeasCount-idx+totalMeasNum} = PRJMeasCount-idx+totalMeasNum;
@@ -566,7 +548,10 @@ classdef CaTx_exported < matlab.apps.AppBase
                     Tcell{3,PRJMeasCount-idx+totalMeasNum} = description;
                     Tcell{4,PRJMeasCount-idx+totalMeasNum} = app.instrument_profile; % Instrument profile
                     Tcell{5,PRJMeasCount-idx+totalMeasNum} = app.user_profile; % User profile
+                    Tcell{6,PRJMeasCount-idx+totalMeasNum} = datetime; % Measurement start time
+                    Tcell{7,PRJMeasCount-idx+totalMeasNum} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection                
                     Tcell{8,PRJMeasCount-idx+totalMeasNum} = []; % coordinates
+                    Tcell{9,PRJMeasCount-idx+totalMeasNum} = mdDescription; % Metadata description
                     
                     Tcell{15,PRJMeasCount-idx+totalMeasNum} = []; % not used
                     Tcell{16,PRJMeasCount-idx+totalMeasNum} = []; % not used
@@ -586,7 +571,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DEBUGMsgLabel.Text = "Complete Loading";
             app.totalMeasNum = size(Tcell,2);
             app.Tcell = Tcell;
-            app.UITable_Header.Data = app.Tcell_headerDefault;
             updateMeasurementTable(app);
             app.FILEDLISTTOEditField.Value = app.totalMeasNum;
             app.TabGroup.SelectedTab = app.TabGroup.Children(1);
@@ -594,11 +578,10 @@ classdef CaTx_exported < matlab.apps.AppBase
         
         function loadDeploymentRecipes(app)
             try
-                recipeFile = 'DeploymentRecipes.json';
-                recipeData = jsondecode(fileread(recipeFile));
+                recipeData = jsondecode(fileread(app.recipeFile));
            catch ME
                 fig = app.CaTxUIFigure;
-                uialert(fig, sprintf('Failed to read data recipe JSON file: %s', ME.message), 'Error');
+                uialert(fig, sprintf('Failed to read DeploymentRecipe.json: %s', ME.message), 'Error');
                 loadDefaultDeploymentRecipe(app);
                 return;
             end
@@ -607,7 +590,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeNames = recipeTable{:,1};
             app.recipeTable = recipeTable;
             app.recipeData = recipeData;
-            %assignin("base","recipeTable",recipeTable);
 
             app.RecipeListListBox.Items = recipeNames;
             app.DataRecipeDropDown.Items = recipeNames;
@@ -707,7 +689,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             refMat = [0;0;0;0];
             baseMat = [0;0;0;0;0];
 
-            recipeTable = table({'*.thz file'}, {'Transmission'}, {'thz'}, {samMat}, {refMat}, {baseMat},'VariableNames',{'name','group','fileExt','sample','reference','baseline'});
+            recipeTable = table({'*.thz file'}, {'Transmission'}, {'thz'}, {samMat}, {refMat}, {baseMat},{' '},'VariableNames',{'name','group','fileExt','sample','reference','baseline','mdDescription'});
             recipeName = recipeTable{:,1}
 
             app.RecipeListListBox.Items = recipeName;
@@ -722,11 +704,10 @@ classdef CaTx_exported < matlab.apps.AppBase
                         
             % Write the updated configData back to the JSON file
             try
-                recipeFile = 'DeploymentRecipes.json';
                 jsonText = jsonencode(recipeData, 'PrettyPrint', true);
-                fid = fopen(recipeFile, 'w');
+                fid = fopen(app.recipeFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', recipeFile);
+                    error('Cannot open file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -807,9 +788,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         
         function updateProfiles(app)
             fig = app.CaTxUIFigure;
-            profileFile = 'Profiles.json';
             try
-                profileData = jsondecode(fileread(profileFile));
+                profileData = jsondecode(fileread(app.profileFile));
             catch ME            
                 uialert(fig, sprintf('Failed to read profile JSON file: %s', ME.message), 'Error');
                 return;
@@ -824,9 +804,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Write the updated profileData to the JSON file
             try
                 jsonText = jsonencode(profileData, 'PrettyPrint', true);
-                fid = fopen(profileFile, 'w');
+                fid = fopen(app.profileFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', recipeFile);
+                    error('Cannot open file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -837,7 +817,6 @@ classdef CaTx_exported < matlab.apps.AppBase
         end
         
         function loadMetaTable(app)
-            %cate1 = categorical({'-','Sample','Reference'});
             group.t1 = categorical({'-','Sample','Reference'});
             group.t2 = categorical({'-','Thickness','Weight','Temperature','Volume','Concentration','Refractive Index','Molar Mass'});
             group.Thickness = categorical({'m','cm','mm','μm','nm'});
@@ -849,9 +828,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.group = group;
 
             col1 = {'md1';'md2';'md3';'md4';'md5';'md6'};
-            col2 = {group.t1(2);group.t1(3);group.t1(1);group.t1(1);group.t1(1);group.t1(1)};
-            col3 = {group.t2(2);group.t2(2);group.t2(1);group.t2(1);group.t2(1);group.t2(1)};
-            col4 = {group.Thickness(3);group.Thickness(3);'-';'-';'-';'-'};
+            col2 = {group.t1(1);group.t1(1);group.t1(1);group.t1(1);group.t1(1);group.t1(1)};
+            col3 = {group.t2(1);group.t2(1);group.t2(1);group.t2(1);group.t2(1);group.t2(1)};
+            col4 = {'-';'-';'-';'-';'-';'-'};
 
             MetaTableData = table(col1,col2,col3,col4);
             app.UITable_Metadata.Data = MetaTableData;
@@ -860,8 +839,29 @@ classdef CaTx_exported < matlab.apps.AppBase
         
         function updateMDDescription(app)
             metaTableData = app.UITable_Metadata.Data;
-            % 
-            mdDescription = 'temp';
+            mdNum = app.MetadatanumberSpinner.Value;
+            mdDescription = '';
+            if mdNum == 0
+                app.MetadataDescriptionEditField.Value = '';
+                return;
+            end
+            noUnits = {'Refractive Index','-'};
+
+            for idx = 1:mdNum
+               rowContent = strcat('md',num2str(idx),':'); 
+               if ~isequal(string(metaTableData{idx,2}),'-')
+                   rowContent = strcat(rowContent,string(metaTableData{idx,2}),'_');
+               end
+               if ismember(string(metaTableData{idx,3}),noUnits)
+                   rowContent = strcat(rowContent,string(metaTableData{idx,3}));
+               else
+                   rowContent = strcat(rowContent,string(metaTableData{idx,3}),'(',string(metaTableData{idx,4}),')');
+               end
+               if idx < mdNum
+                   rowContent = strcat(rowContent,', ');
+               end
+               mdDescription = strcat(mdDescription,rowContent);
+            end
             app.MetadataDescriptionEditField.Value = mdDescription;
         end
     end
@@ -1109,43 +1109,10 @@ classdef CaTx_exported < matlab.apps.AppBase
         function UITable_MeasurementCellEdit(app, event)
             indices = event.Indices;
             newData = event.NewData; 
-
             if app.manualMode
                 return;
             end
-
-            switch indices(1)
-                case 9
-                    app.Tcell(9,:) = {newData};
-                    mdList = split(newData,',');
-                    Tcell_header = app.Tcell_header;
-                    for idx = 1:7
-                        mdDRow = 9; % metadata description row
-                        if idx<=size(mdList,1)
-                            Tcell_header{idx+mdDRow} = strcat(num2str(idx+mdDRow),": ",mdList(idx,1));
-                        else
-                            Tcell_header{idx+mdDRow} = strcat(num2str(idx+mdDRow),": -");
-                        end
-                    end
-                    app.UITable_Header.Data = cell2table(Tcell_header);
-                    app.Tcell_header = Tcell_header;
-                case 18
-                    app.Tcell(18,:) = {newData};
-                    dsList = split(newData,',');
-                    Tcell_header = app.Tcell_header;
-                    for idx = 1:4
-                        dsDRow = 18; % Dataset description row
-                        if idx<=size(dsList,1)
-                            Tcell_header{idx+dsDRow} = strcat(num2str(idx+dsDRow),": ",dsList(idx,1));
-                        else
-                            Tcell_header{idx+dsDRow} = strcat(num2str(idx+dsDRow),": -");
-                        end
-                    end
-                    app.UITable_Header.Data = cell2table(Tcell_header);
-                    app.Tcell_header = Tcell_header;
-                otherwise
-                    app.Tcell(indices(1),indices(2)) = {newData};
-            end
+            app.Tcell(indices(1),indices(2)) = {newData};
 
             updateMeasurementTable(app);
         end
@@ -1761,6 +1728,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeTable = app.recipeTable;
             recipeData = app.recipeData;
             recipeNames = recipeTable{:,1};
+            mdDescription = app.MetadataDescriptionEditField.Value;
             [isMember,itemLoc]= ismember(recipeName,recipeNames);
 
             if isempty(recipeName)
@@ -1804,6 +1772,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeTable(entryRow,4) = {samMat};
             recipeTable(entryRow,5) = {refMat};
             recipeTable(entryRow,6) = {baseMat};
+            recipeTable(entryRow,7) = {mdDescription};
 
             app.RecipeListListBox.Items = recipeNames;
             app.DataRecipeDropDown.Items = recipeNames;          
@@ -1812,11 +1781,10 @@ classdef CaTx_exported < matlab.apps.AppBase
                         
             % Write the updated configData back to the JSON file
             try
-                recipeFile = 'DeploymentRecipes.json';
                 jsonText = jsonencode(recipeData, 'PrettyPrint', true);
-                fid = fopen(recipeFile, 'w');
+                fid = fopen(app.recipeFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', recipeFile);
+                    error('Cannot open file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -1837,6 +1805,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             recipeTable = app.recipeTable;
             app.RecipeNameEditField.Value = char(recipeTable{item,1});
+            app.MetadataDescriptionEditField.Value = char(recipeTable{item,7});
             fileExt = char(recipeTable{item,3});
 
             % Display data file extension
@@ -1881,10 +1850,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             try
-                recipeFile = 'DeploymentRecipes.json';
-                recipeData = jsondecode(fileread(recipeFile));
-           catch ME
-                uialert(fig,'config_default.json file is missing.','warning');
+                recipeData = jsondecode(fileread(app.recipeFile));
+            catch ME
+                uialert(fig,'Fail to open DeploymentRecipes.json.','warning');
                 return;
             end   
 
@@ -1894,9 +1862,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Write the updated configData back to the JSON file
             try
                 jsonText = jsonencode(recipeData, 'PrettyPrint', true);
-                fid = fopen(recipeFile, 'w');
+                fid = fopen(app.recipeFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', recipeFile);
+                    error('Cannot open file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -1906,7 +1874,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             loadDeploymentRecipes(app);
-
         end
 
         % Button pushed function: RemoveRecipeButton
@@ -1952,11 +1919,10 @@ classdef CaTx_exported < matlab.apps.AppBase
                         
             % Write the updated configData back to the JSON file
             try
-                recipeFile = 'DeploymentRecipes.json';
                 jsonText = jsonencode(recipeData, 'PrettyPrint', true);
-                fid = fopen(recipeFile, 'w');
+                fid = fopen(app.recipeFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', recipeFile);
+                    error('Cannot open file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -1995,11 +1961,10 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeData.recipes = table2struct(recipeTable);        
                         
             try
-                recipeFile = 'DeploymentRecipes.json';
                 jsonText = jsonencode(recipeData, 'PrettyPrint', true);
-                fid = fopen(recipeFile, 'w');
+                fid = fopen(app.recipeFile, 'w');
                 if fid == -1
-                    error('Cannot open json file for writing: %s', recipeFile);
+                    error('Cannot open json file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -2035,11 +2000,10 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeData.recipes = table2struct(recipeTable);        
                         
             try
-                recipeFile = 'DeploymentRecipes.json';
                 jsonText = jsonencode(recipeData, 'PrettyPrint', true);
-                fid = fopen(recipeFile, 'w');
+                fid = fopen(app.recipeFile, 'w');
                 if fid == -1
-                    error('Cannot open json file for writing: %s', recipeFile);
+                    error('Cannot open json file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -2063,13 +2027,12 @@ classdef CaTx_exported < matlab.apps.AppBase
         function SetDefaultInstrumentButtonPushed(app, event)
             fig = app.CaTxUIFigure;
             itemNum = app.InstrumentSelectionEditField.Value;
-            profileFile = 'Profiles.json';
             if isequal(itemNum,0)
                 return;
             end
 
             try
-                profileData = jsondecode(fileread(profileFile));
+                profileData = jsondecode(fileread(app.profileFile));
             catch ME            
                 uialert(fig, sprintf('Failed to read profile JSON file: %s', ME.message), 'Error');
                 return;
@@ -2080,9 +2043,9 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             try
                 jsonText = jsonencode(profileData, 'PrettyPrint', true);
-                fid = fopen(profileFile, 'w');
+                fid = fopen(app.profileFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', recipeFile);
+                    error('Cannot open file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -2098,13 +2061,12 @@ classdef CaTx_exported < matlab.apps.AppBase
         function SetDefaultUserButtonPushed(app, event)
             fig = app.CaTxUIFigure;
             itemNum = app.UserSelectionEditField.Value;
-            profileFile = 'Profiles.json';
             if isequal(itemNum,0)
                 return;
             end
 
             try
-                profileData = jsondecode(fileread(profileFile));
+                profileData = jsondecode(fileread(app.profileFile));
             catch ME            
                 uialert(fig, sprintf('Failed to read profile JSON file: %s', ME.message), 'Error');
                 return;
@@ -2115,9 +2077,9 @@ classdef CaTx_exported < matlab.apps.AppBase
                         
             try
                 jsonText = jsonencode(profileData, 'PrettyPrint', true);
-                fid = fopen(profileFile, 'w');
+                fid = fopen(app.profileFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', recipeFile);
+                    error('Cannot open file for writing: %s', app.recipeFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -2141,6 +2103,11 @@ classdef CaTx_exported < matlab.apps.AppBase
         % Selection changed function: UITable_Metadata
         function UITable_MetadataSelectionChanged(app, event)
             selection = app.UITable_Metadata.Selection;
+            if selection(1) > app.MetadatanumberSpinner.Value || selection(2) == 1
+                app.UITable_Metadata.ColumnEditable = false;
+            else
+                app.UITable_Metadata.ColumnEditable = true;
+            end
         end
 
         % Cell edit callback: UITable_Metadata
@@ -2168,13 +2135,12 @@ classdef CaTx_exported < matlab.apps.AppBase
                 end
             end
             app.UITable_Metadata.Data = metaTableData;
-            strcat(table2cell(metaTableData(indices(1),3)),'(',table2cell(metaTableData(indices(1),4)),')')
             updateMDDescription(app);            
         end
 
         % Button pushed function: ResetTabletButton
         function ResetTabletButtonPushed(app, event)
-            app.MetadatanumberSpinner.Value = 2;
+            app.MetadatanumberSpinner.Value = 0;
             loadMetaTable(app);
         end
 
@@ -2194,6 +2160,66 @@ classdef CaTx_exported < matlab.apps.AppBase
                 metaTableData(idx,2:4) = table({group.t1(1)},{group.t2(1)},{'-'});
             end
             app.UITable_Metadata.Data = metaTableData;
+            updateMDDescription(app);
+        end
+
+        % Button pushed function: AddUpdateMDRecipeButton
+        function AddUpdateMDRecipeButtonPushed(app, event)
+            fig = app.CaTxUIFigure;
+            recipeName = app.RecipeNameEditField.Value;
+            mdDescription = app.MetadataDescriptionEditField.Value;
+
+            if isempty(recipeName)
+                return;
+            end
+
+            recipeTable = app.recipeTable;
+            recipeData = app.recipeData;
+            recipeNames = recipeTable{:,1};
+            [isMember,itemLoc]= ismember(recipeName,recipeNames);
+
+            if isempty(recipeName)
+                return;
+            end
+
+            entryRow = itemLoc;
+            recipeTable(entryRow,7) = {mdDescription};
+            app.recipeTable = recipeTable;
+            recipeData.recipes = table2struct(recipeTable);
+                        
+            % Write the updated configData back to the JSON file
+            try
+                jsonText = jsonencode(recipeData, 'PrettyPrint', true);
+                fid = fopen(app.recipeFile, 'w');
+                if fid == -1
+                    error('Cannot open file for writing: %s', app.recipeFile);
+                end
+                fwrite(fid, jsonText, 'char');
+                fclose(fid);
+                uialert(fig, 'Add/Update the metadata description successfully.', 'Success');
+            catch ME
+                uialert(fig, sprintf('Failed to add/update the metadata description: %s', ME.message), 'Error');
+            end
+        end
+
+        % Button pushed function: SetMetadataDescriptionButton
+        function SetMetadataDescriptionButtonPushed(app, event)
+            mdDescription = app.MetadataDescriptionEditField.Value;
+            mdDescriptionRow = 9;
+            fig = app.CaTxUIFigure;
+
+            if isempty(mdDescription) || isempty(app.Tcell)
+                return;
+            end
+
+            try
+                app.Tcell(mdDescriptionRow,1:app.totalMeasNum) = {mdDescription};
+            catch ME
+                uialert(fig,'Failed to update metadata description','warning');
+                return;
+            end
+
+            updateMeasurementTable(app);
         end
     end
 
@@ -2917,7 +2943,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.MetadataPanel_2 = uipanel(app.TransmissionTab);
             app.MetadataPanel_2.Title = 'Metadata';
             app.MetadataPanel_2.FontWeight = 'bold';
-            app.MetadataPanel_2.Position = [15 15 723 256];
+            app.MetadataPanel_2.Position = [15 10 723 261];
 
             % Create UITable_Metadata
             app.UITable_Metadata = uitable(app.MetadataPanel_2);
@@ -2927,58 +2953,54 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.UITable_Metadata.ColumnEditable = [false true true true];
             app.UITable_Metadata.CellEditCallback = createCallbackFcn(app, @UITable_MetadataCellEdit, true);
             app.UITable_Metadata.SelectionChangedFcn = createCallbackFcn(app, @UITable_MetadataSelectionChanged, true);
-            app.UITable_Metadata.Position = [188 56 487 170];
+            app.UITable_Metadata.Position = [179 24 487 170];
 
             % Create ResetTabletButton
             app.ResetTabletButton = uibutton(app.MetadataPanel_2, 'push');
             app.ResetTabletButton.ButtonPushedFcn = createCallbackFcn(app, @ResetTabletButtonPushed, true);
-            app.ResetTabletButton.Position = [15 153 153 23];
+            app.ResetTabletButton.Position = [12 127 153 25];
             app.ResetTabletButton.Text = 'Reset Tablet';
 
             % Create MetadataDescriptionEditFieldLabel
             app.MetadataDescriptionEditFieldLabel = uilabel(app.MetadataPanel_2);
             app.MetadataDescriptionEditFieldLabel.HorizontalAlignment = 'right';
-            app.MetadataDescriptionEditFieldLabel.Position = [71 9 118 22];
+            app.MetadataDescriptionEditFieldLabel.Position = [15 208 118 22];
             app.MetadataDescriptionEditFieldLabel.Text = 'Metadata Description';
 
             % Create MetadataDescriptionEditField
             app.MetadataDescriptionEditField = uieditfield(app.MetadataPanel_2, 'text');
-            app.MetadataDescriptionEditField.Position = [204 9 486 22];
+            app.MetadataDescriptionEditField.Position = [148 208 518 22];
 
-            % Create AddUpdateButton
-            app.AddUpdateButton = uibutton(app.MetadataPanel_2, 'push');
-            app.AddUpdateButton.Position = [15 121 153 23];
-            app.AddUpdateButton.Text = 'Add / Update';
+            % Create AddUpdateMDRecipeButton
+            app.AddUpdateMDRecipeButton = uibutton(app.MetadataPanel_2, 'push');
+            app.AddUpdateMDRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @AddUpdateMDRecipeButtonPushed, true);
+            app.AddUpdateMDRecipeButton.Position = [12 94 153 25];
+            app.AddUpdateMDRecipeButton.Text = 'Add / Update Recipe';
 
             % Create MetadatanumberSpinnerLabel
             app.MetadatanumberSpinnerLabel = uilabel(app.MetadataPanel_2);
             app.MetadatanumberSpinnerLabel.HorizontalAlignment = 'right';
-            app.MetadatanumberSpinnerLabel.Position = [18 185 99 22];
+            app.MetadatanumberSpinnerLabel.Position = [14 160 99 22];
             app.MetadatanumberSpinnerLabel.Text = 'Metadata number';
 
             % Create MetadatanumberSpinner
             app.MetadatanumberSpinner = uispinner(app.MetadataPanel_2);
             app.MetadatanumberSpinner.Limits = [0 6];
             app.MetadatanumberSpinner.ValueChangedFcn = createCallbackFcn(app, @MetadatanumberSpinnerValueChanged, true);
-            app.MetadatanumberSpinner.Position = [123 185 45 22];
-            app.MetadatanumberSpinner.Value = 2;
-
-            % Create PresetDropDownLabel
-            app.PresetDropDownLabel = uilabel(app.MetadataPanel_2);
-            app.PresetDropDownLabel.HorizontalAlignment = 'right';
-            app.PresetDropDownLabel.Position = [21 90 40 22];
-            app.PresetDropDownLabel.Text = 'Preset';
-
-            % Create PresetDropDown
-            app.PresetDropDown = uidropdown(app.MetadataPanel_2);
-            app.PresetDropDown.Position = [71 90 97 22];
+            app.MetadatanumberSpinner.Position = [119 160 45 22];
 
             % Create SelectfornoentryLabel
             app.SelectfornoentryLabel = uilabel(app.MetadataPanel_2);
             app.SelectfornoentryLabel.FontSize = 11;
             app.SelectfornoentryLabel.FontColor = [0.851 0.3255 0.098];
-            app.SelectfornoentryLabel.Position = [190 35 487 22];
+            app.SelectfornoentryLabel.Position = [180 1 487 22];
             app.SelectfornoentryLabel.Text = '* Select '' - '' for no entry / double-click and type in when no suitable item is found in the dropdown.';
+
+            % Create SetMetadataDescriptionButton
+            app.SetMetadataDescriptionButton = uibutton(app.MetadataPanel_2, 'push');
+            app.SetMetadataDescriptionButton.ButtonPushedFcn = createCallbackFcn(app, @SetMetadataDescriptionButtonPushed, true);
+            app.SetMetadataDescriptionButton.Position = [12 62 153 25];
+            app.SetMetadataDescriptionButton.Text = 'Set Metadata Description';
 
             % Create ReflectionTab
             app.ReflectionTab = uitab(app.TabGroup2);
