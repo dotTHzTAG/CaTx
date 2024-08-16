@@ -128,8 +128,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         RecipeListListBox               matlab.ui.control.ListBox
         RecipeListListBoxLabel          matlab.ui.control.Label
         ClearMemoryButton               matlab.ui.control.Button
-        DataRecipeDropDown              matlab.ui.control.DropDown
-        DataRecipeDropDownLabel         matlab.ui.control.Label
+        DataDeploymentRecipeDropDown    matlab.ui.control.DropDown
+        DataDeploymentRecipeDropDownLabel  matlab.ui.control.Label
         ExportthzFileButton             matlab.ui.control.Button
         CaTxLabel                       matlab.ui.control.Label
         DeployDataButton                matlab.ui.control.Button
@@ -159,6 +159,8 @@ classdef CaTx_exported < matlab.apps.AppBase
         group % Unit structure corresponding to the metadata categories
         recipeFile = 'DeploymentRecipes.json';
         profileFile = 'Profiles.json';
+        %#exclude DeploymentRecipes.json
+        %#exclude Profiles.json
     end
     
     methods (Access = private)
@@ -592,8 +594,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.recipeData = recipeData;
 
             app.RecipeListListBox.Items = recipeNames;
-            app.DataRecipeDropDown.Items = recipeNames;
-            app.DataRecipeDropDown.Value = recipeData.defaultItem;            
+            app.DataDeploymentRecipeDropDown.Items = recipeNames;
+            app.DataDeploymentRecipeDropDown.Value = recipeData.defaultItem;            
         end
         
         function deployData_thz(app, PRJ_count,fullpathname,recipeNum)
@@ -693,7 +695,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeName = recipeTable{:,1}
 
             app.RecipeListListBox.Items = recipeName;
-            app.DataRecipeDropDown.Items = recipeName;
+            app.DataDeploymentRecipeDropDown.Items = recipeName;
             recipeData.defaultItem = recipeName;
             recipeData.dataDescription.sample = "[time of flight column(#), sample THz column(#)]";
             recipeData.dataDescription.reference = "[load (1/0), use a seperate file(1/0), Reference THz column(#), dataset(#)]";
@@ -955,7 +957,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         % Button pushed function: ImportDataFilesButton
         function ImportDataFilesButtonPushed(app, event)
             fig = app.CaTxUIFigure;
-            recipeName = app.DataRecipeDropDown.Value;
+            recipeName = app.DataDeploymentRecipeDropDown.Value;
             if isempty(recipeName)
                 return;
             end
@@ -1013,7 +1015,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         % Button pushed function: DeployDataButton
         function DeployDataButtonPushed(app, event)
             fig = app.CaTxUIFigure;
-            recipeName = app.DataRecipeDropDown.Value;
+            recipeName = app.DataDeploymentRecipeDropDown.Value;
             if isempty(recipeName)
                 return;
             end
@@ -1775,7 +1777,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeTable(entryRow,7) = {mdDescription};
 
             app.RecipeListListBox.Items = recipeNames;
-            app.DataRecipeDropDown.Items = recipeNames;          
+            app.DataDeploymentRecipeDropDown.Items = recipeNames;          
 
             recipeData.recipes = table2struct(recipeTable);        
                         
@@ -1912,8 +1914,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             app.RecipeListListBox.Items = recipeNames;
-            app.DataRecipeDropDown.Items = recipeNames;
-            app.DataRecipeDropDown.Value = recipeData.defaultItem;           
+            app.DataDeploymentRecipeDropDown.Items = recipeNames;
+            app.DataDeploymentRecipeDropDown.Value = recipeData.defaultItem;           
 
             recipeData.recipes = table2struct(recipeTable);        
                         
@@ -1956,7 +1958,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.recipeTable = recipeTable;
 
             app.RecipeListListBox.Items = recipeNames;
-            app.DataRecipeDropDown.Items = recipeNames;        
+            app.DataDeploymentRecipeDropDown.Items = recipeNames;        
 
             recipeData.recipes = table2struct(recipeTable);        
                         
@@ -1995,7 +1997,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.recipeTable = recipeTable;
 
             app.RecipeListListBox.Items = recipeNames;
-            app.DataRecipeDropDown.Items = recipeNames;        
+            app.DataDeploymentRecipeDropDown.Items = recipeNames;        
 
             recipeData.recipes = table2struct(recipeTable);        
                         
@@ -2092,8 +2094,8 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         end
 
-        % Value changed function: DataRecipeDropDown
-        function DataRecipeDropDownValueChanged(app, event)
+        % Value changed function: DataDeploymentRecipeDropDown
+        function DataDeploymentRecipeDropDownValueChanged(app, event)
             app.filename = [];
             app.fullpathname = [];
             app.PRJ_count = 0;
@@ -2273,22 +2275,22 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.ExportthzFileButton.Position = [939 15 152 30];
             app.ExportthzFileButton.Text = 'Export .thz File';
 
-            % Create DataRecipeDropDownLabel
-            app.DataRecipeDropDownLabel = uilabel(app.CaTxUIFigure);
-            app.DataRecipeDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.DataRecipeDropDownLabel.HorizontalAlignment = 'right';
-            app.DataRecipeDropDownLabel.FontWeight = 'bold';
-            app.DataRecipeDropDownLabel.Position = [235 827 108 22];
-            app.DataRecipeDropDownLabel.Text = 'Data Recipe';
+            % Create DataDeploymentRecipeDropDownLabel
+            app.DataDeploymentRecipeDropDownLabel = uilabel(app.CaTxUIFigure);
+            app.DataDeploymentRecipeDropDownLabel.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.DataDeploymentRecipeDropDownLabel.HorizontalAlignment = 'right';
+            app.DataDeploymentRecipeDropDownLabel.FontWeight = 'bold';
+            app.DataDeploymentRecipeDropDownLabel.Position = [194 827 146 22];
+            app.DataDeploymentRecipeDropDownLabel.Text = 'Data Deployment Recipe';
 
-            % Create DataRecipeDropDown
-            app.DataRecipeDropDown = uidropdown(app.CaTxUIFigure);
-            app.DataRecipeDropDown.Items = {'No recipes available. Please check DeplymentRecipes.json file.'};
-            app.DataRecipeDropDown.ValueChangedFcn = createCallbackFcn(app, @DataRecipeDropDownValueChanged, true);
-            app.DataRecipeDropDown.FontWeight = 'bold';
-            app.DataRecipeDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.DataRecipeDropDown.Position = [354 825 577 25];
-            app.DataRecipeDropDown.Value = 'No recipes available. Please check DeplymentRecipes.json file.';
+            % Create DataDeploymentRecipeDropDown
+            app.DataDeploymentRecipeDropDown = uidropdown(app.CaTxUIFigure);
+            app.DataDeploymentRecipeDropDown.Items = {'No recipes available. Please check DeplymentRecipes.json file.'};
+            app.DataDeploymentRecipeDropDown.ValueChangedFcn = createCallbackFcn(app, @DataDeploymentRecipeDropDownValueChanged, true);
+            app.DataDeploymentRecipeDropDown.FontWeight = 'bold';
+            app.DataDeploymentRecipeDropDown.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.DataDeploymentRecipeDropDown.Position = [354 825 577 25];
+            app.DataDeploymentRecipeDropDown.Value = 'No recipes available. Please check DeplymentRecipes.json file.';
 
             % Create ClearMemoryButton
             app.ClearMemoryButton = uibutton(app.CaTxUIFigure, 'push');

@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="2491905981" file="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx.prj" location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx" name="CaTx" preferred-package-location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="324546025" file="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx.prj" location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx" name="CaTx" preferred-package-location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>CaTx</param.appname>
     <param.icon>${PROJECT_ROOT}\CaTx_resources\icon.ico</param.icon>
     <param.icons>
@@ -79,7 +79,6 @@ GitHub Documentation
     </fileset.main>
     <fileset.resources />
     <fileset.package>
-      <file>${PROJECT_ROOT}\Engines</file>
       <file>${PROJECT_ROOT}\Profiles</file>
     </fileset.package>
     <fileset.depfun>
