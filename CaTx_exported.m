@@ -82,7 +82,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         TabGroup2                       matlab.ui.container.TabGroup
         TransmissionTab                 matlab.ui.container.Tab
         MetadataPanel_2                 matlab.ui.container.Panel
-        SetMetadataDescriptionButton    matlab.ui.control.Button
+        UpdateTab1TableButton           matlab.ui.control.Button
         SelectfornoentryLabel           matlab.ui.control.Label
         MetadatanumberSpinner           matlab.ui.control.Spinner
         MetadatanumberSpinnerLabel      matlab.ui.control.Label
@@ -153,14 +153,16 @@ classdef CaTx_exported < matlab.apps.AppBase
         userTable % User profile table
         totalMeasNum % total measurement number
         manualMode % Description
-        thzVer = "1.00";
+        thzVer;
         recipeTable % imported recipe table
         recipeData % imported the whole recipe data from json file
         group % Unit structure corresponding to the metadata categories
         recipeFile = 'DeploymentRecipes.json';
         profileFile = 'Profiles.json';
+        configFile = 'Configuration.json';
         %#exclude DeploymentRecipes.json
         %#exclude Profiles.json
+        %#exclude Configuration.json
     end
     
     methods (Access = private)
@@ -256,6 +258,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             fig = app.CaTxUIFigure;
             app.manualMode = 0;
             DSBaseCol = 18;
+            thzVer = app.thzVer;
             [fileLocation,sampleName,fileExt] = fileparts(fullpathname(1));
 
             recipeTable = app.recipeTable;
@@ -389,9 +392,9 @@ classdef CaTx_exported < matlab.apps.AppBase
                 Tcell{8,PRJIdx} = []; % Coordinates
                 Tcell{9,PRJIdx} = mdDescription; % Metadata description
                 
-                Tcell{15,PRJIdx} = []; % not used
-                Tcell{16,PRJIdx} = []; % not used
-                Tcell{17,PRJIdx} = []; % not used
+                Tcell{15,PRJIdx} = []; % md6
+                Tcell{16,PRJIdx} = []; % md7
+                Tcell{17,PRJIdx} = thzVer; % dotTHz Versio
     
                 Tcell{18,PRJIdx} = dsDescription; % Dataset description
             end
@@ -410,6 +413,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.manualMode = 0;
             DSBaseCol = 18;
             totalMeasNum = 1; % Total measurement number
+            thzVer = app.thzVer;
 
             recipeTable = app.recipeTable;
             samMat = cell2mat(recipeTable{recipeNum,4});
@@ -555,9 +559,9 @@ classdef CaTx_exported < matlab.apps.AppBase
                     Tcell{8,PRJMeasCount-idx+totalMeasNum} = []; % coordinates
                     Tcell{9,PRJMeasCount-idx+totalMeasNum} = mdDescription; % Metadata description
                     
-                    Tcell{15,PRJMeasCount-idx+totalMeasNum} = []; % not used
-                    Tcell{16,PRJMeasCount-idx+totalMeasNum} = []; % not used
-                    Tcell{17,PRJMeasCount-idx+totalMeasNum} = []; % not used
+                    Tcell{15,PRJMeasCount-idx+totalMeasNum} = [];
+                    Tcell{16,PRJMeasCount-idx+totalMeasNum} = [];
+                    Tcell{17,PRJMeasCount-idx+totalMeasNum} = thzVer; % dotTHz version
         
                     Tcell{18,PRJMeasCount-idx+totalMeasNum} = dsDescription; % Dataset description
 
@@ -874,58 +878,22 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
+            fig = app.CaTxUIFigure;
             app.PRJ_count = 0;
             app.filename = [];
-            Tcell_header = {'01: Number','02: Name','03: Description','04: Instrument Profile','05: User Profile','06: Date and Time','07: Measurement Mode','08: Coordinates',...
-                '09: Metadata Description', '10: Metadata 1','11: Metadata 2','12: Metadata 3','13: Metadata 4','14: Metadata 5','15: Metadata 6','16: Metadata 7',...
-                '17: dotTHz Version','18: Dataset Description','19: Dataset 1','20: Dataset 2','21: Dataset 3','22: Dataset 4'
-                }';
+            try
+                configData = jsondecode(fileread(app.configFile));
+            catch ME            
+                uialert(fig, sprintf('Failed to read Configuration.json: %s', ME.message), 'Error');
+                return;
+            end
 
-            Tcell_guideCol1 = {"1","HDF5","Category (name)","attribute (instrument)", "attribute (user)","attribute (time)","attribute (mode)","attribute (coordinate)",...
-                "attribute (mdDescription)","attribute (md1)","attribute (md2)","attribute (md3)","attribute (md4)","attribute (md5)","attribute (md6)","attribute (md7)",...
-                "attribute (thzVer)","attribute (dsDescription)","dataset (ds1)","dataset (ds2)","dataset (ds3)","dataset (ds4)"
-                }';
+            Tcell_header = struct2table(configData.T_header,"AsArray",true);
+            Tcell_guide = struct2table(configData.T_guide);
+            app.thzVer = configData.thzVer;
 
-            Tcell_guideCol2 = {"2","HDF5","Data Format","string scalar", "string scalar","string scalar","string scalar","numeric vector",...
-                "string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar",...
-                "numeric value/vector, string scalar","numeric value/vector, string scalar","numeric value/vector, string scalar","string scalar","string scalar",...
-                "numeric matrix","numeric matrix","numeric matrix","numeric matrix"
-                }';
-
-            Tcell_guideCol3 = {"3","THz-TDS Example","Data Assignment Guide","", "","Date and Time (ISO8601 format)","THz-TDS/Transmission","",...
-                "Sample Thickness (mm), Reference Thickness (mm), Temperature (K)","1.50","1.00","293","","","","*More metadata can be added if necessary.",...
-                "1.00","Sample, Ref1:air, Ref2:PTFE","sample [time(ps); E.field(a.u.)]","Reference 1 [time(ps); E.field(a.u.)]","Reference 2 [time(ps); E.field(a.u.)]","*More datasets can be added if necessary.",...
-                }';
-
-            Tcell_guideCol4 = {"4","THz-Imaging Example","Data Assignment Guide","", "","2023-11-25T12:24:13.876+00:00 or","THz-Imaging/Reflection","[x,y,z]",...
-                "","","","","","","","",...
-                "1.00","Sample, Ref, Baseline","Sample [time(ps); E.field(a.u.)]","Reference [time(ps); E.field(a.u.)]","Baseline [time(ps); E.field(a.u.)]","",...
-                }';
-
-            Tcell_guideCol5 = {"5","Frequency-domain Datasets","Data Assignment Guide","", "","T12:24:13.876+00:00 or","FMCW/Reflection","",...
-                "meta1, meta2, meta3, meta4","meta1","meta2","meta3","meta4","","","",...
-                "1.00","da1, ds2, ds3, ds4","ds1 [frequency; amplitude; phase]","ds2 [frequency; amplitude; phase]","ds1 [frequency; amplitude; phase]","ds1 [frequency; amplitude; phase]",...
-                }';
-
-            Tcell_guideCol6 = {"6","Further Application","Data Assignment Guide","", "","T12:24:13","APPLICATION1/Transmission","",...
-                "meta1, meta2","meta1","meta2","","","","","",...
-                "1.01","da1, ds2","ds1 [row1; row2; row3; row4]","ds2 [row1; row2; row3; row4]","","",...
-                }';
-
-           Tcell_guideCol7 = {"7","CaTTrans_Focus Example","Data Assignment Guide","", "","2022-05-27T12:48:55","THz-Imaging/Reflection","",...
-               "Thickness (mm), Refractive Index","4.78","1.72","","","","","",...
-               "1.00","Sample","Sample [time(ps); E.field(a.u.)]","","","",...
-                }';
-
-            % More dataset and metadata guidelines can be displayed by
-            % concatenating and editing Tcell_guideCol# entries.
-
-            Tcell_guide = [Tcell_guideCol1, Tcell_guideCol2, Tcell_guideCol3, Tcell_guideCol4, Tcell_guideCol5, Tcell_guideCol6, Tcell_guideCol7];
-
-            %Tcell_header = cell(colHeader');
-            app.UITable_Header.Data = cell2table(Tcell_header);
-            app.UITable_Measurement.Data = cell2table(Tcell_guide);
-            % assignin("base","Tcell_guide",cell2table(Tcell_guide));
+            app.UITable_Header.Data = Tcell_header;
+            app.UITable_Measurement.Data = Tcell_guide;
 
             sFont = uistyle("FontColor","#0072BD"); % manual font color style
             sWtBg = uistyle("BackgroundColor","white"); % white background style
@@ -936,12 +904,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             addStyle(app.UITable_Measurement,sGrBg,"row",(2:5));
             addStyle(app.UITable_Measurement,sWtBg,"row",(6:17));
             addStyle(app.UITable_Measurement,sGrBg,"row",(19:22));
-            addStyle(app.UITable_Measurement,sDGrBg,"row",[1,9,17,18]);
+            addStyle(app.UITable_Measurement,sGrBg,"row",[17]);
+            addStyle(app.UITable_Measurement,sDGrBg,"row",[1,9,18]);
 
             addStyle(app.UITable_Header,sGrBg,"row",(2:5));
             addStyle(app.UITable_Header,sWtBg,"row",(6:17));
             addStyle(app.UITable_Header,sGrBg,"row",(19:22));
-            addStyle(app.UITable_Header,sDGrBg,"row",[1,9,17,18]);
+            addStyle(app.UITable_Header,sGrBg,"row",[17]);
+            addStyle(app.UITable_Header,sDGrBg,"row",[1,9,18]);
 
             app.Tcell_header = Tcell_header;
             app.Tcell_headerDefault = Tcell_header;
@@ -2204,8 +2174,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
         end
 
-        % Button pushed function: SetMetadataDescriptionButton
-        function SetMetadataDescriptionButtonPushed(app, event)
+        % Button pushed function: UpdateTab1TableButton
+        function UpdateTab1TableButtonPushed(app, event)
             mdDescription = app.MetadataDescriptionEditField.Value;
             mdDescriptionRow = 9;
             fig = app.CaTxUIFigure;
@@ -2955,7 +2925,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.UITable_Metadata.ColumnEditable = [false true true true];
             app.UITable_Metadata.CellEditCallback = createCallbackFcn(app, @UITable_MetadataCellEdit, true);
             app.UITable_Metadata.SelectionChangedFcn = createCallbackFcn(app, @UITable_MetadataSelectionChanged, true);
-            app.UITable_Metadata.Position = [179 24 487 170];
+            app.UITable_Metadata.Position = [179 28 487 170];
 
             % Create ResetTabletButton
             app.ResetTabletButton = uibutton(app.MetadataPanel_2, 'push');
@@ -2977,7 +2947,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.AddUpdateMDRecipeButton = uibutton(app.MetadataPanel_2, 'push');
             app.AddUpdateMDRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @AddUpdateMDRecipeButtonPushed, true);
             app.AddUpdateMDRecipeButton.Position = [12 94 153 25];
-            app.AddUpdateMDRecipeButton.Text = 'Add / Update Recipe';
+            app.AddUpdateMDRecipeButton.Text = 'Update Recipe';
 
             % Create MetadatanumberSpinnerLabel
             app.MetadatanumberSpinnerLabel = uilabel(app.MetadataPanel_2);
@@ -2995,14 +2965,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.SelectfornoentryLabel = uilabel(app.MetadataPanel_2);
             app.SelectfornoentryLabel.FontSize = 11;
             app.SelectfornoentryLabel.FontColor = [0.851 0.3255 0.098];
-            app.SelectfornoentryLabel.Position = [180 1 487 22];
+            app.SelectfornoentryLabel.Position = [178 5 487 22];
             app.SelectfornoentryLabel.Text = '* Select '' - '' for no entry / double-click and type in when no suitable item is found in the dropdown.';
 
-            % Create SetMetadataDescriptionButton
-            app.SetMetadataDescriptionButton = uibutton(app.MetadataPanel_2, 'push');
-            app.SetMetadataDescriptionButton.ButtonPushedFcn = createCallbackFcn(app, @SetMetadataDescriptionButtonPushed, true);
-            app.SetMetadataDescriptionButton.Position = [12 62 153 25];
-            app.SetMetadataDescriptionButton.Text = 'Set Metadata Description';
+            % Create UpdateTab1TableButton
+            app.UpdateTab1TableButton = uibutton(app.MetadataPanel_2, 'push');
+            app.UpdateTab1TableButton.ButtonPushedFcn = createCallbackFcn(app, @UpdateTab1TableButtonPushed, true);
+            app.UpdateTab1TableButton.Position = [12 62 153 25];
+            app.UpdateTab1TableButton.Text = 'Update Tab1 Table';
 
             % Create ReflectionTab
             app.ReflectionTab = uitab(app.TabGroup2);

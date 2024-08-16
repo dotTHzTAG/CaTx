@@ -79,7 +79,10 @@ GitHub Documentation
     </fileset.main>
     <fileset.resources />
     <fileset.package>
+      <file>${PROJECT_ROOT}\Configuration.json</file>
+      <file>${PROJECT_ROOT}\DeploymentRecipes.json</file>
       <file>${PROJECT_ROOT}\Profiles</file>
+      <file>${PROJECT_ROOT}\Profiles.json</file>
     </fileset.package>
     <fileset.depfun>
       <file>${PROJECT_ROOT}\Images\dotTHz_logo.png</file>
