@@ -2,7 +2,7 @@
   "recipes": [
     {
       "name": "MenloSystems *.dat file (use a separate reference file)",
-      "group": "Transmission",
+      "mode": "Transmission",
       "fileExt": "dat",
       "sample": [
         1,
@@ -21,11 +21,12 @@
         3,
         0
       ],
-      "mdDescription": ""
+      "mdDescription": "",
+      "RecipeDesignTab": 1
     },
     {
       "name": "TeraView TeraPulse4000 *.tprj file (use an integrated reference)",
-      "group": "Transmission",
+      "mode": "Transmission",
       "fileExt": "tprj",
       "sample": [
         1,
@@ -44,11 +45,12 @@
         3,
         0
       ],
-      "mdDescription": ""
+      "mdDescription": "",
+      "RecipeDesignTab": 1
     },
     {
       "name": "Toptica *.csv file (reference integrated)",
-      "group": "Transmission",
+      "mode": "Transmission",
       "fileExt": "csv",
       "sample": [
         1,
@@ -67,11 +69,12 @@
         3,
         0
       ],
-      "mdDescription": ""
+      "mdDescription": "",
+      "RecipeDesignTab": 1
     },
     {
       "name": "*.thz file",
-      "group": "Transmission",
+      "mode": "Transmission/Reflection",
       "fileExt": "thz",
       "sample": [
         1,
@@ -90,7 +93,8 @@
         0,
         0
       ],
-      "mdDescription": ""
+      "mdDescription": "",
+      "RecipeDesignTab": 0
     }
   ],
   "dataDescription": {

@@ -74,8 +74,7 @@
       "Tcell_guide3": "3",
       "Tcell_guide4": "4",
       "Tcell_guide5": "5",
-      "Tcell_guide6": "6",
-      "Tcell_guide7": "7"
+      "Tcell_guide6": "6"
     },
     {
       "Tcell_guide1": "HDF5",
@@ -83,8 +82,7 @@
       "Tcell_guide3": "THz-TDS Example",
       "Tcell_guide4": "THz-Imaging Example",
       "Tcell_guide5": "Frequency-domain Datasets",
-      "Tcell_guide6": "Further Application",
-      "Tcell_guide7": "CaTTrans_Focus Example"
+      "Tcell_guide6": "Further Application"
     },
     {
       "Tcell_guide1": "Category (name)",
@@ -92,8 +90,7 @@
       "Tcell_guide3": "Data Assignment Guide",
       "Tcell_guide4": "Data Assignment Guide",
       "Tcell_guide5": "Data Assignment Guide",
-      "Tcell_guide6": "Data Assignment Guide",
-      "Tcell_guide7": "Data Assignment Guide"
+      "Tcell_guide6": "Data Assignment Guide"
     },
     {
       "Tcell_guide1": "attribute (instrument)",
@@ -101,8 +98,7 @@
       "Tcell_guide3": "",
       "Tcell_guide4": "",
       "Tcell_guide5": "",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "attribute (user)",
@@ -110,8 +106,7 @@
       "Tcell_guide3": "",
       "Tcell_guide4": "",
       "Tcell_guide5": "",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "attribute (time)",
@@ -119,17 +114,15 @@
       "Tcell_guide3": "Date and Time (ISO8601 format)",
       "Tcell_guide4": "2023-11-25T12:24:13.876+00:00 or",
       "Tcell_guide5": "T12:24:13.876+00:00 or",
-      "Tcell_guide6": "T12:24:13",
-      "Tcell_guide7": "2022-05-27T12:48:55"
+      "Tcell_guide6": "T12:24:13"
     },
     {
       "Tcell_guide1": "attribute (mode)",
       "Tcell_guide2": "string scalar",
-      "Tcell_guide3": "THz-TDS/Transmission",
-      "Tcell_guide4": "THz-Imaging/Reflection",
+      "Tcell_guide3": "Transmission/Reflection",
+      "Tcell_guide4": "Transmission/Reflection",
       "Tcell_guide5": "FMCW/Reflection",
-      "Tcell_guide6": "APPLICATION1/Transmission",
-      "Tcell_guide7": "THz-Imaging/Reflection"
+      "Tcell_guide6": "APPLICATION1/Transmission"
     },
     {
       "Tcell_guide1": "attribute (coordinate)",
@@ -137,8 +130,7 @@
       "Tcell_guide3": "",
       "Tcell_guide4": "[x,y,z]",
       "Tcell_guide5": "",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "attribute (mdDescription)",
@@ -146,8 +138,7 @@
       "Tcell_guide3": "Sample Thickness (mm), Reference Thickness (mm), Temperature (K)",
       "Tcell_guide4": "",
       "Tcell_guide5": "meta1, meta2, meta3, meta4",
-      "Tcell_guide6": "meta1, meta2",
-      "Tcell_guide7": "Thickness (mm), Refractive Index"
+      "Tcell_guide6": "meta1, meta2"
     },
     {
       "Tcell_guide1": "attribute (md1)",
@@ -155,8 +146,7 @@
       "Tcell_guide3": "1.50",
       "Tcell_guide4": "",
       "Tcell_guide5": "meta1",
-      "Tcell_guide6": "meta1",
-      "Tcell_guide7": "4.78"
+      "Tcell_guide6": "meta1"
     },
     {
       "Tcell_guide1": "attribute (md2)",
@@ -164,8 +154,7 @@
       "Tcell_guide3": "1.00",
       "Tcell_guide4": "",
       "Tcell_guide5": "meta2",
-      "Tcell_guide6": "meta2",
-      "Tcell_guide7": "1.72"
+      "Tcell_guide6": "meta2"
     },
     {
       "Tcell_guide1": "attribute (md3)",
@@ -173,8 +162,7 @@
       "Tcell_guide3": "293",
       "Tcell_guide4": "",
       "Tcell_guide5": "meta3",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "attribute (md4)",
@@ -182,8 +170,7 @@
       "Tcell_guide3": "",
       "Tcell_guide4": "",
       "Tcell_guide5": "meta4",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "attribute (md5)",
@@ -191,8 +178,7 @@
       "Tcell_guide3": "",
       "Tcell_guide4": "",
       "Tcell_guide5": "",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "attribute (md6)",
@@ -200,8 +186,7 @@
       "Tcell_guide3": "",
       "Tcell_guide4": "",
       "Tcell_guide5": "",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "attribute (md7)",
@@ -209,8 +194,7 @@
       "Tcell_guide3": "*More metadata can be added if necessary.",
       "Tcell_guide4": "",
       "Tcell_guide5": "",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "attribute (thzVer)",
@@ -218,8 +202,7 @@
       "Tcell_guide3": "1.00",
       "Tcell_guide4": "1.00",
       "Tcell_guide5": "1.00",
-      "Tcell_guide6": "1.01",
-      "Tcell_guide7": "1.00"
+      "Tcell_guide6": "1.01"
     },
     {
       "Tcell_guide1": "attribute (dsDescription)",
@@ -227,8 +210,7 @@
       "Tcell_guide3": "Sample, Ref1:air, Ref2:PTFE",
       "Tcell_guide4": "Sample, Ref, Baseline",
       "Tcell_guide5": "da1, ds2, ds3, ds4",
-      "Tcell_guide6": "da1, ds2",
-      "Tcell_guide7": "Sample"
+      "Tcell_guide6": "da1, ds2"
     },
     {
       "Tcell_guide1": "dataset (ds1)",
@@ -236,8 +218,7 @@
       "Tcell_guide3": "sample [time(ps); E.field(a.u.)]",
       "Tcell_guide4": "Sample [time(ps); E.field(a.u.)]",
       "Tcell_guide5": "ds1 [frequency; amplitude; phase]",
-      "Tcell_guide6": "ds1 [row1; row2; row3; row4]",
-      "Tcell_guide7": "Sample [time(ps); E.field(a.u.)]"
+      "Tcell_guide6": "ds1 [row1; row2; row3; row4]"
     },
     {
       "Tcell_guide1": "dataset (ds2)",
@@ -245,8 +226,7 @@
       "Tcell_guide3": "Reference 1 [time(ps); E.field(a.u.)]",
       "Tcell_guide4": "Reference [time(ps); E.field(a.u.)]",
       "Tcell_guide5": "ds2 [frequency; amplitude; phase]",
-      "Tcell_guide6": "ds2 [row1; row2; row3; row4]",
-      "Tcell_guide7": ""
+      "Tcell_guide6": "ds2 [row1; row2; row3; row4]"
     },
     {
       "Tcell_guide1": "dataset (ds3)",
@@ -254,8 +234,7 @@
       "Tcell_guide3": "Reference 2 [time(ps); E.field(a.u.)]",
       "Tcell_guide4": "Baseline [time(ps); E.field(a.u.)]",
       "Tcell_guide5": "ds1 [frequency; amplitude; phase]",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     },
     {
       "Tcell_guide1": "dataset (ds4)",
@@ -263,8 +242,7 @@
       "Tcell_guide3": "*More datasets can be added if necessary.",
       "Tcell_guide4": "",
       "Tcell_guide5": "ds1 [frequency; amplitude; phase]",
-      "Tcell_guide6": "",
-      "Tcell_guide7": ""
+      "Tcell_guide6": ""
     }
   ],
   "thzVer": "1.0"

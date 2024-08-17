@@ -79,9 +79,11 @@ classdef CaTx_exported < matlab.apps.AppBase
         DownButton                      matlab.ui.control.Button
         UpButton                        matlab.ui.control.Button
         RecipeDesignLabel               matlab.ui.control.Label
-        TabGroup2                       matlab.ui.container.TabGroup
-        TransmissionTab                 matlab.ui.container.Tab
-        MetadataPanel_2                 matlab.ui.container.Panel
+        RecipeTabGroup                  matlab.ui.container.TabGroup
+        TransmissionReflectionTab       matlab.ui.container.Tab
+        ModeDescriptionEditField        matlab.ui.control.EditField
+        ModeDescriptionEditFieldLabel   matlab.ui.control.Label
+        MetadataDescriptionPanel        matlab.ui.container.Panel
         UpdateTab1TableButton           matlab.ui.control.Button
         SelectfornoentryLabel           matlab.ui.control.Label
         MetadatanumberSpinner           matlab.ui.control.Spinner
@@ -122,7 +124,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         THzSignalSampleLabel            matlab.ui.control.Label
         TimepsSpinner                   matlab.ui.control.Spinner
         TimepsSpinnerLabel              matlab.ui.control.Label
-        ReflectionTab                   matlab.ui.container.Tab
+        ExtensionTab                    matlab.ui.container.Tab
         SetDefaultButton                matlab.ui.control.Button
         RemoveRecipeButton              matlab.ui.control.Button
         RecipeListListBox               matlab.ui.control.ListBox
@@ -262,6 +264,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             [fileLocation,sampleName,fileExt] = fileparts(fullpathname(1));
 
             recipeTable = app.recipeTable;
+            mode = string(recipeTable{recipeNum,2});
             samMat = cell2mat(recipeTable{recipeNum,4});
             refMat = cell2mat(recipeTable{recipeNum,5});
             baseMat = cell2mat(recipeTable{recipeNum,6});
@@ -371,7 +374,6 @@ classdef CaTx_exported < matlab.apps.AppBase
                
                 % Data cell allocation
                 description = "";
-                mode = "";
                 try
                     measDate = readlines(fullpath);
                     measDate = measDate(3);
@@ -380,14 +382,14 @@ classdef CaTx_exported < matlab.apps.AppBase
                     measDate = "";
                 end
 
-                datetime = measDate;
+                time = measDate;
 
                 Tcell{1,PRJIdx} = PRJIdx;
                 Tcell{2,PRJIdx} = sampleName;
                 Tcell{3,PRJIdx} = description;
                 Tcell{4,PRJIdx} = app.instrument_profile;
                 Tcell{5,PRJIdx} = app.user_profile;
-                Tcell{6,PRJIdx} = datetime; % Measurement start time
+                Tcell{6,PRJIdx} = time; % Measurement start time
                 Tcell{7,PRJIdx} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection
                 Tcell{8,PRJIdx} = []; % Coordinates
                 Tcell{9,PRJIdx} = mdDescription; % Metadata description
@@ -416,6 +418,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             thzVer = app.thzVer;
 
             recipeTable = app.recipeTable;
+            mode = string(recipeTable{recipeNum,2});
             samMat = cell2mat(recipeTable{recipeNum,4});
             refMat = cell2mat(recipeTable{recipeNum,5});
             baseMat = cell2mat(recipeTable{recipeNum,6});
@@ -542,20 +545,18 @@ classdef CaTx_exported < matlab.apps.AppBase
                     end
 
                     try
-                        datetime = char(extractBefore(extractAfter(settingInfo,'ScanStartDateTime":"'),'.'));
+                        time = char(extractBefore(extractAfter(settingInfo,'ScanStartDateTime":"'),'.'));
                     catch
-                        datetime = "";
+                        time = "";
                     end
-
-                    mode = "";
         
                     Tcell{1,PRJMeasCount-idx+totalMeasNum} = PRJMeasCount-idx+totalMeasNum;
                     Tcell{2,PRJMeasCount-idx+totalMeasNum} = sampleName;
                     Tcell{3,PRJMeasCount-idx+totalMeasNum} = description;
                     Tcell{4,PRJMeasCount-idx+totalMeasNum} = app.instrument_profile; % Instrument profile
                     Tcell{5,PRJMeasCount-idx+totalMeasNum} = app.user_profile; % User profile
-                    Tcell{6,PRJMeasCount-idx+totalMeasNum} = datetime; % Measurement start time
-                    Tcell{7,PRJMeasCount-idx+totalMeasNum} = mode; % THz-TDS/THz-Imaging/Transmission/Reflection                
+                    Tcell{6,PRJMeasCount-idx+totalMeasNum} = time; % Measurement start time
+                    Tcell{7,PRJMeasCount-idx+totalMeasNum} = mode;                
                     Tcell{8,PRJMeasCount-idx+totalMeasNum} = []; % coordinates
                     Tcell{9,PRJMeasCount-idx+totalMeasNum} = mdDescription; % Metadata description
                     
@@ -694,8 +695,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             samMat = [1;2];
             refMat = [0;0;0;0];
             baseMat = [0;0;0;0;0];
+            RecipeDesignTab = 0;
 
-            recipeTable = table({'*.thz file'}, {'Transmission'}, {'thz'}, {samMat}, {refMat}, {baseMat},{' '},'VariableNames',{'name','group','fileExt','sample','reference','baseline','mdDescription'});
+            recipeTable = table({'*.thz file'}, {'Transmission'}, {'thz'}, {samMat}, {refMat}, {baseMat},{' '},{RecipeDesignTab},'VariableNames',{'name','mode','fileExt','sample','reference','baseline','mdDescription', 'RecipeDesignTab'});
             recipeName = recipeTable{:,1}
 
             app.RecipeListListBox.Items = recipeName;
@@ -1091,6 +1093,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Button pushed function: ExportthzFileButton
         function ExportthzFileButtonPushed(app, event)
+            fig = app.CaTxUIFigure;
             if isempty(app.fullpathname)
                 filter = {'*.thz';'*.*'};
                 [filename, filepath] = uiputfile(filter);
@@ -1111,11 +1114,25 @@ classdef CaTx_exported < matlab.apps.AppBase
                         
             fullfile = strcat(filepath,filename);
             delete(fullfile);
-            measNum = app.Tcell{1,end};
+            measNum = app.totalMeasNum;
             incNum = app.NumberPrefixSwitch.Value;
             varsAttr = ["time","mode","coordinates","mdDescription","md1","md2","md3","md4","md5","md6","md7","thzVer"];
             digitNum = ceil(log10(measNum+1));
             digitNumFormat = strcat('%0',num2str(digitNum),'d');
+
+            % Check any duplicated names exist
+            names = app.Tcell(2,:);
+            for idx = 1:measNum
+                tempName = names(idx);
+                names(idx) = {''};
+                [dupExit, dupLoc] = ismember(tempName,names);
+                if dupExit
+                    msg = strcat("Column ",num2str(idx)," and ",num2str(dupLoc(1)),' have the same name. Please review the columns.');
+                    uialert(fig,msg,"Export Aborted!");
+                    return;
+                end
+                names(idx) = tempName;
+            end
 
             % Are the attributes assigned to all datasets?
             if isequal(app.AttribututeInclusionSwitch.Value,"All Measurements")
@@ -1701,6 +1718,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeData = app.recipeData;
             recipeNames = recipeTable{:,1};
             mdDescription = app.MetadataDescriptionEditField.Value;
+            mode = app.ModeDescriptionEditField.Value;
+            tabNum = 1;
             [isMember,itemLoc]= ismember(recipeName,recipeNames);
 
             if isempty(recipeName)
@@ -1734,7 +1753,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Allocate the settings into the recipe table
 
             recipeTable(entryRow,1) = {recipeName};
-            recipeTable(entryRow,2) = {'Transmission'};
+            recipeTable(entryRow,2) = {mode};
             if isequal(app.DataFileExtensionDropDown.Value,'User Defined');
                 fileExt = app.userDefinedEditField.Value;
             else
@@ -1745,6 +1764,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeTable(entryRow,5) = {refMat};
             recipeTable(entryRow,6) = {baseMat};
             recipeTable(entryRow,7) = {mdDescription};
+            recipeTable(entryRow,8) = {tabNum};
 
             app.RecipeListListBox.Items = recipeNames;
             app.DataDeploymentRecipeDropDown.Items = recipeNames;          
@@ -1778,7 +1798,13 @@ classdef CaTx_exported < matlab.apps.AppBase
             recipeTable = app.recipeTable;
             app.RecipeNameEditField.Value = char(recipeTable{item,1});
             app.MetadataDescriptionEditField.Value = char(recipeTable{item,7});
+            app.ModeDescriptionEditField.Value = char(recipeTable{item,2});
+            tabNum = recipeTable{item,8};
             fileExt = char(recipeTable{item,3});
+            if tabNum ~= 0
+                app.RecipeTabGroup.SelectedTab = app.RecipeTabGroup.Children(tabNum);
+            end
+            %assignin("base","recipeTable",recipeTable);
 
             % Display data file extension
             if sum(contains(app.DataFileExtensionDropDown.Items,fileExt))
@@ -2708,19 +2734,19 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.SetDefaultButton.Position = [631 641 127 23];
             app.SetDefaultButton.Text = 'Set Default';
 
-            % Create TabGroup2
-            app.TabGroup2 = uitabgroup(app.DeploymentRecipeTab);
-            app.TabGroup2.Position = [18 13 1038 525];
+            % Create RecipeTabGroup
+            app.RecipeTabGroup = uitabgroup(app.DeploymentRecipeTab);
+            app.RecipeTabGroup.Position = [18 13 1038 525];
 
-            % Create TransmissionTab
-            app.TransmissionTab = uitab(app.TabGroup2);
-            app.TransmissionTab.Title = 'Transmission';
+            % Create TransmissionReflectionTab
+            app.TransmissionReflectionTab = uitab(app.RecipeTabGroup);
+            app.TransmissionReflectionTab.Title = 'Transmission/Reflection';
 
             % Create TerahertzDatasetPanel
-            app.TerahertzDatasetPanel = uipanel(app.TransmissionTab);
+            app.TerahertzDatasetPanel = uipanel(app.TransmissionReflectionTab);
             app.TerahertzDatasetPanel.Title = 'Terahertz Dataset';
             app.TerahertzDatasetPanel.FontWeight = 'bold';
-            app.TerahertzDatasetPanel.Position = [15 281 723 135];
+            app.TerahertzDatasetPanel.Position = [15 281 1001 135];
 
             % Create TimepsSpinnerLabel
             app.TimepsSpinnerLabel = uilabel(app.TerahertzDatasetPanel);
@@ -2876,49 +2902,49 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DSDescriptionEditField.Position = [189 7 466 22];
 
             % Create userDefinedEditField
-            app.userDefinedEditField = uieditfield(app.TransmissionTab, 'text');
+            app.userDefinedEditField = uieditfield(app.TransmissionReflectionTab, 'text');
             app.userDefinedEditField.Enable = 'off';
-            app.userDefinedEditField.Position = [289 428 61 22];
+            app.userDefinedEditField.Position = [573 428 61 22];
 
             % Create RecipeNameEditFieldLabel
-            app.RecipeNameEditFieldLabel = uilabel(app.TransmissionTab);
+            app.RecipeNameEditFieldLabel = uilabel(app.TransmissionReflectionTab);
             app.RecipeNameEditFieldLabel.HorizontalAlignment = 'right';
             app.RecipeNameEditFieldLabel.Position = [21 461 78 22];
             app.RecipeNameEditFieldLabel.Text = 'Recipe Name';
 
             % Create RecipeNameEditField
-            app.RecipeNameEditField = uieditfield(app.TransmissionTab, 'text');
+            app.RecipeNameEditField = uieditfield(app.TransmissionReflectionTab, 'text');
             app.RecipeNameEditField.Position = [114 461 443 22];
 
             % Create DataFileExtensionDropDownLabel
-            app.DataFileExtensionDropDownLabel = uilabel(app.TransmissionTab);
+            app.DataFileExtensionDropDownLabel = uilabel(app.TransmissionReflectionTab);
             app.DataFileExtensionDropDownLabel.HorizontalAlignment = 'right';
-            app.DataFileExtensionDropDownLabel.Position = [20 428 109 22];
+            app.DataFileExtensionDropDownLabel.Position = [346 428 109 22];
             app.DataFileExtensionDropDownLabel.Text = 'Data File Extension';
 
             % Create DataFileExtensionDropDown
-            app.DataFileExtensionDropDown = uidropdown(app.TransmissionTab);
+            app.DataFileExtensionDropDown = uidropdown(app.TransmissionReflectionTab);
             app.DataFileExtensionDropDown.Items = {'dat', 'csv', 'tprj', 'txt', 'User Defined'};
             app.DataFileExtensionDropDown.ValueChangedFcn = createCallbackFcn(app, @DataFileExtensionDropDownValueChanged, true);
-            app.DataFileExtensionDropDown.Position = [143 428 126 22];
+            app.DataFileExtensionDropDown.Position = [469 428 85 22];
             app.DataFileExtensionDropDown.Value = 'dat';
 
             % Create AddUpdateRecipeButton
-            app.AddUpdateRecipeButton = uibutton(app.TransmissionTab, 'push');
+            app.AddUpdateRecipeButton = uibutton(app.TransmissionReflectionTab, 'push');
             app.AddUpdateRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @AddUpdateRecipeButtonPushed, true);
             app.AddUpdateRecipeButton.BackgroundColor = [1 1 1];
             app.AddUpdateRecipeButton.FontWeight = 'bold';
             app.AddUpdateRecipeButton.Position = [569 460 155 25];
             app.AddUpdateRecipeButton.Text = 'Add / Update Recipe';
 
-            % Create MetadataPanel_2
-            app.MetadataPanel_2 = uipanel(app.TransmissionTab);
-            app.MetadataPanel_2.Title = 'Metadata';
-            app.MetadataPanel_2.FontWeight = 'bold';
-            app.MetadataPanel_2.Position = [15 10 723 261];
+            % Create MetadataDescriptionPanel
+            app.MetadataDescriptionPanel = uipanel(app.TransmissionReflectionTab);
+            app.MetadataDescriptionPanel.Title = 'Metadata';
+            app.MetadataDescriptionPanel.FontWeight = 'bold';
+            app.MetadataDescriptionPanel.Position = [15 10 1001 261];
 
             % Create UITable_Metadata
-            app.UITable_Metadata = uitable(app.MetadataPanel_2);
+            app.UITable_Metadata = uitable(app.MetadataDescriptionPanel);
             app.UITable_Metadata.ColumnName = {'Metadata'; 'Sample/Reference'; 'Category'; 'Unit'};
             app.UITable_Metadata.ColumnWidth = {60, 'auto', 'auto', 'auto'};
             app.UITable_Metadata.RowName = {};
@@ -2928,55 +2954,65 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.UITable_Metadata.Position = [179 28 487 170];
 
             % Create ResetTabletButton
-            app.ResetTabletButton = uibutton(app.MetadataPanel_2, 'push');
+            app.ResetTabletButton = uibutton(app.MetadataDescriptionPanel, 'push');
             app.ResetTabletButton.ButtonPushedFcn = createCallbackFcn(app, @ResetTabletButtonPushed, true);
             app.ResetTabletButton.Position = [12 127 153 25];
             app.ResetTabletButton.Text = 'Reset Tablet';
 
             % Create MetadataDescriptionEditFieldLabel
-            app.MetadataDescriptionEditFieldLabel = uilabel(app.MetadataPanel_2);
+            app.MetadataDescriptionEditFieldLabel = uilabel(app.MetadataDescriptionPanel);
             app.MetadataDescriptionEditFieldLabel.HorizontalAlignment = 'right';
             app.MetadataDescriptionEditFieldLabel.Position = [15 208 118 22];
             app.MetadataDescriptionEditFieldLabel.Text = 'Metadata Description';
 
             % Create MetadataDescriptionEditField
-            app.MetadataDescriptionEditField = uieditfield(app.MetadataPanel_2, 'text');
+            app.MetadataDescriptionEditField = uieditfield(app.MetadataDescriptionPanel, 'text');
             app.MetadataDescriptionEditField.Position = [148 208 518 22];
 
             % Create AddUpdateMDRecipeButton
-            app.AddUpdateMDRecipeButton = uibutton(app.MetadataPanel_2, 'push');
+            app.AddUpdateMDRecipeButton = uibutton(app.MetadataDescriptionPanel, 'push');
             app.AddUpdateMDRecipeButton.ButtonPushedFcn = createCallbackFcn(app, @AddUpdateMDRecipeButtonPushed, true);
             app.AddUpdateMDRecipeButton.Position = [12 94 153 25];
             app.AddUpdateMDRecipeButton.Text = 'Update Recipe';
 
             % Create MetadatanumberSpinnerLabel
-            app.MetadatanumberSpinnerLabel = uilabel(app.MetadataPanel_2);
+            app.MetadatanumberSpinnerLabel = uilabel(app.MetadataDescriptionPanel);
             app.MetadatanumberSpinnerLabel.HorizontalAlignment = 'right';
             app.MetadatanumberSpinnerLabel.Position = [14 160 99 22];
             app.MetadatanumberSpinnerLabel.Text = 'Metadata number';
 
             % Create MetadatanumberSpinner
-            app.MetadatanumberSpinner = uispinner(app.MetadataPanel_2);
+            app.MetadatanumberSpinner = uispinner(app.MetadataDescriptionPanel);
             app.MetadatanumberSpinner.Limits = [0 6];
             app.MetadatanumberSpinner.ValueChangedFcn = createCallbackFcn(app, @MetadatanumberSpinnerValueChanged, true);
             app.MetadatanumberSpinner.Position = [119 160 45 22];
 
             % Create SelectfornoentryLabel
-            app.SelectfornoentryLabel = uilabel(app.MetadataPanel_2);
+            app.SelectfornoentryLabel = uilabel(app.MetadataDescriptionPanel);
             app.SelectfornoentryLabel.FontSize = 11;
             app.SelectfornoentryLabel.FontColor = [0.851 0.3255 0.098];
             app.SelectfornoentryLabel.Position = [178 5 487 22];
             app.SelectfornoentryLabel.Text = '* Select '' - '' for no entry / double-click and type in when no suitable item is found in the dropdown.';
 
             % Create UpdateTab1TableButton
-            app.UpdateTab1TableButton = uibutton(app.MetadataPanel_2, 'push');
+            app.UpdateTab1TableButton = uibutton(app.MetadataDescriptionPanel, 'push');
             app.UpdateTab1TableButton.ButtonPushedFcn = createCallbackFcn(app, @UpdateTab1TableButtonPushed, true);
             app.UpdateTab1TableButton.Position = [12 62 153 25];
             app.UpdateTab1TableButton.Text = 'Update Tab1 Table';
 
-            % Create ReflectionTab
-            app.ReflectionTab = uitab(app.TabGroup2);
-            app.ReflectionTab.Title = 'Reflection';
+            % Create ModeDescriptionEditFieldLabel
+            app.ModeDescriptionEditFieldLabel = uilabel(app.TransmissionReflectionTab);
+            app.ModeDescriptionEditFieldLabel.HorizontalAlignment = 'right';
+            app.ModeDescriptionEditFieldLabel.Position = [21 428 98 22];
+            app.ModeDescriptionEditFieldLabel.Text = 'Mode Description';
+
+            % Create ModeDescriptionEditField
+            app.ModeDescriptionEditField = uieditfield(app.TransmissionReflectionTab, 'text');
+            app.ModeDescriptionEditField.Position = [134 428 156 22];
+
+            % Create ExtensionTab
+            app.ExtensionTab = uitab(app.RecipeTabGroup);
+            app.ExtensionTab.Title = 'Extension';
 
             % Create RecipeDesignLabel
             app.RecipeDesignLabel = uilabel(app.DeploymentRecipeTab);
