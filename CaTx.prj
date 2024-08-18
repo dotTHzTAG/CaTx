@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="324546025" file="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx.prj" location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx" name="CaTx" preferred-package-location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="2992476439" file="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx.prj" location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx" name="CaTx" preferred-package-location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>CaTx</param.appname>
     <param.icon>${PROJECT_ROOT}\CaTx_resources\icon.ico</param.icon>
     <param.icons>
@@ -22,7 +22,7 @@
     <param.install.notes>For details
 &gt; https://doi.org/10.1007/s10762-023-00947-w
 GitHub Documentation
-&gt; https://github.com/dotTHzTAG/CaTx</param.install.notes>
+&gt; https://github.com/dotTHzTAG/Documentation</param.install.notes>
     <param.target.install.notes />
     <param.intermediate>${PROJECT_ROOT}\CaTx\for_testing</param.intermediate>
     <param.files.only>${PROJECT_ROOT}\CaTx\for_redistribution_files_only</param.files.only>
