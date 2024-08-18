@@ -13,7 +13,7 @@ Please download [CaTxInstaller_web.exe](CaTxInstaller_web.exe) and run it on you
  -	At the ‘Select destination folder’ step, leave ‘Add shortcut to desktop’ **UNCHECKED**.
  -	Click **Next**, then click **Begin Install**
 
- *Add Shortcut to Desktop:*
+ *Add Shortcut to Desktop: (for Windows)*
  -	Right-click and drag the CaTx.exe file at C:\Program Files\CaTx\application\ to Windows Desktop
  -	Select **Create shortcut to here.**
  -	Right-click the shortcut and select **properties.**
@@ -34,7 +34,7 @@ In the repository, there is a pair of .mlapp and .m files. Basically, .m file is
 Please follow the instructions below.
 1. **MATLAB** needs to be installed in your computer to modify CaTx.
 2. Download *.mlapp and \Images files.
- - **CaTx.mlapp** : CaTx4Menlo MATLAB App-designer file
+ - **CaTx.mlapp** : CaTx MATLAB App-designer file
  - **.\images\CaT_logo.png** : logo image
  - **.\images\dotTHz_logo.png** : logo image
 3. Double click **CaTx.mlapp** to launch the software.
