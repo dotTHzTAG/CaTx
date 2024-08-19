@@ -287,6 +287,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             baseTof = [];
 
             Tcell = cell(22,PRJ_count); % cell structure table
+            fileLocation = string(fileLocation);
 
             % Read Reference Signal
             if readReference && openRefereceFile
@@ -725,7 +726,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
         end
         
-        function THzDatasetUIUpdate(app)
+        function updateTHzDatasetUI(app)
             if isequal(app.DataFileExtensionDropDown.Value,'User Defined');
                 fileExt = app.userDefinedEditField.Value;
             else
@@ -785,12 +786,12 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.SubtractCheckBox.Enable = "on";
             end
 
-            dsDescription = 'ds1: Sample';
+            dsDescription = 'Sample';
             if app.LoadReferenceCheckBox.Value
-                dsDescription = strcat(dsDescription,', ds',num2str(app.dsEditField_Reference.Value),': Reference');
+                dsDescription = strcat(dsDescription,',','Reference');
             end
             if app.LoadBaselineCheckBox.Value && ~app.SubtractCheckBox.Value
-                dsDescription = strcat(dsDescription,', ds',num2str(app.dsEditField_Baseline.Value),': Baseline');
+                dsDescription = strcat(dsDescription,',','Baseline');
             end
             app.DSDescriptionEditField.Value = dsDescription;
         end
@@ -858,8 +859,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             noUnits = {'Refractive Index','-'};
 
             for idx = 1:mdNum
-               rowContent = strcat('md',num2str(idx),':'); 
-               %rowContent = '';
+               rowContent = '';
                if ~isequal(string(metaTableData{idx,2}),'-')
                    rowContent = strcat(rowContent,string(metaTableData{idx,2}),'_');
                end
@@ -1071,15 +1071,13 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             app.SourceDatasetDropDown.Items = srcDDItems;
+            uneditableRows = [1,17,19,20,21,22];
 
-            Tcell = app.Tcell(indices(1),indices(2));
-            dataType = [2 1 1 2 2, 2 2 2 1 1, 1 1 1 1 1, 1 2 1 2 2, 2 2]; % 1 for modifiables, 2 for non-modifiables
-
-            if dataType(indices(1)) < 2
-                app.UITable_Measurement.ColumnEditable = true;
-            else
+            if ismember(indices(1),uneditableRows)
                 app.UITable_Measurement.ColumnEditable = false;
-            end            
+            else
+                app.UITable_Measurement.ColumnEditable = true;
+            end         
         end
 
         % Cell edit callback: UITable_Measurement
@@ -1661,17 +1659,17 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Value changed function: LoadReferenceCheckBox
         function LoadReferenceCheckBoxValueChanged(app, event)
-            THzDatasetUIUpdate(app);
+            updateTHzDatasetUI(app);
         end
 
         % Value changed function: LoadBaselineCheckBox
         function LoadBaselineCheckBoxValueChanged(app, event)
-            THzDatasetUIUpdate(app);
+            updateTHzDatasetUI(app);
         end
 
         % Value changed function: SubtractCheckBox
         function SubtractCheckBoxValueChanged(app, event)
-            THzDatasetUIUpdate(app);
+            updateTHzDatasetUI(app);
         end
 
         % Value changed function: DataFileExtensionDropDown
@@ -1684,7 +1682,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 app.userDefinedEditField.Enable = "off";
                 app.userDefinedEditField.Value = '';
             end
-            THzDatasetUIUpdate(app);
+            updateTHzDatasetUI(app);
         end
 
         % Value changed function: SeperateFileCheckBox_Reference
@@ -1839,7 +1837,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.SubtractCheckBox.Value = baseMat(5);
             LoadBaselineCheckBoxValueChanged(app);
             
-            THzDatasetUIUpdate(app);
+            updateTHzDatasetUI(app);
         end
 
         % Button pushed function: SetDefaultButton
@@ -2016,12 +2014,12 @@ classdef CaTx_exported < matlab.apps.AppBase
 
         % Value changed function: dsEditField_Baseline
         function dsEditField_BaselineValueChanged(app, event)
-            THzDatasetUIUpdate(app);
+            updateTHzDatasetUI(app);
         end
 
         % Value changed function: dsEditField_Reference
         function dsEditField_ReferenceValueChanged(app, event)
-            THzDatasetUIUpdate(app);
+            updateTHzDatasetUI(app);
         end
 
         % Button pushed function: SetDefaultInstrumentButton

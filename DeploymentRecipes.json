@@ -95,6 +95,30 @@
       ],
       "mdDescription": "",
       "RecipeDesignTab": 0
+    },
+    {
+      "name": "MenloSystems *.dat file (w/o reference)",
+      "mode": "Transmission",
+      "fileExt": "dat",
+      "sample": [
+        1,
+        2
+      ],
+      "reference": [
+        0,
+        0,
+        3,
+        2
+      ],
+      "baseline": [
+        0,
+        0,
+        4,
+        3,
+        0
+      ],
+      "mdDescription": "",
+      "RecipeDesignTab": 1
     }
   ],
   "dataDescription": {
