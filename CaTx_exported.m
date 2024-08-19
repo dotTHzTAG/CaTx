@@ -305,12 +305,12 @@ classdef CaTx_exported < matlab.apps.AppBase
                 baseTHz = baseVec(:,baseTHzIdx)';
             end
 
-            dsDescription = 'ds1: Sample';
+            dsDescription = 'Sample';
             if readReference
-                dsDescription = strcat(dsDescription,', ds2: Reference');
+                dsDescription = strcat(dsDescription,',Reference');
             end
             if readBaseline && ~subtractBaseline
-                dsDescription = strcat(dsDescription,', ds3: Reference');
+                dsDescription = strcat(dsDescription,',Baseline');
             end
 
             % Read Sample Signal
@@ -443,12 +443,12 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             HDFDataSet='/TerapulseDocument/Measurements/Spectra Data';
 
-            dsDescription = 'ds1: Sample';
+            dsDescription = 'Sample';
             if readReference
-                dsDescription = strcat(dsDescription,', ds2: Reference');
+                dsDescription = strcat(dsDescription,',Reference');
             end
             if readBaseline && ~subtractBaseline
-                dsDescription = strcat(dsDescription,', ds3: Reference');
+                dsDescription = strcat(dsDescription,',Baseline');
             end 
 
             Tcell = cell(22,1); % cell structure table
