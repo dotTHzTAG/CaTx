@@ -44,11 +44,11 @@ classdef CaTx_exported < matlab.apps.AppBase
         UITable_Header                  matlab.ui.control.Table
         UITable_Measurement             matlab.ui.control.Table
         InstrumentsandUsersTab          matlab.ui.container.Tab
-        DefaultUserEditField            matlab.ui.control.EditField
-        DefaultUserEditFieldLabel       matlab.ui.control.Label
+        CurrentUserEditField            matlab.ui.control.EditField
+        CurrentUserEditFieldLabel       matlab.ui.control.Label
         DefaultInstrumentEditField      matlab.ui.control.EditField
         DefaultInstrumentEditFieldLabel  matlab.ui.control.Label
-        SetDefaultUserButton            matlab.ui.control.Button
+        SetCurrentUserButton            matlab.ui.control.Button
         SetDefaultInstrumentButton      matlab.ui.control.Button
         AnonymousInstrumentButton       matlab.ui.control.Button
         DonotusefordescriptionsLabel    matlab.ui.control.Label
@@ -187,9 +187,9 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.UITable_Users.Data = userTable;
             app.userTable = userTable;
             app.instrument_profile = profileData.defaultInstrument;
-            app.user_profile = profileData.defaultUser;
+            app.user_profile = profileData.currentUser;
             app.DefaultInstrumentEditField.Value = profileData.defaultInstrument;
-            app.DefaultUserEditField.Value = profileData.defaultUser;
+            app.CurrentUserEditField.Value = profileData.currentUser;
         end 
         
         function updateMeasurementTable(app)
@@ -2058,8 +2058,8 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
         end
 
-        % Button pushed function: SetDefaultUserButton
-        function SetDefaultUserButtonPushed(app, event)
+        % Button pushed function: SetCurrentUserButton
+        function SetCurrentUserButtonPushed(app, event)
             fig = app.CaTxUIFigure;
             itemNum = app.UserSelectionEditField.Value;
             if isequal(itemNum,0)
@@ -2074,7 +2074,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             userTable = app.UITable_Users.Data;
-            profileData.defaultUser = strjoin(userTable{itemNum,:},'/');
+            profileData.currentUser = strjoin(userTable{itemNum,:},'/');
                         
             try
                 jsonText = jsonencode(profileData, 'PrettyPrint', true);
@@ -2084,11 +2084,11 @@ classdef CaTx_exported < matlab.apps.AppBase
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
-                uialert(fig, 'Set default user successfully.', 'Success');
-                app.DefaultUserEditField.Value = profileData.defaultUser;
+                uialert(fig, 'Set current user successfully.', 'Success');
+                app.CurrentUserEditField.Value = profileData.currentUser;
             catch ME
-                uialert(fig, sprintf('Failed to set default instrument: %s', ME.message), 'Error');
-                app.DefaultUserEditField.Value = '';
+                uialert(fig, sprintf('Failed to set current user: %s', ME.message), 'Error');
+                app.CurrentUserEditField.Value = '';
             end
 
         end
@@ -2680,11 +2680,11 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.SetDefaultInstrumentButton.Position = [915 598 135 25];
             app.SetDefaultInstrumentButton.Text = 'Set Default Instrument';
 
-            % Create SetDefaultUserButton
-            app.SetDefaultUserButton = uibutton(app.InstrumentsandUsersTab, 'push');
-            app.SetDefaultUserButton.ButtonPushedFcn = createCallbackFcn(app, @SetDefaultUserButtonPushed, true);
-            app.SetDefaultUserButton.Position = [915 340 135 25];
-            app.SetDefaultUserButton.Text = 'Set Default User';
+            % Create SetCurrentUserButton
+            app.SetCurrentUserButton = uibutton(app.InstrumentsandUsersTab, 'push');
+            app.SetCurrentUserButton.ButtonPushedFcn = createCallbackFcn(app, @SetCurrentUserButtonPushed, true);
+            app.SetCurrentUserButton.Position = [915 340 135 25];
+            app.SetCurrentUserButton.Text = 'Set Current User';
 
             % Create DefaultInstrumentEditFieldLabel
             app.DefaultInstrumentEditFieldLabel = uilabel(app.InstrumentsandUsersTab);
@@ -2698,17 +2698,17 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.DefaultInstrumentEditField.BackgroundColor = [0.9412 0.9412 0.9412];
             app.DefaultInstrumentEditField.Position = [457 486 444 22];
 
-            % Create DefaultUserEditFieldLabel
-            app.DefaultUserEditFieldLabel = uilabel(app.InstrumentsandUsersTab);
-            app.DefaultUserEditFieldLabel.HorizontalAlignment = 'right';
-            app.DefaultUserEditFieldLabel.Position = [330 80 75 22];
-            app.DefaultUserEditFieldLabel.Text = 'Default  User';
+            % Create CurrentUserEditFieldLabel
+            app.CurrentUserEditFieldLabel = uilabel(app.InstrumentsandUsersTab);
+            app.CurrentUserEditFieldLabel.HorizontalAlignment = 'right';
+            app.CurrentUserEditFieldLabel.Position = [331 80 74 22];
+            app.CurrentUserEditFieldLabel.Text = 'Current User';
 
-            % Create DefaultUserEditField
-            app.DefaultUserEditField = uieditfield(app.InstrumentsandUsersTab, 'text');
-            app.DefaultUserEditField.Editable = 'off';
-            app.DefaultUserEditField.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.DefaultUserEditField.Position = [420 80 477 22];
+            % Create CurrentUserEditField
+            app.CurrentUserEditField = uieditfield(app.InstrumentsandUsersTab, 'text');
+            app.CurrentUserEditField.Editable = 'off';
+            app.CurrentUserEditField.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.CurrentUserEditField.Position = [420 80 477 22];
 
             % Create DeploymentRecipeTab
             app.DeploymentRecipeTab = uitab(app.TabGroup);
