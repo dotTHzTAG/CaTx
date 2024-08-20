@@ -159,9 +159,9 @@ classdef CaTx_exported < matlab.apps.AppBase
         recipeTable % imported recipe table
         recipeData % imported the whole recipe data from json file
         group % Unit structure corresponding to the metadata categories
-        recipeFile = 'DeploymentRecipes.json';
-        profileFile = 'Profiles.json';
-        configFile = 'Configuration.json';
+        recipeFile
+        profileFile
+        configFile
         %#exclude DeploymentRecipes.json
         %#exclude Profiles.json
         %#exclude Configuration.json
@@ -816,7 +816,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                 jsonText = jsonencode(profileData, 'PrettyPrint', true);
                 fid = fopen(app.profileFile, 'w');
                 if fid == -1
-                    error('Cannot open file for writing: %s', app.recipeFile);
+                    error('Cannot open file for writing: %s', app.profileFile);
                 end
                 fwrite(fid, jsonText, 'char');
                 fclose(fid);
@@ -884,16 +884,21 @@ classdef CaTx_exported < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             fig = app.CaTxUIFigure;
-            app.PRJ_count = 0;
+            app.PRJ_count = 0;   
             app.filename = [];
-            if isdeployed
+
+            app.recipeFile = 'DeploymentRecipes.json';
+            app.profileFile = 'Profiles.json';
+            app.configFile = 'Configuration.json';
+
+            if isdeployed % This if-loop specifies the json file folder for macOS.  
                 appRoot = ctfroot;
                 appRoot = extractBefore(appRoot,'CaTx.app');
-                app.FilesEditField.Value = appRoot;
                 app.configFile = [appRoot,app.configFile];
                 app.recipeFile = [appRoot,app.recipeFile];
                 app.profileFile = [appRoot,app.profileFile];
             end
+
             try
                 configData = jsondecode(fileread(app.configFile));
             catch ME
