@@ -886,9 +886,17 @@ classdef CaTx_exported < matlab.apps.AppBase
             fig = app.CaTxUIFigure;
             app.PRJ_count = 0;
             app.filename = [];
+            if isdeployed
+                appRoot = ctfroot;
+                appRoot = extractBefore(appRoot,'CaTx.app');
+                app.FilesEditField.Value = appRoot;
+                app.configFile = [appRoot,app.configFile];
+                app.recipeFile = [appRoot,app.recipeFile];
+                app.profileFile = [appRoot,app.profileFile];
+            end
             try
                 configData = jsondecode(fileread(app.configFile));
-            catch ME            
+            catch ME
                 uialert(fig, sprintf('Failed to read Configuration.json: %s', ME.message), 'Error');
                 return;
             end
