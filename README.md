@@ -37,8 +37,8 @@ Please download the installer and run it on your local computer as decribed belo
  -	Move to the application folder at /Applications/CaTx/application
  -	Unlock *'Configuration.json'*,*'DeploymentRecipes.json'*,*'Profiles.json'* files.
  -	To unlock a json file:
-   1) Double-click the file and try to change its content. When a warning message pops up, Select 'Unlock'.
-   2) Right-click the file and change its file permissions from *Read* to *Read & Write*.
+>   1) Double-click the file and try to change its content. When a warning message pops up, Select 'Unlock'.
+>   2) Right-click the file and change its file permissions from *Read* to *Read & Write*.
 
 
 
