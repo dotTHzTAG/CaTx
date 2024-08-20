@@ -1,12 +1,12 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="2992476439" file="/Users/jongminlee/Documents/GitHub/CaTx/CaTx.prj" location="/Users/jongminlee/Documents/GitHub/CaTx" name="CaTx" preferred-package-location="/C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_redistribution" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="2992476439" file="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx.prj" location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx" name="CaTx" preferred-package-location="C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_redistribution" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>CaTx</param.appname>
-    <param.icon>${PROJECT_ROOT}/CaTx_resources/icon.ico</param.icon>
+    <param.icon>${PROJECT_ROOT}\CaTx_resources\icon.ico</param.icon>
     <param.icons>
-      <file>${PROJECT_ROOT}/CaTx_resources/icon_48.png</file>
-      <file>${PROJECT_ROOT}/CaTx_resources/icon_32.png</file>
-      <file>${PROJECT_ROOT}/CaTx_resources/icon_24.png</file>
-      <file>${PROJECT_ROOT}/CaTx_resources/icon_16.png</file>
+      <file>${PROJECT_ROOT}\CaTx_resources\icon_48.png</file>
+      <file>${PROJECT_ROOT}\CaTx_resources\icon_32.png</file>
+      <file>${PROJECT_ROOT}\CaTx_resources\icon_24.png</file>
+      <file>${PROJECT_ROOT}\CaTx_resources\icon_16.png</file>
     </param.icons>
     <param.version>1.3</param.version>
     <param.authnamewatermark>Terahertz Applications Group</param.authnamewatermark>
@@ -14,20 +14,20 @@
     <param.company>University of Cambridge</param.company>
     <param.summary>The dotTHz Project Terahertz Data Management Tool</param.summary>
     <param.description />
-    <param.screenshot>${PROJECT_ROOT}/Images/CaTx_splash.png</param.screenshot>
+    <param.screenshot>${PROJECT_ROOT}\Images\CaTx_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\CaTx\</param.installpath.string>
-    <param.installpath.combo>option.installpath.systemwideapp</param.installpath.combo>
-    <param.logo>${PROJECT_ROOT}/Images/installer_image.png</param.logo>
+    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
+    <param.logo>${PROJECT_ROOT}\Images\installer_image.png</param.logo>
     <param.install.notes>For details
 &gt; https://doi.org/10.1007/s10762-023-00947-w
 GitHub Documentation
 &gt; https://github.com/dotTHzTAG/Documentation</param.install.notes>
     <param.target.install.notes />
-    <param.intermediate>${PROJECT_ROOT}/CaTx/for_testing</param.intermediate>
-    <param.files.only>${PROJECT_ROOT}/CaTx/for_redistribution_files_only</param.files.only>
-    <param.output>${PROJECT_ROOT}/CaTx/for_redistribution</param.output>
-    <param.logdir>${PROJECT_ROOT}/CaTx</param.logdir>
+    <param.intermediate>${PROJECT_ROOT}\CaTx\for_testing</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}\CaTx\for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}\CaTx\for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}\CaTx</param.logdir>
     <param.enable.clean.build>false</param.enable.clean.build>
     <param.user.defined.mcr.options />
     <param.target.type>subtarget.standalone</param.target.type>
@@ -38,7 +38,7 @@ GitHub Documentation
     <param.web.mcr.name>CaTxInstaller_web</param.web.mcr.name>
     <param.package.mcr.name>CaTxInstaller_mcr</param.package.mcr.name>
     <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
-    <param.windows.command.prompt>false</param.windows.command.prompt>
+    <param.windows.command.prompt>true</param.windows.command.prompt>
     <param.create.log>false</param.create.log>
     <param.log.file />
     <param.native.matlab>false</param.native.matlab>
@@ -75,43 +75,42 @@ GitHub Documentation
       <param.example />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}/CaTx.mlapp</file>
+      <file>${PROJECT_ROOT}\CaTx.mlapp</file>
     </fileset.main>
     <fileset.resources />
     <fileset.package>
-      <file>${PROJECT_ROOT}/Configuration.json</file>
-      <file>${PROJECT_ROOT}/DeploymentRecipes.json</file>
-      <file>${PROJECT_ROOT}/Profiles</file>
-      <file>${PROJECT_ROOT}/Profiles.json</file>
+      <file>${PROJECT_ROOT}\Configuration.json</file>
+      <file>${PROJECT_ROOT}\DeploymentRecipes.json</file>
+      <file>${PROJECT_ROOT}\Profiles</file>
+      <file>${PROJECT_ROOT}\Profiles.json</file>
     </fileset.package>
     <fileset.depfun>
-      <file>${PROJECT_ROOT}/Images/dotTHz_logo.png</file>
-      <file>${PROJECT_ROOT}/Images/icon.png</file>
+      <file>${PROJECT_ROOT}\Images\dotTHz_logo.png</file>
+      <file>${PROJECT_ROOT}\Images\icon.png</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}/CaTx/for_testing" name="CaTx.app" optional="false">/Users/jongminlee/Documents/GitHub/CaTx/CaTx/for_testing/CaTx.app</file>
-      <file location="${PROJECT_ROOT}/CaTx/for_testing" name="splash.png" optional="false">/Users/jongminlee/Documents/GitHub/CaTx/CaTx/for_testing/splash.png</file>
-      <file location="${PROJECT_ROOT}/CaTx/for_testing" name="readme.txt" optional="true">/Users/jongminlee/Documents/GitHub/CaTx/CaTx/for_testing/readme.txt</file>
-      <file location="${PROJECT_ROOT}/CaTx/for_testing" name="run_CaTx.sh" optional="false">/Users/jongminlee/Documents/GitHub/CaTx/CaTx/for_testing/run_CaTx.sh</file>
+      <file location="${PROJECT_ROOT}\CaTx\for_testing" name="CaTx.exe" optional="false">C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_testing\CaTx.exe</file>
+      <file location="${PROJECT_ROOT}\CaTx\for_testing" name="splash.png" optional="false">C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\CaTx\for_testing" name="readme.txt" optional="true">C:\Users\Jongmin Lee\Documents\GitHub\CaTx\CaTx\for_testing\readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>/Applications/MATLAB_R2023b.app</root>
+      <root>C:\Program Files\MATLAB\R2023a</root>
       <toolboxes />
     </matlab>
     <platform>
-      <unix>true</unix>
-      <mac>true</mac>
-      <windows>false</windows>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
       <win2k>false</win2k>
       <winxp>false</winxp>
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>14.5</osver>
-      <os32>true</os32>
-      <os64>false</os64>
-      <arch>maci64</arch>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
       <matlab>true</matlab>
     </platform>
   </configuration>
