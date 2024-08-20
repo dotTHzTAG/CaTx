@@ -5,15 +5,17 @@ CaTx for the dotTHz project
 
 **Installation guide (standalone version)**
 
-Please download [CaTxInstaller_web.exe](CaTxInstaller_web.exe) and run it on your local computer as decribed below. 
+Please download the installer and run it on your local computer as decribed below.
+
+**For Windows**
 
 *MATLAB Application Installation:*
- -	Run the CaTxInstaller_web.exe file (an internect connection is necessary for installation.)
+ -	Download and run [CaTxInstaller_Windows_web.exe](CaTxInstaller_Windows_web.exe) (an internect connection is necessary for installation.)
  -	The MATLAB Installer will launch. Click **Next**.
  -	At the ‘Select destination folder’ step, leave ‘Add shortcut to desktop’ **UNCHECKED**.
  -	Click **Next**, then click **Begin Install**
 
- *Add Shortcut to Desktop: (for Windows)*
+ *Add Shortcut to Desktop:*
  -	Right-click and drag the CaTx.exe file at C:\Program Files\CaTx\application\ to Windows Desktop
  -	Select **Create shortcut to here.**
  -	Right-click the shortcut and select **properties.**
@@ -22,6 +24,23 @@ Please download [CaTxInstaller_web.exe](CaTxInstaller_web.exe) and run it on you
  -	Click **OK** and **OK**
 
  *Please run CaTx as administrator!!!*
+
+
+**For MacOS**
+
+*MATLAB Application Installation:*
+ -	Download and run [CaTxMacInstaller_web.app](CaTxMacInstaller_web.app) (an internect connection is necessary for installation.)
+ -	The MATLAB Installer will launch. Click **Next**.
+ -	Click **Next**, then click **Begin Install**
+
+ *Unlock 'json' files after installation*
+ -	Move to the application folder at /Applications/CaTx/application
+ -	Unlock *'Configuration.json'*,*'DeploymentRecipes.json'*,*'Profiles.json'* files.
+ -	To unlock a json file:
+   1) Double-click the file and try to change its content. When a warning message pops up, Select 'Unlock'.
+   2) Right-click the file and change its file permissions from *Read* to *Read & Write*.
+
+
 
  <img src="/Images/dotTHzProject_logo.png" height ="150">
 
