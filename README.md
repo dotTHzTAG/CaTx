@@ -7,7 +7,7 @@ CaTx for the dotTHz project
 
 Please download the installer and run it on your local computer as decribed below.
 
-**For Windows**
+## For Windows
 
 *MATLAB Application Installation:*
  -	Download and run [CaTxInstaller_Windows_web.exe](CaTxInstaller_Windows_web.exe) (an internect connection is necessary for installation.)
@@ -25,8 +25,7 @@ Please download the installer and run it on your local computer as decribed belo
 
  *Please run CaTx as administrator!!!*
 
-
-**For MacOS**
+## For MacOS
 
 *MATLAB Application Installation:*
  -	Download and run [CaTxMacInstaller_web.app](CaTxMacInstaller_web.app) (an internect connection is necessary for installation.)
