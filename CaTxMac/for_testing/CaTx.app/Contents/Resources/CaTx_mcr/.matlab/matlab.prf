@@ -1,15 +1,22 @@
 #MATLAB Preferences
-#Tue Aug 20 14:00:10 BST 2024
+#Mon Aug 26 08:23:56 BST 2024
 RLHiddenB2_WB_2014b_1=I16376
 RLOrderB2_WB_2014b_1=S0:1:
 MatlabExitConfirm=Bfalse
 NV_149877564ad41498775fe89b666637=S1726677306137
+RLWidthB2_VE_2014b_1_1=I130
+RLWidthB2_VE_2014b_1_0=I130
 DeploytoollastOpenFile=S
-EditorMRU3=S/Users/jongminlee/Documents/GitHub/CaTx_Menlo/AcquisitionDialog_exported.m
-EditorMRU2=S/Users/jongminlee/Documents/GitHub/DipTab/DipTab_exported.m
-EditorMRU1=S/Users/jongminlee/Documents/GitHub/CaTx/CaTx_exported.m
+EditorMRU5=S/Users/jongminlee/Documents/GitHub/CaTx_Menlo/AcquisitionDialog_exported.m
+EditorMRU4=S/Users/jongminlee/Documents/GitHub/DipTab/DipTab_exported.m
+EditorMRU3=S/Users/jongminlee/Documents/GitHub/CaTx/CaTx_exported.m
+EditorMRU2=S/Users/jongminlee/Documents/GitHub/CaTSper/config_default.json
+EditorMRU1=S/Users/jongminlee/Documents/GitHub/CaTSper/CaTSper_exported.m
 CommandWindowClearConfirmation=Btrue
-DeploytoolrecentProjects=S/Users/jongminlee/Documents/GitHub/CaTx/CaTxMac.prj;/Users/jongminlee/Documents/GitHub/CaTx/CaTx.prj;/Users/jongminlee/Documents/MATLAB/untitled2.prj
+DeploytoolrecentProjects=S/Users/jongminlee/Documents/GitHub/CaTx/CaTxMac.prj;/Users/jongminlee/Documents/GitHub/CaTSper/CaTSPerMac.prj;/Users/jongminlee/Documents/GitHub/CaTSper/CaTSPer.prj;/Users/jongminlee/Documents/GitHub/CaTx_Menlo/CaTx4Menlo.prj;/Users/jongminlee/Documents/GitHub/CaTx/CaTx.prj;/Users/jongminlee/Documents/MATLAB/untitled2.prj
 RLWidthB2_WB_2014b_1_1=I130
 RLWidthB2_WB_2014b_1_0=I130
+RLHiddenB2_VE_2014b_1=I8184
+RLPrevInitB2_VE_2014b_1=Btrue
 RLPrevInitB2_WB_2014b_1=Btrue
+RLOrderB2_VE_2014b_1=S0:1:
