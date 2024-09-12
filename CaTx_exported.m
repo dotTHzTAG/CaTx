@@ -497,7 +497,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                             refTof = h5read(fullpath,strcat(groupName,'/reference/sample/xdata'));
                             refTHz = h5read(fullpath,strcat(groupName,'/reference/sample/ydata'));
                         catch
-                            uialert(fig,'Reference singal loading error','Warning');
+                            uialert(fig,'Reference signal loading error','Warning');
                             app.DEBUGMsgLabel.Text = 'Loading Cancelled';
                             return;
                         end
@@ -1223,13 +1223,13 @@ classdef CaTx_exported < matlab.apps.AppBase
         % Button pushed function: ImportMetadataFromXLSFileButton
         function ImportMetadataFromXLSFileButtonPushed(app, event)
             if isempty(app.fullpathname)
-                filter = {'*.xls';'*.*'};
-                [filename, filepath] = uiputfile(filter);
+                filter = {'*.xlsx';'*.*'};
+                [filename, filepath] = uigetfile(filter,'Select data file(s)','MultiSelect','on');
             else
                 lastPath = app.fullpathname(end);
-                lastPath = strcat(extractBefore(lastPath,'.'),'.xls'); 
+                lastPath = strcat(extractBefore(lastPath,'.'),'.xlsx'); 
                 filter = lastPath;
-                [filename, filepath] = uiputfile(filter);
+                [filename, filepath] = uigetfile(filter,'Select data file(s)','MultiSelect','on');
             end
 
             if isequal(filename,0)||isequal(filepath,0)
@@ -1256,7 +1256,12 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             Tcell(2:3,:)=Tcellxls(2:3,:);
-            Tcell(10:16,:)=Tcellxls(4:10,:);
+            Tcellxls_mdno = size(Tcellxls,1);
+            if Tcellxls_mdno < 7
+            Tcell(10:10+(Tcellxls_mdno-3)-1,:) = Tcellxls(4:end,:);
+            else
+            Tcell(10:16,:) = Tcellxls(4:10,:);
+            end
             Tcell(cellfun(@(x) isa(x,'missing'),Tcell)) = {""};
             app.Tcell = Tcell;
             updateMeasurementTable(app);            
