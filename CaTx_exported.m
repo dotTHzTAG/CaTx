@@ -497,9 +497,9 @@ classdef CaTx_exported < matlab.apps.AppBase
                             refTof = h5read(fullpath,strcat(groupName,'/reference/sample/xdata'));
                             refTHz = h5read(fullpath,strcat(groupName,'/reference/sample/ydata'));
                         catch
-                            uialert(fig,'Reference signal loading error','Warning');
-                            app.DEBUGMsgLabel.Text = 'Loading Cancelled';
-                            return;
+                            refTof = {""};
+                            refTHz = {""};
+                            uialert(fig,'Reference signal is missing for some measurements. Please double check data.','Warning');
                         end
                         % Referecen signal cell allocation
                         Tcell{DSBaseCol+refDS,PRJMeasCount-idx+totalMeasNum} = [refTof;refTHz];
@@ -3064,7 +3064,6 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create NumberPrefixSwitch
             app.NumberPrefixSwitch = uiswitch(app.CaTxUIFigure, 'slider');
             app.NumberPrefixSwitch.Position = [409 21 40 18];
-            app.NumberPrefixSwitch.Value = 'On';
 
             % Create AttributuesallocationLabel
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
