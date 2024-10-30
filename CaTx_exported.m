@@ -1244,6 +1244,10 @@ classdef CaTx_exported < matlab.apps.AppBase
             
             %Tcellxls = readtable(fullfile,"ReadVariableNames",false,);
             Tcellxls = readcell(fullfile);
+            
+            mdDescriptionxls = Tcellxls(4:end,1);
+
+            % Remove description column and keep data only
             Tcellxls(:,1) = [];
 
             % compare the column numbers
@@ -1256,11 +1260,16 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             Tcell(2:3,:)=Tcellxls(2:3,:);
-            Tcellxls_mdno = size(Tcellxls,1);
+            Tcellxls_mdno = size(Tcellxls,1)-3;
             if Tcellxls_mdno < 7
-            Tcell(10:10+(Tcellxls_mdno-3)-1,:) = Tcellxls(4:end,:);
+            Tcell(10:10+Tcellxls_mdno-1,:) = Tcellxls(4:end,:);
+            mdDescriptionxls = strjoin(mdDescriptionxls, ',');
+            Tcell(9,:) = {mdDescriptionxls};
+            Tcell(10+Tcellxls_mdno:16,:) = {""};
             else
             Tcell(10:16,:) = Tcellxls(4:10,:);
+            mdDescriptionxls = strjoin(mdDescriptionxls(1:7), ',');
+            Tcell(9,:) = {mdDescriptionxls};
             end
             Tcell(cellfun(@(x) isa(x,'missing'),Tcell)) = {""};
             app.Tcell = Tcell;
