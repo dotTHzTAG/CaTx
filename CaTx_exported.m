@@ -585,6 +585,196 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.TabGroup.SelectedTab = app.TabGroup.Children(1);
         end
         
+        function deployData_terasolveCSV(app,PRJ_count,fullpathname)
+            
+            fig = app.CaTxUIFigure;
+            app.manualMode = 0;
+            DSBaseCol = 18;
+            thzVer = app.thzVer;
+            Tcell = [];
+            
+            for PRJIdx = 1:PRJ_count
+                fullpath = fullpathname{PRJIdx};
+                
+                % if full file path is empty, do not continue to execute the
+                % function
+                if isempty(fullpath)
+                    return;
+                end
+            
+                % read the headers from the *.csv file
+                csvheader = readmatrix(fullpath,'Range', '1:1', 'OutputType', 'string');
+                % read the data from the *.csv file
+                csvdata = readmatrix(fullpath);
+    
+                % for convenience of extracting measurement number, conserve only
+                % reference time columns with unique names
+                csvheader = csvheader(1:4:end);
+                
+                % convert cell array to character array
+                headerChars = cellfun(@char, csvheader, 'UniformOutput', false);
+                % extract measurement numbers from header
+                % find the '/' that separates the measurement name and the
+                % measurement number
+                splitter = cellfun(@(x) max(x), strfind(headerChars, '/'));
+                % extract the measurement names without numerical identifiers
+                samName_prefix = extractBefore(headerChars, splitter);
+                % extract the measurement number
+                samNum = extractBetween(headerChars,splitter,' Reference Time (ps)','Boundaries','exclusive');
+                % convert all measurement numbers from string to double
+                samNum = cellfun(@str2double, samNum);
+                % total number of measurements
+                totMea = size(csvheader,2);
+        
+                % creating cell array with columns equivalent to number of
+                % measurements
+                % number of rows is 22 by default in the Cambridge THz Converter
+                preTcell = cell(22,totMea);
+        
+                % putting measurement numbers into preTcell
+                % note use brackets when putting cells into cell array,
+                % use curly brackets when putting other data types into a cell
+                % preTcell(1,:) = mat2cell(num, 1, ones(1, totMea));
+        
+                % % temporarily assign measurement names, will do further processing
+                % % later
+                % preTcell(2,:) = samName_prefix;
+                
+                refIdx = repmat([1 2],[1 totMea]) + 4.*(repelem([1:1:totMea],2)-1);
+                samIdx = repmat([3 4],[1 totMea]) + 4.*(repelem([1:1:totMea],2)-1);
+
+                % refIdx = [1:1:totMea.*dsNum]+2.*(repelem([1:1:totMea],2)-1);
+                % samIdx = [1:1:totMea.*dsNum]+2.*repelem([1:1:totMea],2);
+        
+                % extract reference time and amplitude
+                ref = csvdata(:,refIdx)';
+                % extract sample time and amplitude
+                sam = csvdata(:,samIdx)';
+                
+                % sample
+                preTcell(19,:) = mat2cell(sam,repmat(2,1,totMea),size(sam,2))';
+                % reference
+                preTcell(20,:) = mat2cell(ref,repmat(2,1,totMea),size(ref,2))';
+                
+        
+                % in each project file, there may be >=1 unique measurement names
+                % (this excludes the measurement number)
+                % if there is only one unique measurement name
+                if numel(unique(samName_prefix)) == 1
+                    % obtain index on how the cell columns should be sorted
+                    [~, idx] = sort(samNum);
+                    % reorder cell columns
+                    preTcell = preTcell(:,idx);
+        
+                    % generate correct measurement identifiers in ascending order
+                    % measurement identifiers are generated in form of 001, 002, 003,
+                    % etc. for convenience of processing in later steps if needed
+                    % this is to overcome the situation in TeraSolve where some numbers are skipped
+                    % when assigning measurement numbers
+                    meaCnt = num2str((1:size(preTcell, 2)).', '%03d');
+                    % concatenate general name and measurement identifiers to generate
+                    % unique name for each measurement
+                    preTcell(2,:) = strcat(samName_prefix.', '_', meaCnt).';
+        
+                % if there is more than one unique measurement name
+                else
+                    
+                    % empty samidx, otherwise compatibility issues may occur in
+                    % loading multiple project files in a row
+                    samidx = [];
+                    
+                    % note that unique names are segregated in the array and do not
+                    % mix
+                    % obtain the first indices which the respective unique names
+                    % occur
+                    [~,samidx(:,1),~] = unique(samName_prefix,'first');
+                    % obtain the last indices which the respective unique names
+                    % occur
+                    [~,samidx(:,2),~] = unique(samName_prefix,'last');
+        
+                    % sort within each set of columns with unique names
+                    for i = 1:size(samidx,1)
+                        % extract the column set that has the same unique name
+                        cellsort = preTcell(:,samidx(i,1):samidx(i,2));
+                        % sort measurements (columns in preTcell))
+                        % sort by first row (measurement numbers in preTcell)
+                        % obtain index on how the cell columns should be sorted
+                        [~, idx] = sort(samNum(samidx(i,1):samidx(i,2)));
+                        % reorder cell columns
+                        cellsort = cellsort(:,idx);
+                    
+                        % generate correct measurement identifiers in ascending order
+                        % measurement identifiers are generated in form of 001, 002, 003,
+                        % etc. for convenience of processing in later steps if needed
+                        % this is to overcome the situation in TeraSolve where some numbers are skipped
+                        % when assigning measurement numbers
+                        meaCnt = num2str((1:size(cellsort, 2)).', '%03d');
+                        % concatenate general name and measurement identifiers to generate
+                        % unique name for each measurement
+                        cellsort(2,:) = strcat(samName_prefix(:,samidx(i,1):samidx(i,2)).', '_', meaCnt).';
+        
+                        % place the sorted columns into the original locations in
+                        % preTcell
+                        preTcell(:,samidx(i,1):samidx(i,2)) = cellsort;
+                    end     
+    
+                end
+                             
+                % concatenate finalTcell with preTcell
+                % deposit all newly imported measurements into the cell array
+                % finalTcell
+                Tcell = [Tcell,preTcell];
+        
+                % displaying percentage progress
+                progressP = PRJIdx/PRJ_count*100;
+                progressP = num2str(progressP,'%.0f');
+                progressP = strcat("Loading: ", progressP,"%");
+                app.DEBUGMsgLabel.Text = progressP;
+                drawnow
+    
+            end
+                    
+            % extract the number of columns in existing Tcell
+            totalMeasNum = size(Tcell,2);
+            % generate a row vector with increments of one, starting
+            % with the next measurement number in T cell and has a length
+            % equivalent to the number of measurements in finalTcell
+            % meaNum = [TcellCol+1:1:TcellCol+size(Tcell,2)];
+    
+            % renumber measurements over finalTcell in ascending
+            % order and in increments of one
+            Tcell(1,:) = mat2cell([1:1:totalMeasNum],1,ones(1,totalMeasNum));
+            
+            % fill in all other rows that either carry generic information
+            % for all measurements or do not have relevant information yet
+            % measurement description
+            % Tcell([3,6,8:16, ],:) = {[]};
+            % instrument profile
+            Tcell(4,:) = {"TeraPulseLX/TeraView/Cambridge, UK"};
+            % user profile
+            Tcell(5,:) = {app.user_profile};
+            % Tcell(6,:) = {[]};
+            % Tersolve must be in transmission mode, there is no alternative
+            % set up
+            Tcell(7,:) = {"Transmission"};
+            
+            Tcell(17,:) = {thzVer};
+            
+            Tcell(18,:) = {'Sample,Reference'};
+
+            app.totalMeasNum = totalMeasNum;
+            app.Tcell = Tcell;
+            updateMeasurementTable(app)
+    
+            % % concatenate Tcell with finalTcell
+            % Tcell = [Tcell,finalTcell];
+    
+            % display 'complete conversion' label
+            app.DEBUGMsgLabel.Text = "Complete conversion";                
+            % assignin("base","Tcell",Tcell);
+
+        end
+
         function loadDeploymentRecipes(app)
             try
                 recipeData = jsondecode(fileread(app.recipeFile));
@@ -597,6 +787,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             recipeTable = struct2table(recipeData.recipes,"AsArray",true);
             recipeNames = recipeTable{:,1};
+            recipeNames(end+1) = {'TeraView TeraSolve *.csv file'};
             app.recipeTable = recipeTable;
             app.recipeData = recipeData;
 
@@ -950,18 +1141,22 @@ classdef CaTx_exported < matlab.apps.AppBase
                 return;
             end
 
+            if strcmp(recipeName, 'TeraView TeraSolve *.csv file')
+            fileFilter = '*.csv';           
+            else
             recipeTable = app.recipeTable;
             recipeData = app.recipeData;
             recipeNames = recipeTable{:,1};
             [isMember,itemLoc]= ismember(recipeName,recipeNames);
             fileExt = recipeTable{itemLoc,3};
             fileFilter = strcat('*.',fileExt);
+            end
 
             if isempty(app.fullpathname)
-                [file, pathName] = uigetfile(fileFilter,'Sectect data file(s)','MultiSelect','on');
+                [file, pathName] = uigetfile(fileFilter,'Seclect data file(s)','MultiSelect','on');
             else
                 lastPath = app.fullpathname(end);
-                [file, pathName] = uigetfile(lastPath,'Sectect data file(s)','MultiSelect','on');
+                [file, pathName] = uigetfile(lastPath,'Seclect data file(s)','MultiSelect','on');
             end
 
             % PRJ_count: number of project files imported
@@ -1007,19 +1202,25 @@ classdef CaTx_exported < matlab.apps.AppBase
             if isempty(recipeName)
                 return;
             end
+            
+            PRJ_count = app.PRJ_count; % number of files to be imported
+            fullpathname = app.fullpathname; % full path for the imported files
+            app.manualMode = 0;
+            app.totalMeasNum = 0;
 
+            if strcmp(recipeName, 'TeraView TeraSolve *.csv file')
+
+                deployData_terasolveCSV(app,PRJ_count,fullpathname);
+
+            else
             recipeTable = app.recipeTable;
             recipeData = app.recipeData;
             recipeNames = recipeTable{:,1};
             [isMember,recipeNum]= ismember(recipeName,recipeNames);
             fileExt = char(recipeTable{recipeNum,3});
 
-            PRJ_count = app.PRJ_count; % number of files to be imported
-            fullpathname = app.fullpathname; % full path for the imported files
             Tcell = []; % cell structure table
-            app.manualMode = 0;
-            app.totalMeasNum = 0;
-
+            
             loadProfiles(app);
 
             switch fileExt
@@ -1029,6 +1230,7 @@ classdef CaTx_exported < matlab.apps.AppBase
                     deployData_teraviewHDF(app,PRJ_count,fullpathname,recipeNum);
                 otherwise
                     deployData_readmatrix(app,PRJ_count,fullpathname,recipeNum);
+            end
             end
 
             app.Ins_MeasurementFieldToEditField.Value = app.totalMeasNum;
