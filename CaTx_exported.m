@@ -7,7 +7,7 @@ classdef CaTx_exported < matlab.apps.AppBase
         Image                           matlab.ui.control.Image
         exceptItemDropDown              matlab.ui.control.DropDown
         exceptItemDropDownLabel         matlab.ui.control.Label
-        AttribututeInclusionSwitch      matlab.ui.control.Switch
+        AttributeInclusionSwitch        matlab.ui.control.Switch
         AttributuesallocationLabel      matlab.ui.control.Label
         NumberPrefixSwitch              matlab.ui.control.Switch
         PrefixnumberstothedatasetnameLabel  matlab.ui.control.Label
@@ -1351,7 +1351,7 @@ classdef CaTx_exported < matlab.apps.AppBase
             end
 
             % Are the attributes assigned to all datasets?
-            if isequal(app.AttribututeInclusionSwitch.Value,"All Measurements")
+            if isequal(app.AttributeInclusionSwitch.Value,"All Measurements")
                 attAll = true;
             else
                 attAll = false;
@@ -3280,14 +3280,14 @@ classdef CaTx_exported < matlab.apps.AppBase
             app.AttributuesallocationLabel = uilabel(app.CaTxUIFigure);
             app.AttributuesallocationLabel.HorizontalAlignment = 'center';
             app.AttributuesallocationLabel.FontWeight = 'bold';
-            app.AttributuesallocationLabel.Position = [479 19 126 22];
-            app.AttributuesallocationLabel.Text = 'Attributute Inclusion:';
+            app.AttributuesallocationLabel.Position = [485 19 115 22];
+            app.AttributuesallocationLabel.Text = 'Attribute Inclusion:';
 
-            % Create AttribututeInclusionSwitch
-            app.AttribututeInclusionSwitch = uiswitch(app.CaTxUIFigure, 'slider');
-            app.AttribututeInclusionSwitch.Items = {'All Measurements', 'Only First,'};
-            app.AttribututeInclusionSwitch.Position = [710 21 41 18];
-            app.AttribututeInclusionSwitch.Value = 'All Measurements';
+            % Create AttributeInclusionSwitch
+            app.AttributeInclusionSwitch = uiswitch(app.CaTxUIFigure, 'slider');
+            app.AttributeInclusionSwitch.Items = {'All Measurements', 'Only First,'};
+            app.AttributeInclusionSwitch.Position = [710 21 41 18];
+            app.AttributeInclusionSwitch.Value = 'All Measurements';
 
             % Create exceptItemDropDownLabel
             app.exceptItemDropDownLabel = uilabel(app.CaTxUIFigure);
@@ -3297,7 +3297,7 @@ classdef CaTx_exported < matlab.apps.AppBase
 
             % Create exceptItemDropDown
             app.exceptItemDropDown = uidropdown(app.CaTxUIFigure);
-            app.exceptItemDropDown.Items = {'6', '10', '11', '12', '13', '14', '15', '16'};
+            app.exceptItemDropDown.Items = {'6', '8', '10', '11', '12', '13', '14', '15', '16'};
             app.exceptItemDropDown.Position = [884 19 48 22];
             app.exceptItemDropDown.Value = '6';
 
