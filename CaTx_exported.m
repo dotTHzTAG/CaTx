@@ -100,6 +100,11 @@ classdef CaTx_exported < matlab.apps.AppBase
         RecipeNameEditFieldLabel        matlab.ui.control.Label
         userDefinedEditField            matlab.ui.control.EditField
         TerahertzDatasetPanel           matlab.ui.container.Panel
+        TimeArrayInclusionButtonGroup   matlab.ui.container.ButtonGroup
+        TDSDatasetsLabel                matlab.ui.control.Label
+        TPIDatasetsLabel                matlab.ui.control.Label
+        OnlyFirstColumnButton           matlab.ui.control.RadioButton
+        AllColumnsButton                matlab.ui.control.RadioButton
         DSDescriptionEditField          matlab.ui.control.EditField
         DatasetDescriptionLabel         matlab.ui.control.Label
         LoadUseaSeperateFileLabel       matlab.ui.control.Label
@@ -527,12 +532,18 @@ classdef CaTx_exported < matlab.apps.AppBase
                     end
 
                     try
-                        sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
-                        %sampleName = char(HDFDataInfo.Groups(idx).Groups(3).Attributes(9).Value); 
+                        try
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(2).Attributes(9).Value); 
+                        catch
+                            sampleName = char(HDFDataInfo.Groups(idx).Groups(3).Attributes(9).Value); 
+                        end
                     catch
                         try
-                            %sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value);
-                            sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(19).Value);
+                            try
+                                sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(19).Value);
+                            catch
+                                sampleName = char(HDFDataInfo.Groups(idx).Groups(1).Attributes(9).Value);
+                            end                           
                         catch
                             uialert(fig,'Cannot find sampleName attribute.','Warning');
                             app.DEBUGMsgLabel.Text = 'Loading Aborted';
@@ -1232,6 +1243,8 @@ classdef CaTx_exported < matlab.apps.AppBase
                     deployData_readmatrix(app,PRJ_count,fullpathname,recipeNum);
             end
             end
+
+            app.totalMeasNum
 
             app.Ins_MeasurementFieldToEditField.Value = app.totalMeasNum;
             app.User_MeasurementFieldToEditField.Value = app.totalMeasNum;
@@ -3132,6 +3145,33 @@ classdef CaTx_exported < matlab.apps.AppBase
             % Create DSDescriptionEditField
             app.DSDescriptionEditField = uieditfield(app.TerahertzDatasetPanel, 'text');
             app.DSDescriptionEditField.Position = [189 7 466 22];
+
+            % Create TimeArrayInclusionButtonGroup
+            app.TimeArrayInclusionButtonGroup = uibuttongroup(app.TerahertzDatasetPanel);
+            app.TimeArrayInclusionButtonGroup.Title = 'Time Array Inclusion';
+            app.TimeArrayInclusionButtonGroup.FontWeight = 'bold';
+            app.TimeArrayInclusionButtonGroup.Position = [762 21 212 75];
+
+            % Create AllColumnsButton
+            app.AllColumnsButton = uiradiobutton(app.TimeArrayInclusionButtonGroup);
+            app.AllColumnsButton.Text = 'All Columns';
+            app.AllColumnsButton.Position = [11 29 86 22];
+            app.AllColumnsButton.Value = true;
+
+            % Create OnlyFirstColumnButton
+            app.OnlyFirstColumnButton = uiradiobutton(app.TimeArrayInclusionButtonGroup);
+            app.OnlyFirstColumnButton.Text = 'Only First Column';
+            app.OnlyFirstColumnButton.Position = [11 7 118 22];
+
+            % Create TPIDatasetsLabel
+            app.TPIDatasetsLabel = uilabel(app.TimeArrayInclusionButtonGroup);
+            app.TPIDatasetsLabel.Position = [128 7 82 22];
+            app.TPIDatasetsLabel.Text = '(TPI Datasets)';
+
+            % Create TDSDatasetsLabel
+            app.TDSDatasetsLabel = uilabel(app.TimeArrayInclusionButtonGroup);
+            app.TDSDatasetsLabel.Position = [98 29 88 22];
+            app.TDSDatasetsLabel.Text = '(TDS Datasets)';
 
             % Create userDefinedEditField
             app.userDefinedEditField = uieditfield(app.TransmissionReflectionTab, 'text');
