@@ -1224,27 +1224,25 @@ classdef CaTx_exported < matlab.apps.AppBase
                 deployData_terasolveCSV(app,PRJ_count,fullpathname);
 
             else
-            recipeTable = app.recipeTable;
-            recipeData = app.recipeData;
-            recipeNames = recipeTable{:,1};
-            [isMember,recipeNum]= ismember(recipeName,recipeNames);
-            fileExt = char(recipeTable{recipeNum,3});
-
-            Tcell = []; % cell structure table
-            
-            loadProfiles(app);
-
-            switch fileExt
-                case 'thz'
-                    deployData_thz(app, PRJ_count,fullpathname,recipeNum);
-                case 'tprj'
-                    deployData_teraviewHDF(app,PRJ_count,fullpathname,recipeNum);
-                otherwise
-                    deployData_readmatrix(app,PRJ_count,fullpathname,recipeNum);
+                recipeTable = app.recipeTable;
+                recipeData = app.recipeData;
+                recipeNames = recipeTable{:,1};
+                [isMember,recipeNum]= ismember(recipeName,recipeNames);
+                fileExt = char(recipeTable{recipeNum,3});
+    
+                Tcell = []; % cell structure table
+                
+                loadProfiles(app);
+    
+                switch fileExt
+                    case 'thz'
+                        deployData_thz(app, PRJ_count,fullpathname,recipeNum);
+                    case 'tprj'
+                        deployData_teraviewHDF(app,PRJ_count,fullpathname,recipeNum);
+                    otherwise
+                        deployData_readmatrix(app,PRJ_count,fullpathname,recipeNum);
+                end
             end
-            end
-
-            app.totalMeasNum
 
             app.Ins_MeasurementFieldToEditField.Value = app.totalMeasNum;
             app.User_MeasurementFieldToEditField.Value = app.totalMeasNum;
